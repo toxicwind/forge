@@ -203,13 +203,16 @@ describe("winner ledger", () => {
   });
 });
 describe("cuttinggate server sse endpoints", () => {
-  test("GET /models/sse returns text/event-stream with keep-alive and reload event", async () => {
+  test("GET /models/sse returns text/event-stream with an immediate models_reload event", async () => {
     const { buildApp } = await import("../src/server.ts");
-    const r = new Router(cfg, new ProviderGate(cfg), new Quarantine(), ledgerAt(scratch("cg-s-")));
+    // Hermetic: point the herd upstream at a dead port so the handler takes
+    // its fallback path (live herd would proxy its own stream instead).
+    const cfgDead = loadConfig({ ...cfg, bases: { ...cfg.bases, "llama-swap": "http://127.0.0.1:1" } });
+    const r = new Router(cfgDead, new ProviderGate(cfgDead), new Quarantine(), ledgerAt(scratch("cg-s-")));
     r.register("m/mock", "alpha");
     const app = buildApp({
-      config: cfg,
-      gate: new ProviderGate(cfg),
+      config: cfgDead,
+      gate: new ProviderGate(cfgDead),
       quarantine: new Quarantine(),
       ledger: ledgerAt(scratch("cg-s2-")),
       router: r,
@@ -223,8 +226,8 @@ describe("cuttinggate server sse endpoints", () => {
     expect(reader).toBeDefined();
     const { value } = await reader!.read();
     const text = new TextDecoder().decode(value);
-    expect(text).toContain(": keep-alive");
-    expect(text).toContain("models_reload");
+    expect(text).toContain("event: models_reload");
+    expect(text).toContain('"status":"loaded"');
   });
 
   test("POST /v1/chat/completions with stream: true returns SSE chunks", async () => {

@@ -54,38 +54,41 @@ describe("gatewayRoot", () => {
 describe("loadLiveCatalog", () => {
   test("accepts the canonical contract", () => {
     const loaded = loadLiveCatalog(catalogFile(FIXTURE));
-    expect(loaded.ok).toBe(true);
-    if (!loaded.ok) return;
-    expect(loaded.contractMatched).toBe(true);
-    expect(servingIds(loaded.data)).toHaveLength(3);
+    expect(loaded.status).toBe("ok");
+    if (loaded.status !== "ok") return;
+    expect(loaded.contract.canonical).toBe(true);
+    expect([...servingIds(loaded.catalog)]).toHaveLength(3);
   });
 
   // The real outage: the file on disk said estate-providers/live-catalog/v1
   // and both readers did `if (contract !== expected) return null`, silently.
   test("accepts the pre-rename contract but flags it", () => {
     const loaded = loadLiveCatalog(catalogFile({ ...FIXTURE, contract: LEGACY_CATALOG_CONTRACT }));
-    expect(loaded.ok).toBe(true);
-    if (!loaded.ok) return;
-    expect(loaded.contractMatched).toBe(false);
+    expect(loaded.status).toBe("ok");
+    if (loaded.status !== "ok") return;
+    expect(loaded.contract.canonical).toBe(false);
   });
 
   test("rejects a contract it does not understand", () => {
     const loaded = loadLiveCatalog(catalogFile({ ...FIXTURE, contract: "something-else/v9" }));
-    expect(loaded.ok).toBe(false);
-    if (loaded.ok) return;
-    expect(loaded.reason).toContain("unknown contract");
+    if (loaded.status !== "unknown-contract") {
+      expect(loaded.status).toBe("unknown-contract");
+      return;
+    }
+    expect(loaded.contract.saw).toBe("something-else/v9");
+    expect(loaded.contract.expected).toContain("ranch-roost/live-catalog/v1");
   });
 
   test("a missing file is a reason, not a throw", () => {
     const loaded = loadLiveCatalog("/definitely/not/here/live.json");
-    expect(loaded.ok).toBe(false);
+    expect(loaded.status).toBe("missing");
   });
 
   test("malformed JSON is a reason, not a throw", () => {
     const dir = mkdtempSync(join(tmpdir(), "cg-bad-"));
     const path = join(dir, "live.json");
     writeFileSync(path, "{not json", "utf8");
-    expect(loadLiveCatalog(path).ok).toBe(false);
+    expect(loadLiveCatalog(path).status).toBe("malformed");
   });
 });
 
@@ -99,7 +102,7 @@ describe("resolve", () => {
   test("a bare name resolves across providers rather than picking one", () => {
     const hits = resolve(FIXTURE, "qwen-flash-64k");
     expect(hits).toHaveLength(1);
-    expect(hits[0]!.exact).toBe(true);
+    expect(hits[0]!.tier).toBe("bare");
   });
 
   test("a dead id is never marked live", () => {
@@ -142,6 +145,6 @@ describe("writeLiveCatalog", () => {
     const back = JSON.parse(readFileSync(path, "utf8")) as LiveCatalog;
     expect(back.contract).toBe(LIVE_CATALOG_CONTRACT);
     const reloaded = loadLiveCatalog(path);
-    expect(reloaded.ok && reloaded.contractMatched).toBe(true);
+    expect(reloaded.status === "ok" && reloaded.contract.canonical).toBe(true);
   });
 });

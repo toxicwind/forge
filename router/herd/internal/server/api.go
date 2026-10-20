@@ -429,7 +429,11 @@ func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleHealth(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// No hardcoded CORS headers: the global CORS middleware owns
+	// Access-Control-Allow-Origin (emits nothing when the request carries
+	// no Origin). A hardcoded "*" here reintroduced issue #85 (doubled
+	// headers against llama-server upstreams) and breaks
+	// TestServer_CORSNoOriginEmitsNoHeaders.
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 }
