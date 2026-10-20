@@ -54,20 +54,19 @@ export function loadLiveCatalog(source: string = DEFAULT_CATALOG_PATH, staleMs: 
   try { mtimeMs = statSync(source).mtimeMs; raw = readFileSync(source, "utf8"); }
   catch (e) {
     const code = (e as NodeJS.ErrnoException).code;
-    return { ok: false, contractMatched: false, status: code === "ENOENT" ? "missing" : "unreadable", source, reason: (e as Error).message };
+    return { status: code === "ENOENT" ? "missing" : "unreadable", source, reason: (e as Error).message };
   }
   let parsed: { contract?: string } & Partial<Omit<LiveCatalog, "contract">>;
   try { parsed = JSON.parse(raw); } catch (e) { return { status: "malformed", source, reason: (e as Error).message }; }
   const saw = parsed.contract ?? "";
   const spec = (CONTRACTS as Record<string, ContractSpec>)[saw];
-  if (!spec) return { ok: false, contractMatched: false, status: "unknown-contract", source, reason: `unknown contract ${saw}`, contract: { saw, expected: Object.keys(CONTRACTS) as ContractName[] } };
+  if (!spec) return { status: "unknown-contract", source, contract: { saw, expected: Object.keys(CONTRACTS) as ContractName[] } };
   const providers: Record<string, ProviderEntry> = {};
   for (const [name, value] of Object.entries(parsed.providers ?? {})) {
     providers[name] = { serving: [...(value?.serving ?? [])], quarantined: [...(value?.quarantined ?? [])], discovered: value?.discovered === true };
   }
   const ageMs = Math.max(0, Date.now() - mtimeMs);
   return {
-    ok: true, contractMatched: spec.canonical, data: { contract: saw as ContractName, generatedAt: parsed.generatedAt ?? "unknown", deadIds: parsed.deadIds ?? [], providers },
     status: "ok", source,
     contract: { name: saw as ContractName, spec, canonical: spec.canonical },
     catalog: { contract: saw as ContractName, generatedAt: parsed.generatedAt ?? "unknown", deadIds: parsed.deadIds ?? [], providers },

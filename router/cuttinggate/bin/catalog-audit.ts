@@ -14,7 +14,8 @@
  */
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
-import { audit, renderReport, resolve, loadLiveCatalog, writeLiveCatalog, DEFAULT_CATALOG_PATH, DEFAULT_REPORT_PATH, gatewayRoot } from "../src/catalog";
+import { loadLiveCatalog, resolve, writeLiveCatalog, DEFAULT_CATALOG_PATH, gatewayRoot } from "../src/catalog";
+import { audit, renderReport, DEFAULT_REPORT_PATH } from "../src/audit";
 
 const args = process.argv.slice(2);
 const flags = new Set(args.filter((a) => a.startsWith("--")));
@@ -74,11 +75,11 @@ const auditResult = await audit({
 if (flags.has("--find")) {
   const want = positional[0] ?? "";
   const loaded = loadLiveCatalog();
-  if (!loaded.ok) {
+  if (loaded.status !== "ok") {
     process.stderr.write(`catalog unreadable: ${loaded.reason}\n`);
     process.exit(1);
   }
-  const hits = resolve(loaded.data, want);
+  const hits = resolve(loaded.catalog, want);
   if (flags.has("--json")) {
     process.stdout.write(`${JSON.stringify({ query: want, matches: hits }, null, 2)}\n`);
   } else if (!hits.length) {
@@ -99,13 +100,13 @@ if (!auditResult.ok) {
 
 if (flags.has("--rewrite")) {
   const loaded = loadLiveCatalog();
-  if (!loaded.ok) {
+  if (loaded.status !== "ok") {
     process.stderr.write(`catalog unreadable: ${loaded.reason}\n`);
     process.exit(1);
   }
   writeLiveCatalog(DEFAULT_CATALOG_PATH, {
-    deadIds: loaded.data.deadIds,
-    providers: loaded.data.providers,
+    deadIds: loaded.catalog.deadIds,
+    providers: loaded.catalog.providers,
   });
   process.stderr.write(`rewrote ${DEFAULT_CATALOG_PATH} with the canonical contract\n`);
 }

@@ -1,8 +1,8 @@
-# Sovereign Router v2 (flock-py)
+# Estate Router v2 (flock-py)
 
-*The Python reference implementation of the sovereign provider router — 6 routing strategies, OpenAI-compatible serving, and a health DB with per-provider Elo.*
+*The Python reference implementation of the estate provider router — 6 routing strategies, OpenAI-compatible serving, and a health DB with per-provider Elo.*
 
-![sovereign](https://img.shields.io/badge/sovereign--projects-blue?style=for-the-badge) ![mesh](https://img.shields.io/badge/mesh-router--v2-purple?style=for-the-badge) ![python](https://img.shields.io/badge/python-3776AB?style=for-the-badge) ![port 25104](https://img.shields.io/badge/port-25104-orange?style=for-the-badge)
+![estate](https://img.shields.io/badge/estate--projects-blue?style=for-the-badge) ![mesh](https://img.shields.io/badge/mesh-router--v2-purple?style=for-the-badge) ![python](https://img.shields.io/badge/python-3776AB?style=for-the-badge) ![port 25104](https://img.shields.io/badge/port-25104-orange?style=for-the-badge)
 
 ## Why this exists
 
@@ -12,7 +12,7 @@
 
 ```mermaid
 flowchart LR
-    zed([Zed / OpenAI client]) -->|"POST /v1<br/>X-Sovereign-Strategy"| rs["router_server.py<br/>HTTPServer 127.0.0.1:25104"]
+    zed([Zed / OpenAI client]) -->|"POST /v1<br/>X-Estate-Strategy"| rs["router_server.py<br/>HTTPServer 127.0.0.1:25104"]
     rs --> strat{"router_strategy.py"}
     strat -->|fifo| q["fifo_matrix<br/>bounded queue"]
     strat -->|ast_race| race["4 providers in parallel<br/>first AST/code-shaped wins"]
@@ -24,7 +24,7 @@ flowchart LR
     elo --> prov
     cb --> prov
     hyb --> prov
-    rs --> db[("WAL health DB<br/>sovereign/data/ast_matrix.db")]
+    rs --> db[("WAL health DB<br/>estate/data/ast_matrix.db")]
 ```
 
 ## Quick Start
@@ -46,7 +46,7 @@ Then merge `zed_settings.json` into your Zed `settings.json` and pick any routed
 5. **circuit_chain** — sequential with open/half-open circuit breakers
 6. **hybrid** (default) — sticky → ast_race of top-weighted → circuit_chain
 
-Header override: `X-Sovereign-Strategy: ast_race` (etc.). Env override: `SOVEREIGN_STRATEGY=hybrid`. Port: `SOVEREIGN_PORT` / `AST_MATRIX_PORT`, default **25104** (router_config.py). Health DB: `SOVEREIGN_DB` (default `/home/toxic/estate/data/ast_matrix.db`).
+Header override: `X-Estate-Strategy: ast_race` (etc.). Env override: `ESTATE_STRATEGY=hybrid`. Port: `ESTATE_PORT` / `AST_MATRIX_PORT`, default **25104** (router_config.py). Health DB: `ESTATE_DB` (default `/home/toxic/estate/data/ast_matrix.db`).
 
 Local club3090 (or any OpenAI-compatible) on `:8020` is auto-eligible.
 
@@ -83,16 +83,16 @@ Get a free key at <https://build.nvidia.com> (starts with `nvapi-`), export `NVI
 
 | Env var | Default | Purpose |
 |---|---|---|
-| `SOVEREIGN_STRATEGY` | `hybrid` | routing strategy |
-| `SOVEREIGN_PORT` / `AST_MATRIX_PORT` | `25104` | listen port |
-| `SOVEREIGN_DB` | `/home/toxic/estate/data/ast_matrix.db` | WAL health DB |
+| `ESTATE_STRATEGY` | `hybrid` | routing strategy |
+| `ESTATE_PORT` / `AST_MATRIX_PORT` | `25104` | listen port |
+| `ESTATE_DB` | `/home/toxic/estate/data/ast_matrix.db` | WAL health DB |
 | `OPENROUTER_API_KEY` (+ `GROQ_API_KEY`, `NVIDIA_API_KEY`, `CEREBRAS_API_KEY`, `GOOGLE_API_KEY`, `MISTRAL_API_KEY`) | — | provider keys |
 
 ## Dev / contributing
 
-Changes land as commits in the sovereign-projects repo. This is the reference implementation — when you change strategy behavior here, mirror it in `../flock-router/` (Bun port) and keep the strategy table in `../README.md` consistent. Keep provider keys out of the repo; `key_ok` gates providers on key presence.
+Changes land as commits in the estate-projects repo. This is the reference implementation — when you change strategy behavior here, mirror it in `../flock-router/` (Bun port) and keep the strategy table in `../README.md` consistent. Keep provider keys out of the repo; `key_ok` gates providers on key presence.
 
 ## License & Security
 
-- Follows the sovereign-projects repo licensing.
+- Follows the estate-projects repo licensing.
 - Security: provider API keys come from the environment only — never committed, never logged; the server binds loopback (`127.0.0.1`); the health DB path is configurable so test runs don't touch the live DB. Circuit breakers isolate failing providers automatically.
