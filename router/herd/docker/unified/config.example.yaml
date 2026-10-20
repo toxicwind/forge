@@ -1,0 +1,45 @@
+# placeholder example configuration
+healthCheckTimeout: 300
+logRequests: true
+
+models:
+  "llama":
+    cmd: >
+      llama-server
+      -hf bartowski/Qwen2.5-0.5B-Instruct-GGUF:Q4_K_M
+      --port ${PORT}
+
+  "whisper":
+    checkEndpoint: /v1/audio/transcriptions/
+    cmd: >
+      whisper-server
+      --port ${PORT}
+      --m /models/whisper.bin
+      --flash-attn
+      --request-path /v1/audio/transcriptions --inference-path ""
+
+  "audio":
+    checkEndpoint: /health
+    # audiocpp_server takes its own JSON config listing the models it serves.
+    # Copy the starter shipped in the image -- it already has this image's
+    # backend set -- and replace the example models with your own:
+    #   docker run --rm --entrypoint cat <image> \
+    #     /etc/herd/audiocpp-server.example.json > /models/audiocpp-server.json
+    cmd: |
+      audiocpp_server
+      --config /models/audiocpp-server.json
+      --port ${PORT}
+
+  "image":
+    checkEndpoint: /
+    cmd: |
+      /app/sd-server
+      --listen-port 9999
+      --diffusion-fa
+      --diffusion-model /models/z_image_turbo-Q8_0.gguf
+      --vae /models/ae.safetensors
+      --llm /models/qwen3-4b-instruct-2507-q8_0.gguf
+      --offload-to-cpu
+      --cfg-scale 1.0
+      --height 512 --width 512
+      --steps 8

@@ -1,0 +1,13 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+language: 'go'
+layer: 'application'
+# Flicker embeds web/dist via web/web.go, but dist/ is gitignored (built by CI).
+# The external_web tag swaps in the live HTTP backend so `go build ./...`
+# works without a frontend build.
+tasks:
+  build:
+    command: 'go build -tags external_web ./...'
+    inputs: ['**/*.go', 'go.mod', 'go.sum']
+  test:
+    command: 'go test -tags "external_web test" ./...'
+    inputs: ['**/*.go', 'go.mod', 'go.sum']

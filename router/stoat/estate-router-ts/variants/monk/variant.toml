@@ -1,0 +1,4 @@
+[variant]
+name = "monk"
+description = "Variant monk for Obelisk evolutionary race"
+port_offset = 1

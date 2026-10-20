@@ -1,0 +1,12 @@
+--- a/internal/config/config.go
++++ b/internal/config/config.go
+@@ -184,6 +184,9 @@
+ 
+ 	// upstream controls behaviour of the /upstream passthrough endpoint
+ 	Upstream UpstreamConfig `yaml:"upstream"`
++
++	// AstMatrix configures cloud provider routing (astmatrix v2).
++	AstMatrix AstMatrixConfig `yaml:"astMatrix"`
+ }
+ 
+ // RoutingConfig is the canonical, normalized routing/scheduling configuration.

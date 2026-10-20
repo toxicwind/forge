@@ -1,0 +1,80 @@
+{
+  "tool": "provider-bench",
+  "version": 1,
+  "startedAt": "2026-10-01T19:12:44.310Z",
+  "provider": "mistral",
+  "base": "https://api.mistral.ai/v1",
+  "config": {
+    "reqs": 3,
+    "concurrency": 2,
+    "timeoutMs": 45000
+  },
+  "models": [
+    {
+      "model": "mistral-small-latest",
+      "liveness": {
+        "healthy": false,
+        "reason": "http 429: {\"object\":\"error\",\"message\":\"Rate limit exceeded\",\"type\":\"rate_limited\",\"param\":null,\"code\":\"1300\",\"raw_status_code\":429}",
+        "latencyMs": 320
+      },
+      "quality": {
+        "scores": [],
+        "mean": 0,
+        "n": 0
+      },
+      "latencyP50Ms": 320,
+      "rateLimited": true,
+      "keyDead": false
+    },
+    {
+      "model": "mistral-medium-latest",
+      "liveness": {
+        "healthy": false,
+        "reason": "http 429: {\"object\":\"error\",\"message\":\"Rate limit exceeded\",\"type\":\"rate_limited\",\"param\":null,\"code\":\"1300\",\"raw_status_code\":429}",
+        "latencyMs": 264
+      },
+      "quality": {
+        "scores": [],
+        "mean": 0,
+        "n": 0
+      },
+      "latencyP50Ms": 264,
+      "rateLimited": true,
+      "keyDead": false
+    },
+    {
+      "model": "codestral-latest",
+      "liveness": {
+        "healthy": false,
+        "reason": "skipped: provider stopped",
+        "latencyMs": null
+      },
+      "quality": {
+        "scores": [],
+        "mean": 0,
+        "n": 0
+      },
+      "latencyP50Ms": null,
+      "rateLimited": true,
+      "keyDead": false
+    },
+    {
+      "model": "magistral-small-latest",
+      "liveness": {
+        "healthy": false,
+        "reason": "skipped: provider stopped",
+        "latencyMs": null
+      },
+      "quality": {
+        "scores": [],
+        "mean": 0,
+        "n": 0
+      },
+      "latencyP50Ms": null,
+      "rateLimited": true,
+      "keyDead": false
+    }
+  ],
+  "providerRateLimited": true,
+  "providerKeyDead": false
+}

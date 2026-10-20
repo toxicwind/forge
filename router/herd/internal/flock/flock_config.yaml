@@ -1,0 +1,133 @@
+astMatrix:
+  enabled: true
+  strategy: hybrid
+  astStrategy: ast_race
+  requestTimeout: 120
+  maxRetries: 3
+  healthProbeInterval: 30
+  enableCoalescing: true
+  astAlways: false
+
+  providers:
+    # KIMI — primary target
+    kimi:
+      baseUrl: https://kimi-api-sandbox.msh.team/v1
+      keyEnv: KIMI_API_KEY
+      models: [kimi/k1.5, kimi/moonshot-v1-128k, kimi/moonshot-v1-8k]
+      modelMap:
+        kimi-auto: kimi/k1.5
+        kimi-long: kimi/moonshot-v1-128k
+        kimi-fast: kimi/moonshot-v1-8k
+      weight: 2.0
+      elo: 1700
+
+    # Local herd
+    herd:
+      baseUrl: http://127.0.0.1:25100/v1
+      noAuth: true
+      models: [local-fast, local-quality, local-longctx]
+      weight: 1.0
+      elo: 1600
+
+    # OpenRouter — free tier fallback
+    openrouter:
+      baseUrl: https://openrouter.ai/api/v1
+      keyEnv: OPENROUTER_API_KEY
+      models: [openrouter/auto, openrouter/optimus-alpha]
+      freeTier: true
+      weight: 1.5
+      elo: 1500
+
+    # Groq — fast free tier
+    groq:
+      baseUrl: https://api.groq.com/openai/v1
+      keyEnv: GROQ_API_KEY
+      freeTier: true
+      models: [groq/llama-3.1-70b-versatile, groq/mixtral-8x7b]
+      weight: 1.5
+      elo: 1580
+
+    # GitHub Models — free tier
+    github:
+      baseUrl: https://models.inference.ai.azure.com
+      keyEnv: GITHUB_TOKEN
+      freeTier: true
+      models: [github/Phi-4, github/gpt-4o-mini]
+      weight: 1.0
+      elo: 1500
+
+    # NVIDIA NIM — free tier
+    nvidia:
+      baseUrl: https://integrate.api.nvidia.com/v1
+      keyEnv: NVIDIA_API_KEY
+      freeTier: true
+      models: [nvidia/llama-3.1-nemotron-70b]
+      weight: 1.2
+      elo: 1550
+
+    # Together AI
+    together:
+      baseUrl: https://api.together.xyz/v1
+      keyEnv: TOGETHER_API_KEY
+      models: [together/llama-3.1-70b, together/mixtral-8x22b]
+      weight: 1.0
+      elo: 1520
+
+    # Cerebras — free tier
+    cerebras:
+      baseUrl: https://api.cerebras.ai/v1
+      keyEnv: CEREBRAS_API_KEY
+      freeTier: true
+      models: [cerebras/llama-3.1-70b]
+      weight: 1.3
+      elo: 1560
+
+    # Fireworks
+    fireworks:
+      baseUrl: https://api.fireworks.ai/inference/v1
+      keyEnv: FIREWORKS_API_KEY
+      models: [fireworks/llama-3.1-70b]
+      weight: 1.0
+      elo: 1510
+
+    # Hyperbolic — free tier
+    hyperbolic:
+      baseUrl: https://api.hyperbolic.xyz/v1
+      keyEnv: HYPERBOLIC_API_KEY
+      freeTier: true
+      models: [hyperbolic/llama-3.1-70b]
+      weight: 1.0
+      elo: 1490
+
+    # Mistral
+    mistral:
+      baseUrl: https://api.mistral.ai/v1
+      keyEnv: MISTRAL_API_KEY
+      models: [mistral/mistral-large-2]
+      weight: 1.0
+      elo: 1530
+
+    # OpenAI
+    openai:
+      baseUrl: https://api.openai.com/v1
+      keyEnv: OPENAI_API_KEY
+      models: [gpt-4o, gpt-4o-mini, o1-preview]
+      weight: 1.0
+      elo: 1650
+
+    # Perplexity
+    perplexity:
+      baseUrl: https://api.perplexity.ai
+      keyEnv: PERPLEXITY_API_KEY
+      models: [perplexity/sonar]
+      weight: 1.0
+      elo: 1480
+
+    # SiliconFlow — free tier
+    siliconflow:
+      baseUrl: https://api.siliconflow.cn/v1
+      keyEnv: SILICONFLOW_API_KEY
+      freeTier: true
+      models: [siliconflow/deepseek-v2]
+      weight: 1.0
+      elo: 1470

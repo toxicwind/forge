@@ -1,0 +1,15 @@
+#!/bin/sh
+# pre-push hook: toolchain-drift-guard.
+# Fails the push when any Dockerfile's `FROM golang:<tag>` pin lags the
+# maximum `go` directive required by any go.mod in the repo or by the
+# upstream herd source the unified image build fetches.
+#
+# Install: cp scripts/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+set -e
+ROOT="$(git rev-parse --show-toplevel)"
+if [ -x "$ROOT/scripts/toolchain-drift-guard.py" ]; then
+  exec "$ROOT/scripts/toolchain-drift-guard.py" --root "$ROOT"
+else
+  echo "pre-push: scripts/toolchain-drift-guard.py not found/executable, skipping" >&2
+  exit 0
+fi

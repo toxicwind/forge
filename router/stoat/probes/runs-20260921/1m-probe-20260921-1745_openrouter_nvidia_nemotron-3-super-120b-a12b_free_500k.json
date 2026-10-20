@@ -1,0 +1,22 @@
+{
+  "run_tag": "1m-probe-20260921-1745/openrouter/nvidia/nemotron-3-super-120b-a12b:free/500k",
+  "session": "1m-probe-20260921-1745",
+  "lane": "openrouter",
+  "provider": "openrouter",
+  "model": "nvidia/nemotron-3-super-120b-a12b:free",
+  "size": "500k",
+  "target_tokens": 500000,
+  "token_basis": "chars/4.0 approximation",
+  "haystack_chars": 2000203,
+  "needle_char_offset": 899909,
+  "secret_sha256": "aee2b8e5dd87bc8d03b4d737316a5635136c9007062ae955f5f0c6923f89f4ea",
+  "latency_ms": 186.2,
+  "http_status": 400,
+  "outcome": "context_too_big",
+  "error_class": "http_400_context",
+  "error_body": "{\"error\":{\"message\":\"This endpoint's maximum context length is 262144 tokens. However, you requested about 504454 tokens (502406 of text input, 2048 in the output). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.\",\"code\":400,\"metadata\":{\"provider_name\":null}}}",
+  "accurate": false,
+  "response_head": "",
+  "db": "recorded",
+  "winner": 0
+}

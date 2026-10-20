@@ -1,0 +1,22 @@
+{
+  "run_tag": "1m-probe-20260921-1745/openrouter/nvidia/nemotron-3-super-120b-a12b:free/100k",
+  "session": "1m-probe-20260921-1745",
+  "lane": "openrouter",
+  "provider": "openrouter",
+  "model": "nvidia/nemotron-3-super-120b-a12b:free",
+  "size": "100k",
+  "target_tokens": 100000,
+  "token_basis": "chars/4.0 approximation",
+  "haystack_chars": 400508,
+  "needle_char_offset": 180076,
+  "secret_sha256": "22a1d85dcea60ce0052bf06b1bd20e9c517cc6f30788ebf8f530a403275513e8",
+  "latency_ms": 1094.6,
+  "http_status": 200,
+  "outcome": "ok",
+  "error_class": null,
+  "error_body": "",
+  "accurate": true,
+  "response_head": "QXD959A9357B",
+  "db": "recorded",
+  "winner": 1
+}

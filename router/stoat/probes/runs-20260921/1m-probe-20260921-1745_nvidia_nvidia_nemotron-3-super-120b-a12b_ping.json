@@ -1,0 +1,22 @@
+{
+  "run_tag": "1m-probe-20260921-1745/nvidia/nvidia/nemotron-3-super-120b-a12b/ping",
+  "session": "1m-probe-20260921-1745",
+  "lane": "nvidia",
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "size": "ping",
+  "target_tokens": 0,
+  "token_basis": "chars/4.0 approximation",
+  "haystack_chars": 0,
+  "needle_char_offset": 0,
+  "secret_sha256": "43401b7ea0096b0fb1f19f392abf9bc24eaf9d82c9072519b09bb1edff833bb1",
+  "latency_ms": 3381.2,
+  "http_status": 200,
+  "outcome": "ok",
+  "error_class": null,
+  "error_body": "",
+  "accurate": true,
+  "response_head": "PONG",
+  "db": "recorded",
+  "winner": 1
+}

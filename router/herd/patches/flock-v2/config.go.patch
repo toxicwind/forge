@@ -1,0 +1,12 @@
+--- a/internal/config/config.go
++++ b/internal/config/config.go
+@@ -184,6 +184,9 @@
+ 
+ 	// upstream controls behaviour of the /upstream passthrough endpoint
+ 	Upstream UpstreamConfig `yaml:"upstream"`
++
++	// Flock configures cloud provider routing (flock router; legacy yaml key astMatrix still accepted).
++	Flock FlockConfig `yaml:"flock"`
+ }
+ 
+ // RoutingConfig is the canonical, normalized routing/scheduling configuration.

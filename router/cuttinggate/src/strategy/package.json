@@ -1,0 +1,14 @@
+{
+  "name": "estate-scripts-router-ts",
+  "version": "3.1.0",
+  "type": "module",
+  "main": "router.ts",
+  "scripts": {
+    "start": "bun run router.ts",
+    "dev": "bun --hot run router.ts",
+    "check": "bun build router.ts --outdir=/tmp/estate-scripts-router-ts-check --target=bun"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

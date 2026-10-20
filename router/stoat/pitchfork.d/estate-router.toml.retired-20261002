@@ -1,0 +1,18 @@
+# tools/estate-scripts-router -- project-owned daemon manifest.
+
+[daemons.estate-scripts-router]
+port = 25104
+run = "exec bun router.ts"
+dir = "/home/toxic/estate/tools/estate-scripts-router/estate-scripts-router-ts"
+retry = true
+ready_http = "http://127.0.0.1:25104/health"
+health_http = { url = "http://127.0.0.1:25104/health", interval = "30s", timeout = "5s", retries = 3 }
+# gatehouse dropped 2026-09-29: router has no runtime dep on it (zero refs in router source); gatehouse MCPPROXY_API_KEY minted into ~/.secrets 2026-09-29 per Chris; old leaked key rotated out of mcp_config.json
+depends = ["keypool"]
+env = { estate-scripts_ROUTER_PORT = "25104" }
+auto = ["start"]
+
+# market-loop — autonomous market-loop daemon for weaver's emergent task
+# market (trading-post/src/market). Event-driven: inotify on weaver's
+# intake/ dir, first-eligible-bid close, watchdog sweep on every ledger
+# append. No timers, no polling loops. Added 2026-09-30.

@@ -1,0 +1,10 @@
+--- a/internal/server/server.go
++++ b/internal/server/server.go
+@@ -43,6 +43,7 @@
+ 
+ 	local router.LocalRouter
+ 	peer  router.Router
++	cloud *astmatrix.Router // cloud provider routing via AST Matrix
+ 
+ 	mux     *http.ServeMux
+ 	handler http.Handler
