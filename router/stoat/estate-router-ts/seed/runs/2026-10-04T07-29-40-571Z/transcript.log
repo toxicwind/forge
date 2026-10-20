@@ -1,0 +1,62 @@
+┌─ [mistral/codestral-2508] general/general-qa
+│ REQUEST: prompt="What is the capital of France? Answer in one word...."
+│ RESPONSE (307ms, status=200, finish=stop)
+│   content:    "Paris."
+│ VERDICT:      ✓ PASS
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [mistral/codestral-2508] code/code-palindrome
+│ REQUEST: prompt="Write a short Python function `is_pal(s)` returning a boolean for palindrome che..."
+│ RESPONSE (698ms, status=200, finish=length)
+│   content:    "Here's a short Python function `is_pal(s)` that checks if a string `s` is a palindrome (reads the sa"
+│ VERDICT:      ✓ PASS
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [mistral/codestral-2508] json_schema/json-structured
+│ REQUEST: prompt="Output a JSON object with keys 'status' (string 'ok') and 'count' (number 42). D..."
+│ RESPONSE (428ms, status=200, finish=stop)
+│   content:    "```json\n{\n  \"status\": \"ok\",\n  \"count\": 42\n}\n```"
+│ VERDICT:      ✓ PASS
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [mistral/codestral-2508] reasoning_depth/reasoning-puzzle
+│ REQUEST: prompt="A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. Ho..."
+│ RESPONSE (1337ms, status=200, finish=length)
+│   content:    "Alright, let's tackle this problem step by step. I'm going to think aloud as I work through it to ma"
+│ VERDICT:      ✗ FAIL (EXPECT_MISMATCH)
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [mistral/codestral-2508] vulnerability_analysis/security-code-audit
+│ REQUEST: prompt="Review this C snippet: `void alloc(unsigned int n) { char *buf = malloc(n + 1); ..."
+│ RESPONSE (2294ms, status=200, finish=length)
+│   content:    "The provided C snippet has a potential flaw related to integer overflow in the `malloc` call. If `n`"
+│ VERDICT:      ✓ PASS
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [mistral/codestral-2508] multilingual/multilingual-roundtrip
+│ REQUEST: prompt="Translate 'Good morning, friend' into Spanish...."
+│ RESPONSE (540ms, status=200, finish=length)
+│   content:    "The translation of **\"Good morning, friend\"** into Spanish is:\n\n**\"Buenos días, amigo.\"**\n\n- **\"Buen"
+│ VERDICT:      ✓ PASS
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [mistral/codestral-2508] tools/tools-weather
+│ REQUEST: prompt="What is the weather in Tokyo right now? Use the get_weather tool...."
+│ RESPONSE (422ms, status=200, finish=tool_calls)
+│   content:    ""
+│ VERDICT:      ✓ PASS
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [mistral/codestral-2508] tools/tools-no-tool-needed
+│ REQUEST: prompt="What is 2 + 2? Do not use any tools. Just answer with the number...."
+│ RESPONSE (348ms, status=200, finish=stop)
+│   content:    "4"
+│ VERDICT:      ✓ PASS
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [mistral/codestral-2508] longctx_8k/longctx-8k
+│ REQUEST: prompt="The quick brown fox jumps over the lazy dog. Contextual filler stream verificati..."
+│ RESPONSE (1654ms, status=200, finish=stop)
+│   content:    "The special pin mentioned in the text is **SECRET_PIN_4920**."
+│ VERDICT:      ✓ PASS
+└────────────────────────────────────────────────────────────────────────

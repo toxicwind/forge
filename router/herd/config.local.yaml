@@ -1,0 +1,59 @@
+# Local-only model config — no Anthropic credits needed
+# Uses Nemotron 3 Ultra Free + local herd fleet
+healthCheckTimeout: 300
+logLevel: debug
+logToStdout: both
+metricsMaxInMemory: 5000
+captureBuffer: 15
+globalTTL: 600
+startPort: 25001
+includeAliasesInList: true
+sendLoadingState: true
+
+store:
+  path: /home/toxic/.local/share/herd/store.db
+
+performance:
+  enable: true
+  every: 1m
+
+hooks:
+  on_startup:
+    preload:
+      - beellama/exaone-4-0-1-2b-iq4xs
+  on_model_loaded:
+    exec: 'echo "[$(date)] MODEL_LOADED: $MODEL" >> /tmp/herd-events.log'
+  on_model_unloaded:
+    exec: 'echo "[$(date)] MODEL_UNLOADED: $MODEL" >> /tmp/herd-events.log'
+
+routing:
+  scheduler:
+    use: fifo
+    settings:
+      fifo:
+        priority:
+          beellama/exaone-4-0-1-2b-iq4xs: 35
+          beellama/qwen-flash-64k: 30
+          beellama/gemma-64k: 25
+          turboquant/heretic-27b-128k: 10
+          ik_llama/heretic-ud-64k: 5
+
+  router:
+    use: matrix
+    settings:
+      matrix:
+        vars:
+          exa1: beellama/exaone-4-0-1-2b-iq4xs
+          qf64: beellama/qwen-flash-64k
+          gm64: beellama/gemma-64k
+          h128: turboquant/heretic-27b-128k
+          hu64: ik_llama/heretic-ud-64k
+        evict_costs:
+          exa1: 35
+          qf64: 30
+          gm64: 25
+          h128: 10
+          hu64: 5
+        sets:
+          exclusive:
+            - exa1 | qf64 | gm64 | h128 | hu64

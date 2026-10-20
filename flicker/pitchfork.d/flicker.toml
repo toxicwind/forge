@@ -1,0 +1,28 @@
+# ranch/flicker — project-owned daemon manifest. Source of truth for 'flicker-agent'.
+# Owned by the ranch/flicker project; the parent only composes it.
+
+[daemons.flicker-agent]
+run = "exec /home/toxic/estate/var/reconciliation/flicker/bin/flicker-agent"
+dir = "/home/toxic/estate/var/reconciliation/flicker"
+mise = false
+retry = true
+boot_start = true
+env = { WOODPECKER_SERVER = "127.0.0.1:25240", WOODPECKER_AGENT_SECRET = "c6eee4c1bce957ae19638a330efe5fc3c561f18ea58e3468fe224a60416faf4f" }
+auto = ["start"]
+
+# SUPERSEDED 2026-09-30 (peregrine): brand-watchdog retired with brand.
+# Flicker has its own health_http checks; no external watchdog needed.
+
+# ranch/flicker — project-owned daemon manifest. Source of truth for 'flicker'.
+# Owned by the ranch/flicker project; the parent only composes it.
+
+[daemons.flicker]
+port = 25148
+run = "exec /home/toxic/estate/var/reconciliation/flicker/bin/flicker-server"
+dir = "/home/toxic/estate/var/reconciliation/flicker"
+mise = false
+retry = true
+boot_start = true
+ready_http = "http://127.0.0.1:25148/api/health"
+health_http = { url = "http://127.0.0.1:25148/api/health", interval = "30s", timeout = "5s", retries = 3 }
+env = { FLICKER_ROOT = "/home/toxic/flicker", WOODPECKER_HOST = "http://127.0.0.1:25148", WOODPECKER_GRPC_ADDR = ":25240", WOODPECKER_SERVER_ADDR = ":25148", WOODPECKER_GRPC_SECRET = "66a9f7c1d6ffbac15c447f6d3d97827ab3d152286b23c0cbeb19a9372108419b", WOODPECKER_AGENT_SECRET = "c6eee4c1bce957ae19638a330efe5fc3c561f18ea58e3468fe224a60416faf4f" }

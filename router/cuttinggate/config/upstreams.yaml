@@ -1,0 +1,232 @@
+? '# Moved OUT of estate/config/herd.yaml on 2026-10-02.
+
+  # herd :25100 serves LOCAL GGUFs only. These cloud routes belong to
+
+  # cuttinggate, which fronts flock :25193. Nothing was deleted.
+
+  routes_from_herd'
+: oracle-judge-a:
+    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+      openrouter-ling/inclusionai/ling-3.0-flash-sante:free --standby openrouter-free/poolside/laguna-s-2.1:free
+    description: Oracle judge A (alias -> inclusionai/ling-3.0-flash-sante:free) --
+      fastest exact-output free judge (489ms census)
+    metadata:
+      alias_of: inclusionai/ling-3.0-flash-sante:free
+      role: oracle-judge
+  oracle-judge-b:
+    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+      openrouter-ling/inclusionai/ling-3.0-flash-sante:free --standby openrouter-free/poolside/laguna-s-2.1:free
+    description: Oracle judge B (alias -> inclusionai/ling-3.0-flash-sante:free) --
+      exact-output NEX complement (799ms census)
+    metadata:
+      alias_of: inclusionai/ling-3.0-flash-sante:free
+      role: oracle-judge
+  oracle-judge-c:
+    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+      openrouter-free/poolside/laguna-s-2.1:free --standby openrouter-ling/inclusionai/ling-3.0-flash-sante:free
+    description: Oracle judge C (alias -> poolside/laguna-s-2.1:free) -- third model
+      family (2161ms census)
+    metadata:
+      alias_of: poolside/laguna-s-2.1:free
+      role: oracle-judge
+  kimi:
+    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+      openrouter-free/moonshotai/kimi-k3:free --standby openrouter-free/moonshotai/kimi-k2.6:free
+      --standby openrouter-free/moonshotai/kimi-k2.5:free --standby openrouter-free/moonshotai/kimi-k2.7-code:free
+      --standby hf-free/moonshotai/Kimi-K3 --advance-on 5xx,conn,429,402,404 --name
+      kimi
+    description: Kimi (alias -> maximal free-Kimi chain)
+    metadata:
+      alias_of: openrouter-free/moonshotai/kimi-k3:free
+      chain: free-kimi-maximal
+      selection: router-config
+  kimi-k2:
+    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+      openrouter-free/moonshotai/kimi-k3:free --standby openrouter-free/moonshotai/kimi-k2.6:free
+      --standby openrouter-free/moonshotai/kimi-k2.5:free --standby openrouter-free/moonshotai/kimi-k2.7-code:free
+      --standby hf-free/moonshotai/Kimi-K3 --advance-on 5xx,conn,429,402,404 --name
+      kimi-k2
+    description: Kimi (alias -> maximal free-Kimi chain)
+    metadata:
+      alias_of: openrouter-free/moonshotai/kimi-k3:free
+      chain: free-kimi-maximal
+      selection: router-config
+  kimi-code:
+    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+      openrouter-free/moonshotai/kimi-k3:free --standby openrouter-free/moonshotai/kimi-k2.6:free
+      --standby openrouter-free/moonshotai/kimi-k2.5:free --standby openrouter-free/moonshotai/kimi-k2.7-code:free
+      --standby hf-free/moonshotai/Kimi-K3 --advance-on 5xx,conn,429,402,404 --name
+      kimi-code
+    description: Kimi (alias -> maximal free-Kimi chain)
+    metadata:
+      alias_of: openrouter-free/moonshotai/kimi-k3:free
+      chain: free-kimi-maximal
+      selection: router-config
+  kimi-k3-nim:
+    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+      nim-kimi/moonshotai/kimi-k3 --name kimi-k3-nim
+    env:
+    - SHIM_CONNECT_TIMEOUT=240
+    description: Kimi K3 via NVIDIA NIM (genuine moonshotai/kimi-k3, cold-aware).
+      Fails loudly; no fallback.
+    metadata:
+      alias_of: nim-kimi/moonshotai/kimi-k3
+      role: kimi-nim
+peers:
+  pollinations-free:
+    proxy: https://gen.pollinations.ai
+    models:
+    - gpt-oss
+    - kimi-k3
+    timeouts:
+      connect: 30
+      keepalive: 30
+      responseHeader: 60
+      tlsHandshake: 10
+      idleConn: 90
+  hf-free:
+    proxy: https://router.huggingface.co
+    apiKey: ${env.HF_TOKEN}
+    models:
+    - moonshotai/Kimi-K3
+  openrouter-ling:
+    proxy: http://127.0.0.1:25109/openrouter-free
+    models:
+    - inclusionai/ling-3.0-flash-sante:free
+    timeouts:
+      connect: 30
+      keepalive: 30
+      responseHeader: 120
+      tlsHandshake: 10
+      idleConn: 90
+    health:
+      enabled: true
+      ewma_alpha: 0.2
+      failure_threshold: 8
+      recovery_credit: 1
+      success_threshold: 1
+      cool_off_seconds: 30
+      degraded_latency_ms: 15000
+      degraded_error_rate: 0.5
+      weights:
+        transport: 2.0
+        5xx: 1.5
+        404-dead-id: 3.0
+        402-not-entitled: 2.0
+        403-refused: 1.5
+        429-throttled: 0.5
+        200-empty: 1.5
+  mistral:
+    proxy: http://127.0.0.1:25109/mistral
+    models:
+    - codestral-latest
+    - ministral-14b-latest
+    - ministral-8b-latest
+    - ministral-3b-latest
+    - mistral-code-latest
+    timeouts:
+      connect: 30
+      keepalive: 30
+      responseHeader: 120
+      tlsHandshake: 10
+      idleConn: 90
+  nim-kimi:
+    proxy: http://127.0.0.1:25163
+    models:
+    - moonshotai/kimi-k3
+    timeouts:
+      connect: 30
+      keepalive: 30
+      responseHeader: 300
+      tlsHandshake: 10
+      idleConn: 90
+  gemini-eap:
+    proxy: http://127.0.0.1:25109/gemini-eap
+    models:
+    - google/gemini-flash-tool-retrieval
+    - gemini-flash-tool-retrieval
+    timeouts:
+      connect: 30
+      keepalive: 30
+      responseHeader: 120
+  gemini-eap-openai:
+    proxy: http://127.0.0.1:25109/gemini-eap-openai
+    models:
+    - google/gemini-3.8-flash
+    - gemini-3.8-flash
+    - google/gemini-3.1-pro-eap
+    timeouts:
+      connect: 30
+      keepalive: 30
+      responseHeader: 120
+  gemini:
+    proxy: http://127.0.0.1:25109/gemini
+    models:
+    - gemini-3.1-pro-preview
+    - gemini-3.5-flash
+    - gemini-3.6-flash
+    - gemini-3.7-flash
+    - gemini-3.8-flash
+    - gemini-3-flash-preview
+    timeouts:
+      connect: 30
+      keepalive: 30
+      responseHeader: 120
+      tlsHandshake: 10
+      idleConn: 90
+  openrouter-free:
+    proxy: http://127.0.0.1:25109/openrouter-free
+    models:
+    - cohere/north-mini-code:free
+    - inclusionai/ling-3.0-flash-sante:free
+    - nvidia/nemotron-3-super-120b-a12b:free
+    - dots-studio/dots-3-note-preview:free
+    - nvidia/nemotron-3-ultra-550b-a55b:free
+    - nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
+    - poolside/laguna-s-2.1:free
+    - liquid/lfm-2.5-2.6b:free
+    - google/gemma-4-31b-it:free
+    - google/gemma-4-26b-a4b-it:free
+    - qwen/qwen3.8-27b:free
+    - moonshotai/kimi-k3:free
+    - moonshotai/kimi-k2.6:free
+    - moonshotai/kimi-k2.5:free
+    - moonshotai/kimi-k2.7-code:free
+    timeouts:
+      connect: 30
+      keepalive: 30
+      responseHeader: 120
+      tlsHandshake: 10
+      idleConn: 90
+  openrouter-pool:
+    proxy: http://127.0.0.1:25109/openrouter-paid
+    models:
+    - moonshotai/kimi-k3
+    - moonshotai/kimi-k2.6
+    - kimi-k2.7-code
+    timeouts:
+      connect: 30
+      keepalive: 30
+      responseHeader: 180
+      tlsHandshake: 10
+      idleConn: 90
+  toolcall-local:
+    proxy: http://127.0.0.1:25152
+    models:
+    - qwen3.5-9b-tool
+    timeouts:
+      connect: 10
+      keepalive: 30
+      responseHeader: 120
+      tlsHandshake: 5
+      idleConn: 90
+herd_flock_block:
+  enabled: false
+  baseUrl: http://127.0.0.1:25193
+  keyEnv: FLOCK_API_KEY
+  modelMap:
+    flock-deepseek-v4-flash: deepseek-ai/deepseek-v4-flash-0731
+    flock-nemotron-35-lightning: nvidia/nemotron-3.5-lightning-30b-a3b
+    flock-glm-53-flash: z-ai/glm-5.3-flash
+    kimi-k2: moonshotai/kimi-k2.6:free
+    kimi-k3-nim: moonshotai/kimi-k3:free

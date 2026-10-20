@@ -1,0 +1,44 @@
+{
+  "name": "herd-herd",
+  "version": "18.1.14",
+  "description": "Maximal estate herd \u2014 herd engine with mesh orchestration",
+  "main": "herd.go",
+  "scripts": {
+    "start": "go run ./cmd/main.go",
+    "test": "go test ./...",
+    "lint": "gofmt -l ./internal ./cmd",
+    "go-mod": "go mod download && go mod tidy",
+    "full-install": "go mod download",
+    "docker-build": "docker build -t herd ./docker/unified",
+    "benchmark": "go test -bench=. ./internal/bench/..."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "svelte": "^5.0.0",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "vite": "^8.1.0",
+    "@tailwindcss/vite": "^4.1.8",
+    "tailwindcss": "^4.1.8",
+    "vitest": "^4.1.0",
+    "tsx": "^4.20.0"
+  },
+  "engines": {
+    "node": ">=22.12.0",
+    "bun": ">=1.4.2",
+    "go": ">=1.23.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/toxicwind/herd.git"
+  },
+  "keywords": [
+    "herd",
+    "herd",
+    "mesh",
+    "estate",
+    "inference"
+  ],
+  "author": "toxicwind",
+  "license": "MIT"
+}

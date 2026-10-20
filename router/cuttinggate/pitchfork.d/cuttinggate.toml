@@ -1,0 +1,14 @@
+# ranch/mesh/proxy/cuttinggate — project-owned daemon manifest. Source of truth for 'cuttinggate'.
+# The canonical estate router. Binds :25200 via CUTTINGGATE_PORT.
+# NOTE: the baked-in config default 25194 is held by the Ralph dashboard
+# (uvicorn); 25195 is held by codebase-memory. Do not move this daemon
+# onto either without re-homing the holder first.
+
+[daemons.cuttinggate]
+run = "exec bun run src/server.ts"
+dir = "/home/toxic/estate/ranch/mesh/proxy/cuttinggate"
+retry = true
+ready_http = "http://127.0.0.1:25200/health"
+health_http = { url = "http://127.0.0.1:25200/health", interval = "30s", timeout = "5s", retries = 3 }
+env = { CUTTINGGATE_PORT = "25200", CUTTINGGATE_LOG_LEVEL = "info" }
+auto = ["start"]

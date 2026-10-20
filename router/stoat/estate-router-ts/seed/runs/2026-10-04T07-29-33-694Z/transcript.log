@@ -1,0 +1,48 @@
+┌─ [nim-local/meta/llama-3.2-11b-vision-instruct] general/general-qa
+│ REQUEST: prompt="What is the capital of France? Answer in one word...."
+│ RESPONSE (354ms, status=200, finish=stop)
+│   content:    "Paris."
+│ VERDICT:      ✓ PASS
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [nim-local/meta/llama-3.2-11b-vision-instruct] code/code-palindrome
+│ REQUEST: prompt="Write a short Python function `is_pal(s)` returning a boolean for palindrome che..."
+│ VERDICT:      ? N/A (NOT_SUITABLE_FOR_TASK)
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [nim-local/meta/llama-3.2-11b-vision-instruct] json_schema/json-structured
+│ REQUEST: prompt="Output a JSON object with keys 'status' (string 'ok') and 'count' (number 42). D..."
+│ VERDICT:      ? N/A (NOT_SUITABLE_FOR_TASK)
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [nim-local/meta/llama-3.2-11b-vision-instruct] reasoning_depth/reasoning-puzzle
+│ REQUEST: prompt="A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. Ho..."
+│ VERDICT:      ? N/A (NOT_SUITABLE_FOR_TASK)
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [nim-local/meta/llama-3.2-11b-vision-instruct] vulnerability_analysis/security-code-audit
+│ REQUEST: prompt="Review this C snippet: `void alloc(unsigned int n) { char *buf = malloc(n + 1); ..."
+│ VERDICT:      ? N/A (NOT_SUITABLE_FOR_TASK)
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [nim-local/meta/llama-3.2-11b-vision-instruct] multilingual/multilingual-roundtrip
+│ REQUEST: prompt="Translate 'Good morning, friend' into Spanish...."
+│ RESPONSE (1266ms, status=200, finish=stop)
+│   content:    "\"Good morning, friend\" in Spanish is:\n\n\"Buenos días, amigo\""
+│ VERDICT:      ✓ PASS
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [nim-local/meta/llama-3.2-11b-vision-instruct] tools/tools-weather
+│ REQUEST: prompt="What is the weather in Tokyo right now? Use the get_weather tool...."
+│ VERDICT:      ? N/A (NOT_SUITABLE_FOR_TASK)
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [nim-local/meta/llama-3.2-11b-vision-instruct] tools/tools-no-tool-needed
+│ REQUEST: prompt="What is 2 + 2? Do not use any tools. Just answer with the number...."
+│ VERDICT:      ? N/A (NOT_SUITABLE_FOR_TASK)
+└────────────────────────────────────────────────────────────────────────
+
+┌─ [nim-local/meta/llama-3.2-11b-vision-instruct] longctx_8k/longctx-8k
+│ REQUEST: prompt="The quick brown fox jumps over the lazy dog. Contextual filler stream verificati..."
+│ VERDICT:      ? N/A (NOT_SUITABLE_FOR_TASK)
+└────────────────────────────────────────────────────────────────────────

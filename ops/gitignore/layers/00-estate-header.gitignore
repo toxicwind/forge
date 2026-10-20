@@ -1,0 +1,10 @@
+# ─────────────────────────────────────────────────────────────────────────
+# estate/.gitignore — GENERATED FILE, DO NOT HAND-EDIT
+#
+# Source of truth:  ops/gitignore/manifest.json
+# Regenerate:       bun ops/bin/gitignore-sync.ts
+# Verify drift:     bun ops/bin/gitignore-sync.ts --check
+#
+# Composed from github/gitignore (CC0-1.0, pinned) plus estate-specific
+# layers in ops/gitignore/layers/.
+# ─────────────────────────────────────────────────────────────────────────

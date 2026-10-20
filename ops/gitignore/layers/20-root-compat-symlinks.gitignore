@@ -1,0 +1,13 @@
+# ── Root-level compat symlinks ───────────────────────────────────────────
+# These resolve into ranch/ (or $HOME). Nothing to track — they are
+# navigation, not source. Kept for backwards compatibility with configs
+# that still spell the old paths.
+
+/herd
+/qed
+/yote
+/mesh
+/openfang
+/shell
+/models
+/shingle-workspace

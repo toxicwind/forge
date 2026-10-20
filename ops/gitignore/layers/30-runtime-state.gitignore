@@ -1,0 +1,118 @@
+# ── Runtime state ───────────────────────────────────────────────────────
+# Recreated on demand by daemons and audits. Never committed.
+
+/data/
+/log/
+/runs/
+/output/
+/coverage/
+/tmp/
+
+# audit + agent runtimes
+.scout-cache/
+.pytest_cache/
+.turbo/
+# Moon's project graph and workspace config are tracked; its task hashes,
+# reports, and outputs are machine-local runtime state.
+.moon/cache/
+.qdrant-initialized/
+.state/
+.jj/
+.smithers/
+.super-ralph/
+.env.local
+
+# browser + app locks (transient)
+SingletonLock
+SingletonCookie
+.lock
+
+# tau runtime state: transcripts, vendored plugin caches, compiled natives.
+# Regenerated on demand; config/tau/agent/config.yml itself stays tracked.
+config/tau/agent/sessions/
+config/tau/sessions/
+config/tau/plugins/cache/
+config/tau/natives/
+# Attached-image blob store. Regenerated per screenshot/attachment, and 118
+# of these were committed before this rule existed -- they stay tracked (a
+# tracked file is never ignored), but new blobs no longer get staged.
+config/tau/agent/blobs/
+# Launcher and service runtime state, rewritten on every start.
+config/tau/.launcher.lock
+pitchfork.d/storage/
+pitchfork.d/.qdrant-initialized
+
+# Fleet message spool, written per-message by the squawk bus.
+hatch/agents/*/squawk-root/
+
+# Metrics runtime: Prometheus TSDB blocks/WAL and the Grafana sqlite db are
+# service state that changes on every scrape.
+.prometheus/
+grafana/data/
+
+hatch/agents/*/work/seeds/sessions/
+hatch/agents/*/squawk-relay/
+
+# tau cache/session/run state (repo-hygiene 2026-10-02): regenerated on demand
+config/tau/cache/
+config/tau/agent/terminal-sessions/
+config/tau/agent/custom-session-files/
+config/tau/run/
+config/tau/marketplaces.json
+
+# sqlite runtime databases (tau, agent orchestration) - regenerated on demand
+*.db
+*.db-shm
+*.db-wal
+
+# tau agent runtime churn (repo-hygiene 2026-10-03): composer cache dirs,
+# editor backups, device ids, puppeteer tmp work, compact bookkeeping.
+# config/tau/agent/config.yml itself stays tracked.
+config/tau/agent/cache/
+config/tau/agent/*.bak-*
+config/tau/agent/kimi-device-id
+config/tau/security/tmp-*
+config/tau/snapcompact-savings.jsonl
+config/tau/agent/memories/
+config/tau/puppeteer/
+bench-results-*.json
+bench-state.json
+config/tau/agent/edit-blackbox.jsonl
+config/tau/agent/models.json
+doorbell.*.crt
+doorbell.*.key
+config/tau/agent/extensions/*/settings.json
+
+# ── NativeLink runtime state (2026-10-19) ───────────────────────────────
+# NativeLink CAS/AC content stores and worker scratch live under var/runtime
+# (already covered by `var/` in 10-layout-tiers). What's new: bazel symlinks
+# and local rc fragments that any REAPI-connected project materializes.
+# Content-addressed cache output, never source of truth. Root-anchored:
+# the tau repo tracks its own bazel/ rules dir (no dash), and nested repos
+# carry their own .gitignore for these.
+/bazel-bin
+/bazel-out
+/bazel-testlogs
+/bazel-*
+/user.bazelrc
+
+# ── Standing audit artifacts (2026-10-15) ───────────────────────────────
+# Skills may keep versioned reports. The template layers' unanchored
+# `*.log` (Node/bun/Django/VS — 4 occurrences) silently swallows raw audit
+# output at any depth; re-include skill reports so audits stay reproducible.
+# anchored: root-level dirs only — an unanchored `packages/**` would also
+# re-include any nested `x/packages/` tree vendored under other subrepos.
+!/skills/**/reports/**
+
+# ── Estate workspace packages (2026-10-15) ──────────────────────────────
+# Root package.json declares workspaces: packages/*, but the VisualStudio
+# template layer ships **/[Pp]ackages/* which swallowed the whole tree —
+# 14 files in packages/Estate-utils were silently unstaged. Re-include,
+# then re-ignore the build artifacts the negation would otherwise
+# resurrect (these negations come after the template layers).
+!/packages/**
+/packages/**/node_modules/
+/packages/**/dist/
+/packages/**/build/
+/packages/**/.cache/
+/packages/**/*.tsbuildinfo

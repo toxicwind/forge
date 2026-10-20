@@ -1,0 +1,25 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+language: 'go'
+layer: 'application'
+# Known pre-existing failures (herd lane owns):
+# - internal/router: 4 integration tests for the peer-health ejection flow
+#   (TestPeerIntegration_*) — the health recording wiring was never completed.
+# - internal/config: 3 tailcat tests (TestConfig_TailcatValidation,
+#   TestConfig_TailcatRejectsInvalidValues,
+#   TestConfig_TailcatConnectionTokenIsRedacted) — the tailcat allow-list
+#   wiring was never completed: load.go parses the tailcat block but never
+#   validates the keys, populates AllowedClients, or redacts the token.
+# (2026-10-01: race TestValidCompletion fixed — the head-mention check used
+# total content length instead of mention position; position decides now.
+# 5 CORS security tests fixed — load.go now materializes cfg.Security and
+# runs CORSConfig.Validate(); config_posix_test golden updated for it.)
+tasks:
+  build:
+    command: 'go build ./...'
+    inputs: ['**/*.go', 'go.mod', 'go.sum']
+  test:
+    command: 'go test ./...'
+    inputs: ['**/*.go', 'go.mod', 'go.sum']
+  lint:
+    command: 'gofmt -l ./internal ./cmd'
+    inputs: ['**/*.go']

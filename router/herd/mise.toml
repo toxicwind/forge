@@ -1,0 +1,23 @@
+# Herd — Go inference backplane & Llama-Swap fork
+[tools]
+go = "1.23.1"
+bun = "1.4.2"
+
+[env]
+_.file = "../../config/ports.env"
+
+[tasks]
+build = "go build -o build/herd ./cmd/herd-plane"
+dev = "go run ./cmd/herd-plane"
+test = "go test ./..."
+health = "curl -sf http://127.0.0.1:25100/health"
+models = "curl -sf http://127.0.0.1:25100/v1/models | python3 -c 'import sys,json; data=json.load(sys.stdin); print(len(data.get(\"data\",[])), \"models active\")'"
+# The dashboard is the consolidated ranch app at range/ui (a fork of
+# mostlygeek/herd's ui/). It used to live here as ui-svelte, with
+# mesh/ui-svelte as a byte-identical dead twin and ui/ as a third, diverged
+# copy. All three are gone; range/ui is the master.
+# It is served separately from herd by the ranch-ui daemon (see
+# stack/services/ranch-ui.ts + range/ui/CONSOLIDATION.md) — nothing embeds
+# into the Go binary anymore.
+ui = "cd ../../range/ui && bun run dev"
+"ui:build" = "cd ../../range/ui && bun run build"

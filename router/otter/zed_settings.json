@@ -1,0 +1,29 @@
+{
+  "language_models": {
+    "openai": {
+      "version": "1",
+      "api_url": "http://127.0.0.1:19281/v1",
+      "low_speed_timeout_in_seconds": 300,
+      "available_models": [
+        {"name": "auto", "max_tokens": 262144, "display_name": "Estate Hybrid (5-strategy matrix)"},
+        {"name": "fcm", "max_tokens": 262144, "display_name": "Free Coding Models virtual"},
+        {"name": "hy3", "max_tokens": 262144, "display_name": "Tencent Hy3 free"},
+        {"name": "laguna-m1", "max_tokens": 262144, "display_name": "Poolside Laguna M.1 free"},
+        {"name": "qwen3-coder", "max_tokens": 1048576, "display_name": "Qwen3 Coder free"},
+        {"name": "gemma4-31b", "max_tokens": 262144, "display_name": "Gemma 4 31B free"},
+        {"name": "nemotron-super", "max_tokens": 262144, "display_name": "Nemotron 3 Super (via OpenRouter free)"},
+        {"name": "nim-nemotron-super", "max_tokens": 262144, "display_name": "NVIDIA NIM Nemotron 3 Super"},
+        {"name": "nim-nemotron-nano", "max_tokens": 131072, "display_name": "NVIDIA NIM Nemotron 3 Nano"},
+        {"name": "nim-llama-3.3-70b", "max_tokens": 131072, "display_name": "NVIDIA NIM Llama 3.3 70B"},
+        {"name": "nim-llama-3.1-405b", "max_tokens": 131072, "display_name": "NVIDIA NIM Llama 3.1 405B"},
+        {"name": "nim-qwen3-coder", "max_tokens": 262144, "display_name": "NVIDIA NIM Qwen3 Coder"},
+        {"name": "nim-deepseek-r1", "max_tokens": 163840, "display_name": "NVIDIA NIM DeepSeek R1"},
+        {"name": "nim-mistral-large", "max_tokens": 131072, "display_name": "NVIDIA NIM Mistral Large 2"}
+      ]
+    }
+  },
+  "assistant": {
+    "version": "2",
+    "default_model": {"provider": "openai", "model": "auto"}
+  }
+}

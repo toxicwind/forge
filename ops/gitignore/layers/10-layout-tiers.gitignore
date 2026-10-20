@@ -1,0 +1,27 @@
+# ── Layout tiers ────────────────────────────────────────────────────────
+# estate/ is the control plane. Everything with its own history or its own
+# vendored upstream lives in a sibling tier and is NOT indexed here.
+# Commit project work inside ranch/, control-plane work in this repo.
+
+# project monorepo — registered submodule (path=ranch, url=./ranch, 95a114a5a).
+# NOT ignored: gitignore entries cannot touch a tracked submodule; the stale
+# ranch/ ignore entry was removed so the manifest reflects the submodule layout.
+
+# third-party checkouts (Hyprland, WhiteSur, ansible, ...) — own remotes
+vendored/
+# external projects with their own git remotes
+projects/*
+!projects/OmniRoute
+
+# runtime state: archives, reconciliation snapshots, legacy, scratch
+var/
+# hatch/ — control-cell tree lives at github.com/toxicwind/hatch (PRIVATE),
+# live checkout /home/toxic/hatch on yote. The 2026-10-02 removal never
+# fully landed (258 tracked files lingered as a stale copy; the live repo
+# is 1248 diffs ahead). Completed 2026-10-15; backup branch
+# backup/hatch-tree-20261015 preserves the in-tree copy.
+/hatch/
+
+# scratch/ — 2108 tracked scratch files including PII fixtures (an old
+# credit-report email). Scratch is never tracked.
+/scratch/

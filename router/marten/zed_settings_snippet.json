@@ -1,0 +1,28 @@
+{
+  "language_models": {
+    "openai": {
+      "version": "1",
+      "api_url": "http://127.0.0.1:19280/v1",
+      "low_speed_timeout_in_seconds": 300,
+      "available_models": [
+        {"name": "auto", "max_tokens": 262144, "display_name": "Free Auto (merged gateway)"},
+        {"name": "fcm", "max_tokens": 262144, "display_name": "Free Coding Models virtual"},
+        {"name": "hy3", "max_tokens": 262144, "display_name": "Tencent Hy3 free"},
+        {"name": "laguna-m1", "max_tokens": 262144, "display_name": "Poolside Laguna M.1 free"},
+        {"name": "laguna-xs", "max_tokens": 262144, "display_name": "Poolside Laguna XS free"},
+        {"name": "qwen3-coder", "max_tokens": 1048576, "display_name": "Qwen3 Coder 480B free"},
+        {"name": "gemma4-31b", "max_tokens": 262144, "display_name": "Gemma 4 31B free"},
+        {"name": "gemma4-26b", "max_tokens": 262144, "display_name": "Gemma 4 26B A4B free"},
+        {"name": "nemotron-super", "max_tokens": 262144, "display_name": "Nemotron 3 Super free"},
+        {"name": "nemotron-nano", "max_tokens": 262144, "display_name": "Nemotron Nano free"}
+      ]
+    }
+  },
+  "assistant": {
+    "version": "2",
+    "default_model": {
+      "provider": "openai",
+      "model": "auto"
+    }
+  }
+}

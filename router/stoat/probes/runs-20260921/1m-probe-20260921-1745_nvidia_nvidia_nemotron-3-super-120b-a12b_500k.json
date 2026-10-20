@@ -1,0 +1,22 @@
+{
+  "run_tag": "1m-probe-20260921-1745/nvidia/nvidia/nemotron-3-super-120b-a12b/500k",
+  "session": "1m-probe-20260921-1745",
+  "lane": "nvidia",
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "size": "500k",
+  "target_tokens": 500000,
+  "token_basis": "chars/4.0 approximation",
+  "haystack_chars": 2000260,
+  "needle_char_offset": 899968,
+  "secret_sha256": "4ad74e66df577277460e35d8fbbc141f648f8f11a91d77f5c4a4fc20c0342918",
+  "latency_ms": 18214.2,
+  "http_status": 200,
+  "outcome": "ok",
+  "error_class": null,
+  "error_body": "",
+  "accurate": true,
+  "response_head": "QXF50EA6587C",
+  "db": "recorded",
+  "winner": 1
+}

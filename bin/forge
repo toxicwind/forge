@@ -1,0 +1,88 @@
+#!/usr/bin/env bun
+/**
+ * forge — estate-scripts Ranch Build, Merge & VCS Triad CLI.
+ *
+ * The public master entrypoint. Unifies three layers:
+ *   1. forge build — NativeLink (REAPI) remote cache/execution (:25155 grpc, :25157 http) + Bazel.
+ *   2. forge merge — weave-sub entity-level AST merge driver for parallel agent edits.
+ *   3. forge vcs   — Jujutsu (jj) first-class Git-compatible change-oriented VCS.
+ *
+ * NativeLink is the DEFAULT for all builds: every `forge build` invocation
+ * targets grpc://127.0.0.1:25155 unless overridden.
+ */
+
+import { parseArgs } from "node:util";
+import { spawnSync } from "node:child_process";
+import { existsSync } from "node:fs";
+
+const NATIVELINK_GRPC = process.env.FORGE_REMOTE_CACHE || "grpc://127.0.0.1:25155";
+const NATIVELINK_HTTP = process.env.FORGE_REMOTE_HTTP || "http://127.0.0.1:25157";
+
+const { positionals } = parseArgs({
+  args: Bun.argv.slice(2),
+  options: { help: { type: "boolean", short: "h" }, json: { type: "boolean" } },
+  strict: false,
+  allowPositionals: true,
+});
+
+const cmd = positionals[0] || "status";
+const subArgs = positionals.slice(1);
+
+function runTool(binary: string, args: string[]): never {
+  const res = spawnSync(binary, args, { stdio: "inherit", env: process.env });
+  process.exit(res.status ?? 0);
+}
+
+function check(url: string): boolean {
+  const r = spawnSync("curl", ["-s", "-o", "/dev/null", "-w", "%{http_code}", url], { encoding: "utf8" });
+  return r.stdout.trim() !== "000" && r.stdout.trim() !== "";
+}
+
+switch (cmd) {
+  case "status": {
+    console.log("🔨 forge — estate-scripts Build, Merge & VCS Triad");
+    console.log("---------------------------------------------");
+    const nlUp = check(NATIVELINK_HTTP);
+    console.log(`[build]  NativeLink REAPI  ${NATIVELINK_GRPC}  ${nlUp ? "ACTIVE" : "OFFLINE (http: " + NATIVELINK_HTTP + ")"}`);
+    const weavePath = Bun.which("weave") || "/home/toxic/.local/bin/weave";
+    console.log(`[merge]  weave driver                 ${existsSync(weavePath) ? "READY" : "MISSING"} (${weavePath})`);
+    const jjPath = Bun.which("jj");
+    console.log(`[vcs]    jj (Jujutsu)                ${jjPath ? "READY" : "MISSING"} (${jjPath ?? "not on PATH"})`);
+    break;
+  }
+  case "build":
+  case "bazel": {
+    // NativeLink is default remote cache for every build.
+    const hasCache = subArgs.some((a) => a.startsWith("--remote_cache") || a.startsWith("--remote_executor"));
+    const args = hasCache ? subArgs : [...subArgs, `--remote_cache=${NATIVELINK_GRPC}`];
+    runTool("bazel", args);
+    break;
+  }
+  case "merge":
+  case "weave": {
+    const bin = Bun.which("weave") || "/home/toxic/.local/bin/weave";
+    if (!existsSync(bin)) { console.error(`weave not found at ${bin}`); process.exit(1); }
+    runTool(bin, subArgs);
+    break;
+  }
+  case "vcs":
+  case "jj": {
+    const bin = Bun.which("jj");
+    if (!bin) { console.error("jj not found on PATH"); process.exit(1); }
+    runTool(bin, subArgs);
+    break;
+  }
+  case "cache": {
+    console.log(`NativeLink cache: ${NATIVELINK_GRPC} (http ${NATIVELINK_HTTP})`);
+    runTool("curl", ["-sI", NATIVELINK_HTTP]);
+    break;
+  }
+  default:
+    console.log("Usage: forge <command> [args...]");
+    console.log("  status        Health of NativeLink + weave + jj triad");
+    console.log("  build [args]  Bazel build via NativeLink remote cache (default :25155)");
+    console.log("  merge|weave   Weave entity-level AST merge driver");
+    console.log("  vcs|jj        Jujutsu VCS operations");
+    console.log("  cache         Inspect NativeLink cache endpoint");
+    break;
+}

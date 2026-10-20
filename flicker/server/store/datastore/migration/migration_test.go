@@ -1,0 +1,211 @@
+// Copyright 2023 Woodpecker Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package migration
+
+import (
+	"database/sql"
+	"os"
+	"strings"
+	"testing"
+	"time"
+
+	// Blank imports to register the sql drivers.
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	xormigrate "src.techknowlogick.com/xormigrate"
+	"xorm.io/xorm"
+	"xorm.io/xorm/schemas"
+)
+
+const (
+	sqliteDB     = "./test-files/sqlite.db"
+	postgresDump = "./test-files/postgres.sql"
+)
+
+func testDriver() string {
+	driver := os.Getenv("WOODPECKER_DATABASE_DRIVER")
+	if len(driver) == 0 {
+		return "sqlite3"
+	}
+	return driver
+}
+
+// ensureSQLiteFixture returns the path of the pre-dedupe sqlite fixture.
+// The fixture is gitignored by design (see test-files/README.md); when it is
+// absent it is generated on demand from the current migration list, so the
+// tests pass on a fresh checkout and in CI without a committed binary blob.
+func ensureSQLiteFixture(t *testing.T) string {
+	t.Helper()
+	if _, err := os.Stat(sqliteDB); err == nil {
+		return sqliteDB
+	}
+	tmpF, err := os.CreateTemp("./test-files", "fixture_*.db")
+	require.NoError(t, err)
+	fixture := tmpF.Name()
+	require.NoError(t, tmpF.Close())
+	t.Cleanup(func() { _ = os.Remove(fixture) })
+
+	engine, err := xorm.NewEngine("sqlite3", fixture)
+	require.NoError(t, err)
+
+	var filtered []*xormigrate.Migration
+	for _, m := range MigrationTasks() {
+		if m.ID == "deduplicate-log-entries" {
+			break
+		}
+		filtered = append(filtered, m)
+	}
+	xm := xormigrate.New(engine, filtered)
+	xm.InitSchema(func(*xorm.Engine) error { return nil })
+	require.NoError(t, xm.Migrate())
+	require.NoError(t, SyncLogEntryForFixture(engine))
+	_, err = engine.Exec("CREATE TABLE IF NOT EXISTS migrations (name TEXT UNIQUE)")
+	require.NoError(t, err)
+	_, err = engine.Exec("INSERT OR IGNORE INTO migrations (name) VALUES ('legacy-baseline')")
+	require.NoError(t, err)
+	_, err = engine.Exec(
+		"INSERT INTO log_entries (step_id, time, line, data, created, type) VALUES (?,?,?,?,?,?)",
+		2, 0, 0, []byte("original"), 1641630525, 0,
+	)
+	require.NoError(t, err)
+	require.NoError(t, engine.Close())
+	return fixture
+}
+
+func createSQLiteDB(t *testing.T) string {
+	tmpF, err := os.CreateTemp("./test-files", "tmp_")
+	require.NoError(t, err)
+	dbF, err := os.ReadFile(ensureSQLiteFixture(t))
+	require.NoError(t, err)
+
+	require.NoError(t, os.WriteFile(tmpF.Name(), dbF, 0o644))
+	return tmpF.Name()
+}
+
+func testDB(t *testing.T, initNewDB bool) (engine *xorm.Engine, closeDB func()) {
+	driver := testDriver()
+	var err error
+	closeDB = func() {}
+	switch driver {
+	case "sqlite3":
+		config := ":memory:"
+		if !initNewDB {
+			config = createSQLiteDB(t)
+			closeDB = func() {
+				_ = os.Remove(config)
+			}
+		}
+		engine, err = xorm.NewEngine(driver, config)
+		require.NoError(t, err)
+		return engine, closeDB
+	case "mysql":
+		config := os.Getenv("WOODPECKER_DATABASE_DATASOURCE")
+		if !initNewDB {
+			t.Logf("do not have dump to test against")
+			t.SkipNow()
+		}
+		engine, err = xorm.NewEngine(driver, config)
+		require.NoError(t, err)
+		return engine, closeDB
+	case "postgres":
+		config := os.Getenv("WOODPECKER_DATABASE_DATASOURCE")
+		closeDB = func() {
+			cleanPostgresDB(t, config)
+		}
+		if !initNewDB {
+			restorePostgresDump(t, config)
+		}
+		engine, err = xorm.NewEngine(driver, config)
+		require.NoError(t, err)
+		return engine, closeDB
+	default:
+		t.Errorf("unsupported driver: %s", driver)
+		t.FailNow()
+	}
+	return engine, closeDB
+}
+
+// restorePostgresDump only supports dumps generated with `pg_dump --inserts`.
+func restorePostgresDump(t *testing.T, config string) {
+	dump, err := os.ReadFile(postgresDump)
+	require.NoError(t, err)
+
+	db, err := sql.Open("postgres", config)
+	require.NoError(t, err)
+	defer db.Close()
+
+	// clean dump
+	lines := strings.Split(string(dump), "\n")
+	newLines := make([]string, 0, len(lines))
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		switch {
+		case line == "",
+			strings.HasPrefix(line, "\\"),
+			strings.HasPrefix(line, "--"):
+			continue
+		}
+		newLines = append(newLines, line)
+	}
+
+	for _, stmt := range strings.Split(strings.Join(newLines, "\n"), ";") {
+		if stmt == "" {
+			continue
+		}
+
+		_, err = db.Exec(stmt)
+		if err != nil {
+			t.Logf("Failed to execute statement: %s", stmt[:min(len(stmt), 100)])
+			require.NoErrorf(t, err, "could not load postgres dump")
+		}
+	}
+}
+
+func cleanPostgresDB(t *testing.T, config string) {
+	db, err := sql.Open("postgres", config)
+	require.NoError(t, err)
+	defer db.Close()
+
+	// Drop and recreate the public schema
+	// This removes all tables, indexes, constraints, sequences, etc.
+	_, err = db.Exec(`
+		DROP SCHEMA public CASCADE;
+		CREATE SCHEMA public;
+		GRANT ALL ON SCHEMA public TO postgres;
+		GRANT ALL ON SCHEMA public TO public;
+	`)
+	require.NoError(t, err)
+}
+
+func TestMigrate(t *testing.T) {
+	// init new db
+	engine, closeDB := testDB(t, true)
+	assert.NoError(t, Migrate(t.Context(), engine, true))
+	closeDB()
+
+	dbType := engine.Dialect().URI().DBType
+	if dbType == schemas.MYSQL || dbType == schemas.POSTGRES {
+		// wait for mysql/postgres to sync ...
+		time.Sleep(100 * time.Millisecond)
+	}
+
+	// migrate old db
+	engine, closeDB = testDB(t, false)
+	assert.NoError(t, Migrate(t.Context(), engine, true))
+	closeDB()
+}

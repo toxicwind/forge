@@ -1,0 +1,96 @@
+{
+  "tool": "provider-bench",
+  "version": 1,
+  "startedAt": "2026-10-01T19:13:10.140Z",
+  "provider": "nvidia",
+  "base": "https://integrate.api.nvidia.com/v1",
+  "config": {
+    "reqs": 3,
+    "concurrency": 2,
+    "timeoutMs": 45000
+  },
+  "models": [
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "liveness": {
+        "healthy": true,
+        "reason": "ok",
+        "latencyMs": 3268
+      },
+      "quality": {
+        "scores": [
+          2,
+          2,
+          2
+        ],
+        "mean": 2,
+        "n": 3
+      },
+      "latencyP50Ms": 3268,
+      "rateLimited": false,
+      "keyDead": false
+    },
+    {
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "liveness": {
+        "healthy": true,
+        "reason": "ok",
+        "latencyMs": 1456
+      },
+      "quality": {
+        "scores": [
+          2,
+          2,
+          0
+        ],
+        "mean": 1.333,
+        "n": 3
+      },
+      "latencyP50Ms": 1456,
+      "rateLimited": false,
+      "keyDead": false
+    },
+    {
+      "model": "nvidia/nemotron-nano-3-30b-a3b",
+      "liveness": {
+        "healthy": false,
+        "reason": "http 404: {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function '2b2dcd47-c858-425a-9c04-4cacf2eac993': Not found for account 'iuh5eKGaKSnWglC73O7UeZBzNHZ5aP7TLHyJpM-rxWY'",
+        "latencyMs": 71
+      },
+      "quality": {
+        "scores": [
+          0,
+          0,
+          0
+        ],
+        "mean": 0,
+        "n": 3
+      },
+      "latencyP50Ms": 70,
+      "rateLimited": false,
+      "keyDead": false
+    },
+    {
+      "model": "nvidia/llama-3.1-nemotron-ultra-253b-v1",
+      "liveness": {
+        "healthy": false,
+        "reason": "http 404: {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function '84bf12ff-edbd-4435-baea-0fa6a7453d2e': Not found for account 'iuh5eKGaKSnWglC73O7UeZBzNHZ5aP7TLHyJpM-rxWY'",
+        "latencyMs": 71
+      },
+      "quality": {
+        "scores": [
+          0,
+          0,
+          0
+        ],
+        "mean": 0,
+        "n": 3
+      },
+      "latencyP50Ms": 66,
+      "rateLimited": false,
+      "keyDead": false
+    }
+  ],
+  "providerRateLimited": false,
+  "providerKeyDead": false
+}
