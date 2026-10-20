@@ -1,0 +1,1746 @@
+//! Request handling: strict pass-through to NIM with three additions the
+//! upstream doesn't give us — per-key rate-limit pacing, retry on 429/5xx,
+//! and SSE comment heartbeats so agent harnesses (OpenCode etc.) keep the
+//! connection open instead of aborting while we wait for a slot. Every
+//! request is measured on the way through (see README for the metric list).
+
+use std::hash::{DefaultHasher, Hash, Hasher};
+use std::sync::{Arc, Mutex};
+use std::time::{Duration, Instant};
+
+use axum::body::Body;
+use axum::extract::State;
+use axum::http::{header, HeaderMap, Method, StatusCode, Uri};
+use axum::response::{IntoResponse, Response};
+use bytes::Bytes;
+use futures_util::StreamExt;
+use metrics::{counter, gauge, histogram};
+use tokio::sync::mpsc;
+use tokio_stream::wrappers::ReceiverStream;
+
+use crate::dispatch::Slot;
+use crate::governor::{self, ModelPermit};
+use crate::observation::{
+    observe_buffered, usage_observation_metrics, FinishResult, Observation, ResponseObservations,
+    SseObserver, StreamOutcome,
+};
+use crate::{AppState, Config};
+
+/// Per-request metric labels, resolved once up front.
+#[derive(Clone)]
+struct Ctx {
+    client: String,
+    model: String,
+    path: String,
+    started: Instant,
+}
+
+/// Cap on distinct `model` label values tracked, past which new models are
+/// bucketed to "other" so an attacker can't explode metric cardinality.
+const MODEL_LABEL_CAP: usize = 256;
+const DEADLINE_HEADER: &str = "x-flock-deadline-ms";
+
+#[derive(Clone, Copy)]
+struct RequestDeadline(Instant);
+
+fn parse_request_deadline(
+    headers: &HeaderMap,
+    accepted: Instant,
+) -> Result<Option<RequestDeadline>, ()> {
+    let mut values = headers.get_all(DEADLINE_HEADER).iter();
+    let Some(value) = values.next() else {
+        return Ok(None);
+    };
+    if values.next().is_some() {
+        return Err(());
+    }
+    let raw = value.to_str().map_err(|_| ())?;
+    if raw.is_empty() || !raw.bytes().all(|b| b.is_ascii_digit()) {
+        return Err(());
+    }
+    let millis = raw.parse::<u64>().map_err(|_| ())?;
+    accepted
+        .checked_add(Duration::from_millis(millis))
+        .map(RequestDeadline)
+        .map(Some)
+        .ok_or(())
+}
+
+fn wait_deadline(cfg: &Config) -> Instant {
+    Instant::now() + cfg.max_wait
+}
+
+/// Reduce an arbitrary client-supplied string to a safe metric-label / log
+/// value: keep a conservative charset (which model ids use), drop everything
+/// else (quotes, braces, newlines, control/ANSI — the injection vectors for
+/// Prometheus exposition, structured logs, and terminals), and cap length.
+fn sanitize_label(raw: &str) -> String {
+    let cleaned: String = raw
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-' | '/' | ':'))
+        .take(64)
+        .collect();
+    if cleaned.is_empty() {
+        "none".to_owned()
+    } else {
+        cleaned
+    }
+}
+
+/// Sanitize a model id and bound its cardinality: known models pass through,
+/// but once `MODEL_LABEL_CAP` distinct values have been seen, further new
+/// ones collapse to "other".
+fn label_model(state: &AppState, raw: &str) -> String {
+    let s = sanitize_label(raw);
+    let mut seen = state.model_labels.lock().unwrap();
+    bounded_label(&mut seen, s, MODEL_LABEL_CAP)
+}
+
+/// Cardinality guard: return `s` if already seen or under the cap (recording
+/// it), else "other". Pure so it can be tested without an AppState.
+fn bounded_label(seen: &mut std::collections::HashSet<String>, s: String, cap: usize) -> String {
+    if seen.contains(&s) {
+        s
+    } else if seen.len() < cap {
+        seen.insert(s.clone());
+        s
+    } else {
+        "other".to_owned()
+    }
+}
+
+/// Bound the `path` label to the known OpenAI endpoints; anything else
+/// (arbitrary sub-paths a client can hit under /v1/) becomes "other".
+fn label_path(path: &str) -> String {
+    match path {
+        "/v1/chat/completions"
+        | "/v1/completions"
+        | "/v1/embeddings"
+        | "/v1/models"
+        | "/v1/rankings"
+        | "/v1/custom/dots"
+        | "/v1/custom/rankings" => path.to_owned(),
+        _ => "other".to_owned(),
+    }
+}
+
+/// Flatten `messages[].content` part-arrays into plain strings.
+///
+/// Returns true when the body was mutated. Text parts are joined with a
+/// newline; parts without a `text` field (tool calls, images, unknown types)
+/// are appended as fenced JSON so nothing disappears silently. Bodies whose
+/// `messages` are absent or already strings are untouched.
+pub(crate) fn normalize_message_contents(body: &mut serde_json::Value) -> bool {
+    let Some(messages) = body.get_mut("messages").and_then(|m| m.as_array_mut()) else {
+        return false;
+    };
+    let mut changed = false;
+    for msg in messages.iter_mut() {
+        let Some(parts) = msg.get_mut("content").and_then(|c| c.as_array_mut()) else {
+            continue;
+        };
+        let mut texts: Vec<String> = Vec::with_capacity(parts.len());
+        for part in parts.iter() {
+            match part.get("text").and_then(|t| t.as_str()) {
+                Some(t) => texts.push(t.to_owned()),
+                None => texts.push(format!(
+                    "<part type={}>\n{}\n</part>",
+                    part.get("type").and_then(|t| t.as_str()).unwrap_or("unknown"),
+                    serde_json::to_string_pretty(part).unwrap_or_default()
+                )),
+            }
+        }
+        msg["content"] = serde_json::Value::String(texts.join("\n"));
+        changed = true;
+    }
+    changed
+}
+
+/// Statuses worth waiting out: rate limit and transient server-side trouble.
+/// Upstream 404 strikes before a model is quarantined out of the
+/// /v1/models advertisement (fix C). Strikes decay via
+/// RouterHandle::EMPTY_STRIKE_DECAY, so a transient 404 wave self-heals.
+const QUARANTINE_STRIKES: u32 = 3;
+
+/// Whether an upstream status should trigger failover to the next
+/// candidate (modelmux Fallbackable semantics):
+/// - 400/422/413: the REQUEST is bad -- failing over won't help, surface it.
+/// - 401/403: the KEY is bad -- another key/provider may work, fall over.
+/// - 429/5xx/timeouts: the PROVIDER is struggling -- fall over.
+fn retryable(status: reqwest::StatusCode) -> bool {
+    matches!(status.as_u16(), 401 | 403 | 429 | 500 | 502 | 503 | 504)
+}
+
+/// Backoff for a lane in cooldown: honor Retry-After when present.
+fn backoff_for(resp: &reqwest::Response) -> Duration {
+    resp.headers()
+        .get(header::RETRY_AFTER)
+        .and_then(|v| v.to_str().ok())
+        .and_then(|s| s.parse::<u64>().ok())
+        .map(Duration::from_secs)
+        .unwrap_or(Duration::from_secs(10))
+}
+
+/// Join the global FIFO queue for a rate-limit slot, invoking `on_wait` every
+/// heartbeat interval so streaming callers can keep their client alive.
+/// Returns None if the queue rejects us (no slot before the deadline) or
+/// `on_wait` reports the client is gone.
+async fn reserve_slot(
+    state: &AppState,
+    heartbeat: Duration,
+    deadline: Instant,
+    prefer: Option<usize>,
+    mut on_wait: impl FnMut() -> bool,
+) -> Option<Slot> {
+    let queued = Instant::now();
+    let mut rx = state.dispatch.acquire(deadline, prefer);
+    loop {
+        tokio::select! {
+            slot = &mut rx => {
+                histogram!("flock_queue_wait_seconds").record(queued.elapsed().as_secs_f64());
+                if let Ok(slot) = &slot {
+                    counter!("flock_lane_requests_total", "lane" => slot.lane.to_string())
+                        .increment(1);
+                }
+                return slot.ok();
+            }
+            _ = tokio::time::sleep(heartbeat) => {
+                if !on_wait() {
+                    return None;
+                }
+            }
+        }
+    }
+}
+
+/// Wait for a model-pressure permit (the governor's worker-concurrency gate),
+/// heartbeating so streaming callers keep their client alive. `Ok(None)`
+/// means the request isn't gated (governor off, non-generation path, or no
+/// model to scope by); `Err(())` means the deadline passed or the client left.
+async fn acquire_model_permit(
+    state: &AppState,
+    cfg: &Config,
+    ctx: &Ctx,
+    deadline: Instant,
+    mut on_wait: impl FnMut() -> bool,
+) -> Result<Option<ModelPermit>, ()> {
+    let gated = cfg.governor.enabled
+        && ctx.model != "none"
+        && matches!(
+            ctx.path.as_str(),
+            "/v1/chat/completions" | "/v1/completions"
+        );
+    if !gated {
+        return Ok(None);
+    }
+    let pinned = cfg.governor.overrides.get(&ctx.model).copied();
+    let mut next_heartbeat = Instant::now() + cfg.heartbeat;
+    loop {
+        if let Some(p) = state.governor.admit(&ctx.model, pinned) {
+            return Ok(Some(p));
+        }
+        if Instant::now() + governor::POLL > deadline {
+            return Err(());
+        }
+        tokio::time::sleep(governor::POLL).await;
+        if Instant::now() >= next_heartbeat {
+            if !on_wait() {
+                return Err(());
+            }
+            next_heartbeat = Instant::now() + cfg.heartbeat;
+        }
+    }
+}
+
+/// Put the granting lane in cooldown after the upstream told us to back
+/// off. Routes through the slot's own pool, so a cooldown that races a
+/// settings-driven pool swap lands on the (possibly retired) generation that
+/// made the grant.
+fn enter_cooldown(slot: &Slot, status: &str, backoff: Duration) {
+    counter!("flock_lane_cooldown_total", "lane" => slot.lane.to_string(), "status" => status.to_owned())
+        .increment(1);
+    slot.pool.penalize(slot.lane, backoff);
+}
+
+fn record_request(ctx: &Ctx, status: &str) {
+    counter!(
+        "flock_requests_total",
+        "client" => ctx.client.clone(),
+        "model" => ctx.model.clone(),
+        "path" => ctx.path.clone(),
+        "status" => status.to_owned(),
+    )
+    .increment(1);
+    tracing::info!(
+        "{:<6} {} {} {} ({} ms)",
+        status,
+        ctx.client,
+        ctx.model,
+        ctx.path,
+        ctx.started.elapsed().as_millis()
+    );
+}
+
+fn record_deadline(ctx: &Ctx) {
+    counter!(
+        "flock_deadline_exceeded_total",
+        "client" => ctx.client.clone(),
+        "model" => ctx.model.clone(),
+        "path" => ctx.path.clone(),
+    )
+    .increment(1);
+    record_request(ctx, "deadline");
+}
+
+fn record_tokens(ctx: &Ctx, prompt: Option<u64>, completion: Option<u64>, source: &str) {
+    if let Some(p) = prompt {
+        counter!("flock_prompt_tokens_total", "client" => ctx.client.clone(), "model" => ctx.model.clone())
+            .increment(p);
+    }
+    if let Some(c) = completion {
+        counter!(
+            "flock_completion_tokens_total",
+            "client" => ctx.client.clone(),
+            "model" => ctx.model.clone(),
+            "source" => source.to_owned(),
+        )
+        .increment(c);
+    }
+}
+
+/// The request's tool-selection mode, bounded to a small enum. Called only
+/// when the request offers tools, so a missing `tool_choice` means the
+/// provider default (auto).
+fn tool_choice_mode(v: &serde_json::Value) -> &'static str {
+    match v.get("tool_choice") {
+        Some(serde_json::Value::String(s)) => match s.as_str() {
+            "auto" => "auto",
+            "none" => "none",
+            "required" => "required",
+            _ => "other",
+        },
+        Some(serde_json::Value::Object(_)) => "named",
+        _ => "auto",
+    }
+}
+
+/// Count tools offered in a request body (`tools`, or legacy `functions`).
+fn count_tools(v: &serde_json::Value) -> Option<usize> {
+    v.get("tools")
+        .and_then(|t| t.as_array())
+        .map(|a| a.len())
+        .or_else(|| {
+            v.get("functions")
+                .and_then(|t| t.as_array())
+                .map(|a| a.len())
+        })
+}
+
+/// Whether the request asks for structured (JSON) output.
+fn is_json_mode(v: &serde_json::Value) -> bool {
+    v.get("response_format")
+        .and_then(|rf| rf.get("type"))
+        .and_then(|t| t.as_str())
+        .is_some_and(|t| t == "json_object" || t == "json_schema")
+}
+
+/// Record request-shape metrics: what the harness asked for (stream flag,
+/// conversation depth, tools offered, sampling params, output cap, JSON mode).
+/// Counts and sizes only — never message content. All heavy values go to
+/// histograms, never labels, so cardinality stays bounded.
+fn record_shape(ctx: &Ctx, parsed: Option<&serde_json::Value>, wants_stream: bool) {
+    // Labeled by client: request shape reflects the calling client, not the
+    // model — this is what powers the Clients view ("what is each agent
+    // doing"). "Harness" is retired vocabulary; see
+    // knowledge/decisions/standard-vocabulary.md.
+    counter!(
+        "flock_stream_requests_total",
+        "client" => ctx.client.clone(),
+        "stream" => if wants_stream { "true" } else { "false" }.to_owned(),
+    )
+    .increment(1);
+    let Some(v) = parsed else { return };
+    if let Some(msgs) = v.get("messages").and_then(|m| m.as_array()) {
+        histogram!("flock_request_messages", "client" => ctx.client.clone())
+            .record(msgs.len() as f64);
+    }
+    if let Some(n) = count_tools(v) {
+        histogram!("flock_request_tools", "client" => ctx.client.clone()).record(n as f64);
+        counter!("flock_tool_choice_total", "mode" => tool_choice_mode(v).to_owned()).increment(1);
+    }
+    if let Some(mt) = v
+        .get("max_tokens")
+        .and_then(|x| x.as_u64())
+        .or_else(|| v.get("max_completion_tokens").and_then(|x| x.as_u64()))
+    {
+        histogram!("flock_request_max_tokens", "client" => ctx.client.clone()).record(mt as f64);
+    }
+    if let Some(t) = v.get("temperature").and_then(|x| x.as_f64()) {
+        histogram!("flock_request_temperature", "client" => ctx.client.clone()).record(t);
+    }
+    if is_json_mode(v) {
+        counter!("flock_json_mode_total", "client" => ctx.client.clone()).increment(1);
+    }
+}
+
+/// Record only finalized typed observations. Invalid and unavailable upstream
+/// values are deliberately absent from the existing metrics.
+fn record_observations(
+    ctx: &Ctx,
+    observations: &ResponseObservations,
+) -> Option<(u64, &'static str)> {
+    for metric in usage_observation_metrics(&observations.usage) {
+        counter!(
+            "flock_usage_observations_total",
+            "field" => metric.field,
+            "result" => metric.result,
+        )
+        .increment(1);
+    }
+    let prompt = match observations.usage.prompt_tokens {
+        Observation::Measured(value) => Some(value),
+        _ => None,
+    };
+    let (completion, source) = match observations.usage.completion_tokens {
+        Observation::Measured(value) => (Some(value), "usage"),
+        Observation::Estimated(value) => (Some(value), "estimate"),
+        Observation::Unavailable | Observation::Invalid => (None, "usage"),
+    };
+    record_tokens(ctx, prompt, completion, source);
+    for finish in &observations.finish_reasons {
+        let FinishResult::Measured(reason) = &finish.result else {
+            continue;
+        };
+        counter!(
+            "flock_finish_reason_total",
+            "model" => ctx.model.clone(),
+            "reason" => reason.metric_label(),
+        )
+        .increment(1);
+    }
+    if let Observation::Measured(reasoning) = observations.usage.reasoning_tokens {
+        if reasoning > 0 {
+            counter!("flock_reasoning_tokens_total", "model" => ctx.model.clone())
+                .increment(reasoning);
+        }
+    }
+    if let Observation::Measured(tool_calls) = observations.tool_calls {
+        if tool_calls > 0 {
+            counter!("flock_tool_calls_total", "model" => ctx.model.clone()).increment(tool_calls);
+        }
+    }
+    completion.map(|value| (value, source))
+}
+
+/// Take the one stream-owned observer, if upstream streaming began, and
+/// account it exactly once. The deadline arm and normal relay exits race for
+/// this ownership rather than duplicating observer state or metrics.
+fn finalize_sse_observer(
+    ctx: &Ctx,
+    observer: &Arc<Mutex<Option<SseObserver>>>,
+    outcome: StreamOutcome,
+) -> Option<(u64, &'static str)> {
+    let observations = observer.lock().unwrap().take()?.finish(outcome);
+    record_observations(ctx, &observations)
+}
+
+/// Compose the final upstream request URL for the /v1/* proxy path.
+///
+/// The single choke point every proxied request flows through: `handle` hands
+/// it the raw configured base URL plus the incoming path+query. Versioned
+/// bases (`https://api.groq.com/openai/v1`) would otherwise concatenate into
+/// `/v1/v1/...` 404s, so this delegates to the canonical normalizer instead of
+/// a naive string concat.
+pub(crate) fn upstream_target_url(base_url: &str, path_query: &str) -> String {
+    crate::providers::upstream_url(base_url, path_query)
+}
+
+fn upstream_request(
+    http: &reqwest::Client,
+    base_url: &str,
+    method: &Method,
+    path_query: &str,
+    headers: &HeaderMap,
+    key: &str,
+    body: &Bytes,
+) -> reqwest::RequestBuilder {
+    let url = upstream_target_url(base_url, path_query);
+    let mut req = http
+        .request(method.clone(), url)
+        .header(header::AUTHORIZATION, format!("Bearer {key}"));
+    for name in [header::CONTENT_TYPE, header::ACCEPT] {
+        if let Some(v) = headers.get(&name) {
+            req = req.header(name, v);
+        }
+    }
+    if !body.is_empty() {
+        req = req.body(body.clone());
+    }
+    req
+}
+
+/// Single entry point for every /v1/* call.
+pub async fn handle(
+    State(state): State<Arc<AppState>>,
+    method: Method,
+    uri: Uri,
+    headers: HeaderMap,
+    body: Bytes,
+) -> Response {
+    let accepted = Instant::now();
+    // Fail closed until first-time setup completes: nothing proxies, and the
+    // error tells the operator exactly why.
+    if state
+        .setup_required
+        .load(std::sync::atomic::Ordering::SeqCst)
+    {
+        return crate::auth::setup_required_json();
+    }
+
+    // One consistent config view for this request's whole lifetime; a
+    // concurrent settings save affects only requests that arrive after it.
+    let cfg = state.cfg();
+
+    // Shed load past the in-flight cap so a connection flood can't grow the
+    // queue unbounded. A guard decrements on every exit path; the streaming
+    // path moves it into its spawned task so a live stream keeps occupying
+    // its slot until the stream actually ends.
+    let inflight = state
+        .inflight
+        .fetch_add(1, std::sync::atomic::Ordering::SeqCst)
+        + 1;
+    let inflight_guard = crate::dispatch::scopeguard({
+        let state = state.clone();
+        move || {
+            state
+                .inflight
+                .fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
+        }
+    });
+    if inflight > cfg.max_inflight {
+        counter!("flock_shed_total").increment(1);
+        return overloaded(cfg.max_inflight);
+    }
+
+    // Client auth: open mode admits everyone as "local"; keyed mode hashes
+    // the presented bearer and compares against the stored SHA-256 digests
+    // (the store never holds a usable token). Comparisons are constant-time.
+    let client = match &cfg.clients {
+        None => "local".to_owned(),
+        Some(clients) => {
+            let token = headers
+                .get(header::AUTHORIZATION)
+                .and_then(|v| v.to_str().ok())
+                .and_then(|s| s.strip_prefix("Bearer "))
+                .unwrap_or("");
+            let digest = crate::auth::sha256_hex(token);
+            let mut matched = None;
+            for (stored_digest, name) in clients {
+                if crate::auth::ct_eq(&digest, stored_digest) {
+                    matched = Some(name.clone());
+                }
+            }
+            match matched {
+                Some(name) => name,
+                None => {
+                    counter!("flock_unauthorized_total").increment(1);
+                    tokio::time::sleep(Duration::from_millis(250)).await;
+                    return unauthorized();
+                }
+            }
+        }
+    };
+
+    let request_deadline = match parse_request_deadline(&headers, accepted) {
+        Ok(deadline) => deadline,
+        Err(()) => return invalid_deadline(),
+    };
+
+    let mut path_query = uri
+        .path_and_query()
+        .map(|pq| pq.as_str().to_owned())
+        .unwrap_or_else(|| uri.path().to_owned());
+
+    let mut parsed = serde_json::from_slice::<serde_json::Value>(&body).ok();
+    let mut raw_model = parsed
+        .as_ref()
+        .and_then(|v| v.get("model").and_then(|m| m.as_str()))
+        .unwrap_or("none")
+        .to_owned();
+    // Dots custom-model normalization: any Dots model id or /v1/custom/dots
+    // request is coerced via dotsBody before the normal proxy path runs.
+    let mut body = body;
+    if crate::dots::is_dots_model_or_path(&raw_model, uri.path()) {
+        let session_id = headers
+            .get("x-session-id")
+            .and_then(|v| v.to_str().ok())
+            .unwrap_or("flock-dots-session");
+        if let Some(ref mut val) = parsed {
+            *val = crate::dots::coerce_dots_payload(val.clone(), session_id);
+            raw_model = crate::dots::DOTS_CANONICAL_MODEL.to_owned();
+            body = Bytes::from(serde_json::to_vec(val).unwrap_or_default());
+        }
+        if path_query == crate::routes::V1_CUSTOM_DOTS {
+            path_query = "/v1/chat/completions".to_owned();
+        }
+    }
+    // Multimodal-content normalization (2026-10-14): several clients (rig
+    // agents among them) emit `messages[].content` as a part array even for
+    // pure-text turns. Strict OpenAI-compatible upstreams reject that shape
+    // with 422 "Expected union value: string|null". Flatten text parts to a
+    // single string; non-text parts are appended as fenced JSON so no
+    // information is silently dropped. Strings and null pass through.
+    if let Some(ref mut val) = parsed {
+        if normalize_message_contents(val) {
+            body = Bytes::from(serde_json::to_vec(val).unwrap_or_default());
+        }
+    }
+    let ctx = Ctx {
+        client,
+        model: label_model(&state, &raw_model),
+        path: label_path(uri.path()),
+        started: Instant::now(),
+    };
+
+    // Answer the model-catalog probe from cache: harnesses poll it and it
+    // shouldn't burn rate-limit budget on every poll.
+    if method == Method::GET && uri.path() == "/v1/models" {
+        if let Some(deadline) = request_deadline {
+            return match tokio::time::timeout_at(deadline.0.into(), models(state, cfg)).await {
+                Ok(resp) => {
+                    record_request(&ctx, resp.status().as_str());
+                    resp
+                }
+                Err(_) => {
+                    record_deadline(&ctx);
+                    deadline_exceeded()
+                }
+            };
+        }
+        let resp = models(state, cfg).await;
+        record_request(&ctx, resp.status().as_str());
+        return resp;
+    }
+
+    let wants_stream = parsed
+        .as_ref()
+        .and_then(|v| v.get("stream").and_then(|s| s.as_bool()))
+        .unwrap_or(false);
+    let prefer = parsed
+        .as_ref()
+        .and_then(|v| affinity(v, state.pool().len()));
+
+    // Fingerprint what the harness asked for (generation endpoints only).
+    if ctx.path == "/v1/chat/completions" || ctx.path == "/v1/completions" {
+        record_shape(&ctx, parsed.as_ref(), wants_stream);
+    }
+
+    // Usage injection: streamed responses only report exact token usage when
+    // asked via stream_options, so ask on the client's behalf. `fallback`
+    // keeps the untouched body for a one-shot retry if the model rejects it.
+    // (`body` was already shadowed as mutable above for the Dots coercion.)
+    let mut fallback = None;
+    if wants_stream && !cfg.strict_passthrough && uri.path() == "/v1/chat/completions" {
+        let injectable = parsed
+            .as_ref()
+            .is_some_and(|v| v.is_object() && v.get("stream_options").is_none())
+            && !state.no_inject.lock().unwrap().contains(&ctx.model);
+        if injectable {
+            // `parsed` is unused after this point, so move it rather than deep-
+            // cloning the whole request body (the full conversation) to inject
+            // one field.
+            let mut v = parsed.take().unwrap();
+            v["stream_options"] = serde_json::json!({ "include_usage": true });
+            fallback = Some(std::mem::replace(
+                &mut body,
+                Bytes::from(serde_json::to_vec(&v).expect("serialize injected body")),
+            ));
+        }
+    }
+
+    if wants_stream {
+        let wait_deadline = wait_deadline(&cfg);
+        streaming(
+            state,
+            cfg,
+            ctx,
+            method,
+            path_query,
+            headers,
+            body,
+            prefer,
+            fallback,
+            inflight_guard,
+            request_deadline,
+            wait_deadline,
+        )
+    } else {
+        let wait_deadline = wait_deadline(&cfg);
+        let deadline_ctx = ctx.clone();
+        let work = buffered(
+            state,
+            cfg,
+            ctx,
+            method,
+            path_query,
+            headers,
+            body,
+            prefer,
+            wait_deadline,
+            raw_model.as_str(),
+        );
+        if let Some(deadline) = request_deadline {
+            match tokio::time::timeout_at(deadline.0.into(), work).await {
+                Ok(response) => response,
+                Err(_) => {
+                    record_deadline(&deadline_ctx);
+                    deadline_exceeded()
+                }
+            }
+        } else {
+            work.await
+        }
+    }
+}
+
+/// Sticky-lane hint: hash the conversation's identity (model + the first two
+/// messages — typically the system prompt and first user turn, stable across
+/// every turn of an agent session) so a conversation keeps hitting the same key
+/// while it has capacity, keeping any upstream prefix cache warm. Purely an
+/// optimization; correctness never depends on which key serves a request.
+fn affinity(body: &serde_json::Value, lanes: usize) -> Option<usize> {
+    let messages = body.get("messages")?.as_array()?;
+    let mut h = DefaultHasher::new();
+    body.get("model")
+        .and_then(|m| m.as_str())
+        .unwrap_or("")
+        .hash(&mut h);
+    for msg in messages.iter().take(2) {
+        msg.to_string().hash(&mut h);
+    }
+    Some((h.finish() % lanes as u64) as usize)
+}
+
+/// Non-streaming: pace, retry, and return the upstream response verbatim.
+#[allow(clippy::too_many_arguments)]
+async fn buffered(
+    state: Arc<AppState>,
+    cfg: Arc<Config>,
+    ctx: Ctx,
+    method: Method,
+    path_query: String,
+    headers: HeaderMap,
+    body: Bytes,
+    prefer: Option<usize>,
+    deadline: Instant,
+    raw_model: &str,
+) -> Response {
+    let _active = crate::dispatch::scopeguard(|| gauge!("flock_active_requests").decrement(1.0));
+    gauge!("flock_active_requests").increment(1.0);
+    // Session identity for sticky affinity: the authed client plus the
+    // requested model. (AstMatrix derived it from the incoming Bearer
+    // token; the authed client name is our stable equivalent.)
+    let session = format!("{}:{}", ctx.client, raw_model);
+    let sent_at = Instant::now();
+    let ectx = crate::router::ExecuteCtx {
+        http: state.http.clone(),
+        method,
+        path_query,
+        content_type: headers
+            .get(header::CONTENT_TYPE)
+            .and_then(|v| v.to_str().ok())
+            .map(str::to_owned),
+        accept: headers
+            .get(header::ACCEPT)
+            .and_then(|v| v.to_str().ok())
+            .map(str::to_owned),
+        body,
+        // Relay the Gemini Interactions turn handle. keypool (:25109) reads
+        // `x-previous-interaction-id` to build `previous_interaction_id` and
+        // answers with `x-interaction-id`; without the relay every tool loop
+        // through flock dies with a 400 on the second turn.
+        passthrough: headers
+            .get("x-previous-interaction-id")
+            .and_then(|v| v.to_str().ok())
+            .map(|v| vec![("x-previous-interaction-id".to_owned(), v.to_owned())])
+            .unwrap_or_default(),
+        model: raw_model.to_owned(),
+        session: Some(session),
+        deadline,
+        heartbeat: cfg.heartbeat,
+        request_timeout: cfg.request_timeout,
+        prefer_lane: prefer,
+        gated_path: true,
+        // The buffered path never watched for a gone client (admission used
+        // `|| true`); the request deadline still bounds every attempt.
+        client_gone: Box::new(|| false),
+    };
+    let outcome = state.router.execute_buffered(ectx).await;
+    match outcome {
+        Ok(crate::router::ExecuteOutcome::Response(resp)) => {
+            histogram!("flock_upstream_seconds", "model" => ctx.model.clone())
+                .record(sent_at.elapsed().as_secs_f64());
+            record_request(&ctx, resp.status().as_str());
+            relay(resp, &ctx).await
+        }
+        Ok(crate::router::ExecuteOutcome::Coalesced(shared)) => {
+            histogram!("flock_upstream_seconds", "model" => ctx.model.clone())
+                .record(sent_at.elapsed().as_secs_f64());
+            record_request(&ctx, shared.status.to_string().as_str());
+            relay_shared(&shared, &ctx)
+        }
+        Ok(crate::router::ExecuteOutcome::Buffered {
+            status,
+            content_type,
+            body,
+            extra,
+        }) => {
+            // The router already applied the empty-completion substance
+            // guard to these bytes; relay verbatim and observe.
+            histogram!("flock_upstream_seconds", "model" => ctx.model.clone())
+                .record(sent_at.elapsed().as_secs_f64());
+            record_request(&ctx, status.to_string().as_str());
+            let http_status =
+                StatusCode::from_u16(status).unwrap_or(StatusCode::BAD_GATEWAY);
+            if http_status.is_success() {
+                record_observations(&ctx, &observe_buffered(&body));
+            }
+            let mut builder = Response::builder()
+                .status(http_status)
+                .header(header::CONTENT_TYPE, content_type);
+            // Pass the upstream turn handle back to the client so an OpenAI
+            // caller can echo it as `x-previous-interaction-id` next turn.
+            for (k, v) in &extra {
+                builder = builder.header(k.as_str(), v.as_str());
+            }
+            builder.body(Body::from(body)).unwrap()
+        }
+        Err(crate::router::RouteError::Deadline) => {
+            record_request(&ctx, "504");
+            gateway_timeout(&cfg, state.pool().len())
+        }
+        Err(crate::router::RouteError::ClientGone) => {
+            record_request(&ctx, "499");
+            bad_gateway()
+        }
+        Err(crate::router::RouteError::RateLimited(_))
+        | Err(crate::router::RouteError::Unavailable(_)) => {
+            record_request(&ctx, "502");
+            bad_gateway()
+        }
+    }
+}
+
+/// Relay a coalesced shared response (the leader already read the body).
+fn relay_shared(shared: &crate::coalescer::SharedResponse, ctx: &Ctx) -> Response {
+    let status = StatusCode::from_u16(shared.status).unwrap_or(StatusCode::BAD_GATEWAY);
+    if status.is_success() {
+        record_observations(ctx, &observe_buffered(&shared.body));
+    }
+    let content_type = if shared.content_type.is_empty() {
+        "application/json".to_owned()
+    } else {
+        shared.content_type.clone()
+    };
+    let mut builder = Response::builder()
+        .status(status)
+        .header(header::CONTENT_TYPE, content_type);
+    for (k, v) in &shared.extra {
+        builder = builder.header(k.as_str(), v.as_str());
+    }
+    builder.body(Body::from(shared.body.clone())).unwrap()
+}
+
+/// Streaming: commit to a 200 SSE response immediately and emit `: heartbeat`
+/// comment lines (ignored by every OpenAI SSE client) while we wait for a
+/// slot or ride out 429/5xx, then pipe the upstream stream through.
+#[allow(clippy::too_many_arguments)]
+fn streaming(
+    state: Arc<AppState>,
+    cfg: Arc<Config>,
+    ctx: Ctx,
+    method: Method,
+    path_query: String,
+    headers: HeaderMap,
+    mut body: Bytes,
+    prefer: Option<usize>,
+    mut fallback: Option<Bytes>,
+    inflight_guard: impl Send + 'static,
+    request_deadline: Option<RequestDeadline>,
+    deadline: Instant,
+) -> Response {
+    let (tx, rx) = mpsc::channel::<Result<Bytes, std::io::Error>>(16);
+
+    tokio::spawn(async move {
+        // Holds the handler's in-flight slot until this task — the request's
+        // real lifetime — exits, so max_inflight bounds live streams too.
+        let _inflight = inflight_guard;
+        let _active =
+            crate::dispatch::scopeguard(|| gauge!("flock_active_requests").decrement(1.0));
+        gauge!("flock_active_requests").increment(1.0);
+        let deadline_tx = tx.clone();
+        let deadline_ctx = ctx.clone();
+        let observer = Arc::new(Mutex::new(None));
+        let deadline_observer = observer.clone();
+        let work = async move {
+            let send = |b: &'static str| {
+                let tx = tx.clone();
+                // Static control frames — no per-send alloc/copy.
+                async move { tx.send(Ok(Bytes::from_static(b.as_bytes()))).await.is_ok() }
+            };
+            if !send(": connected\n\n").await {
+                record_request(&ctx, "disconnect");
+                return;
+            }
+            // Per-attempt ledger (Phase D): one entry per upstream attempt,
+            // emitted with the completed decision on every exit path.
+            let decision = std::sync::RwLock::new(crate::decision::RoutingDecision::new());
+            let _decision_emit = crate::decision::DecisionEmit { decision: &decision, model: &ctx.model };
+            'attempt: loop {
+                // Model-pressure permit first (worker concurrency), then an RPM
+                // slot — both heartbeating so the harness doesn't hang up. The
+                // permit spans the whole upstream exchange and drops on every
+                // exit from this iteration.
+                let Ok(_permit) = acquire_model_permit(&state, &cfg, &ctx, deadline, || {
+                    tx.try_send(Ok(Bytes::from_static(b": heartbeat\n\n")))
+                        .is_ok()
+                })
+                .await
+                else {
+                    record_request(&ctx, "504");
+                    let _ = tx
+                        .send(Ok(sse_error(
+                            "proxy timed out waiting for an upstream slot",
+                        )))
+                        .await;
+                    return;
+                };
+                let slot = reserve_slot(&state, cfg.heartbeat, deadline, prefer, || {
+                    tx.try_send(Ok(Bytes::from_static(b": heartbeat\n\n")))
+                        .is_ok()
+                })
+                .await;
+                let Some(slot) = slot else {
+                    record_request(&ctx, "504");
+                    let _ = tx
+                        .send(Ok(sse_error(
+                            "proxy timed out waiting for an upstream slot",
+                        )))
+                        .await;
+                    return;
+                };
+
+                let sent_at = Instant::now();
+                let resp = match upstream_request(
+                    &state.http,
+                    &cfg.base_url,
+                    &method,
+                    &path_query,
+                    &headers,
+                    &slot.key,
+                    &body,
+                )
+                .send()
+                .await
+                {
+                    Ok(r) => r,
+                    Err(e) => {
+                        tracing::warn!(lane = slot.lane, error = %e, "upstream connection error, retrying");
+                        enter_cooldown(&slot, "connect", Duration::from_secs(5));
+                        state.router.record_attempt(
+                            "nvidia",
+                            &ctx.model,
+                            0,
+                            sent_at.elapsed(),
+                            false,
+                        );
+                        decision.write().unwrap().push_attempt("nvidia", 0, sent_at.elapsed());
+                        continue;
+                    }
+                };
+
+                // A 400 right after we injected stream_options usually means this
+                // model rejects the field: remember that and retry untouched.
+                if resp.status() == reqwest::StatusCode::BAD_REQUEST && fallback.is_some() {
+                    tracing::info!(model = %ctx.model, "model rejected stream_options; retrying without injection");
+                    state.no_inject.lock().unwrap().insert(ctx.model.clone());
+                    body = fallback.take().unwrap();
+                    state.router.record_attempt(
+                        "nvidia",
+                        &ctx.model,
+                        400,
+                        sent_at.elapsed(),
+                        false,
+                    );
+                    decision.write().unwrap().push_attempt("nvidia", 400, sent_at.elapsed());
+                    continue;
+                }
+
+                if retryable(resp.status()) {
+                    if Instant::now() >= deadline {
+                        record_request(&ctx, "504");
+                        let _ = tx
+                            .send(Ok(sse_error("upstream unavailable, retries exhausted")))
+                            .await;
+                        return;
+                    }
+                    let status = resp.status();
+                    let backoff = backoff_for(&resp);
+                    // Worker exhaustion is model-scoped: back off the model via
+                    // the governor, never the lane (see `buffered`).
+                    let detail = resp.text().await.unwrap_or_default();
+                    let exhausted = governor::is_worker_exhausted(&detail);
+                    // record_attempt owns the single note_exhausted on the
+                    // shared governor when exhausted (called while the permit
+                    // is still held); the lane is never cooled down here.
+                    if !exhausted {
+                        tracing::info!(lane = slot.lane, %status, ?backoff, "lane in cooldown, retrying");
+                        enter_cooldown(&slot, status.as_str(), backoff);
+                    }
+                    state.router.record_attempt(
+                        "nvidia",
+                        &ctx.model,
+                        status.as_u16(),
+                        sent_at.elapsed(),
+                        exhausted,
+                    );
+                    decision.write().unwrap().push_attempt("nvidia", status.as_u16(), sent_at.elapsed());
+                    if !send(": retrying\n\n").await {
+                        record_request(&ctx, "disconnect");
+                        return;
+                    }
+                    continue;
+                }
+
+                if !resp.status().is_success() {
+                    // Non-retryable upstream error after we already committed to
+                    // SSE: surface it as an in-stream error event.
+                    let status = resp.status();
+                    let detail = resp.text().await.unwrap_or_default();
+                    tracing::warn!(%status, "upstream rejected request");
+                    record_request(&ctx, status.as_str());
+                    state.router.record_attempt(
+                        "nvidia",
+                        &ctx.model,
+                        status.as_u16(),
+                        sent_at.elapsed(),
+                        false,
+                    );
+                    decision.write().unwrap().push_attempt("nvidia", status.as_u16(), sent_at.elapsed());
+                    let _ = tx
+                        .send(Ok(sse_error(&format!("upstream error {status}: {detail}"))))
+                        .await;
+                    return;
+                }
+
+                state.router.record_attempt(
+                    "nvidia",
+                    &ctx.model,
+                    resp.status().as_u16(),
+                    sent_at.elapsed(),
+                    false,
+                );
+                decision.write().unwrap().push_attempt("nvidia", resp.status().as_u16(), sent_at.elapsed());
+                *observer.lock().unwrap() = Some(SseObserver::default());
+                let mut first_chunk: Option<Instant> = None;
+                let mut chunks = resp.bytes_stream();
+                loop {
+                    // Two ways out of a blocked upstream read: the stall cutoff
+                    // (a stalled upstream would otherwise hold the client
+                    // forever), and the client hanging up (`tx.closed()`) — which
+                    // must free the in-flight slot promptly, not at the cutoff
+                    // (and with stream_idle 0 there is no cutoff: a hung upstream
+                    // would pin the slot until restart).
+                    let upstream_read = async {
+                        if cfg.stream_idle.is_zero() {
+                            Ok(chunks.next().await)
+                        } else {
+                            tokio::time::timeout(cfg.stream_idle, chunks.next()).await
+                        }
+                    };
+                    let next = tokio::select! {
+                        _ = tx.closed() => {
+                            finalize_sse_observer(&ctx, &observer, StreamOutcome::Disconnected);
+                            record_request(&ctx, "disconnect");
+                            return;
+                        }
+                        read = upstream_read => match read {
+                            Ok(n) => n,
+                            Err(_) => {
+                                // First-chunk commit (Phase E): nothing has
+                                // reached the client yet, so a stalled
+                                // upstream is retried on the outer loop,
+                                // not surfaced. Once the first chunk
+                                // commits, the retry window closes and a
+                                // stall errors as it always has.
+                                if first_chunk.is_none() && Instant::now() < deadline {
+                                    tracing::warn!(model = %ctx.model, idle = ?cfg.stream_idle, "upstream stalled before first chunk, retrying");
+                                    continue 'attempt;
+                                }
+                                finalize_sse_observer(&ctx, &observer, StreamOutcome::Truncated);
+                                tracing::warn!(model = %ctx.model, idle = ?cfg.stream_idle, "upstream stream stalled");
+                                record_request(&ctx, "stall");
+                                let _ = tx.send(Ok(sse_error("upstream stream stalled"))).await;
+                                return;
+                            }
+                        }
+                    };
+                    let Some(chunk) = next else { break };
+                    match chunk {
+                        Ok(b) => {
+                            if first_chunk.is_none() {
+                                first_chunk = Some(Instant::now());
+                                // Explicit commit marker: from this point
+                                // the response is live to the client and the
+                                // pre-commit retry window closes.
+                                counter!("flock_stream_commit_total", "model" => ctx.model.clone())
+                                    .increment(1);
+                                histogram!("flock_ttft_seconds", "model" => ctx.model.clone())
+                                    .record(sent_at.elapsed().as_secs_f64());
+                            }
+                            observer
+                                .lock()
+                                .unwrap()
+                                .as_mut()
+                                .expect("stream observer initialized")
+                                .push(&b);
+                            if tx.send(Ok(b)).await.is_err() {
+                                finalize_sse_observer(&ctx, &observer, StreamOutcome::Disconnected);
+                                record_request(&ctx, "disconnect");
+                                return; // client hung up
+                            }
+                        }
+                        Err(e) => {
+                            finalize_sse_observer(&ctx, &observer, StreamOutcome::Truncated);
+                            tracing::warn!(error = %e, "upstream stream broke mid-response");
+                            record_request(&ctx, "stream_error");
+                            let _ = tx.send(Ok(sse_error("upstream stream interrupted"))).await;
+                            return;
+                        }
+                    }
+                }
+
+                let completion = finalize_sse_observer(&ctx, &observer, StreamOutcome::Completed);
+                if let (Some(first), Some((c, source))) = (first_chunk, completion) {
+                    let gen_secs = first.elapsed().as_secs_f64();
+                    if gen_secs > 0.1 && c > 0 {
+                        histogram!("flock_tokens_per_second", "model" => ctx.model.clone(), "source" => source)
+                        .record(c as f64 / gen_secs);
+                        // Mean inter-token latency (time-per-output-token).
+                        histogram!("flock_tpot_seconds", "model" => ctx.model.clone())
+                            .record(gen_secs / c as f64);
+                    }
+                }
+                // Total upstream time for streaming, for parity with the buffered
+                // path (which records upstream_seconds directly).
+                histogram!("flock_upstream_seconds", "model" => ctx.model.clone())
+                    .record(sent_at.elapsed().as_secs_f64());
+                record_request(&ctx, "200");
+                return;
+            }
+        };
+        if let Some(request_deadline) = request_deadline {
+            tokio::select! {
+                _ = tokio::time::sleep_until(request_deadline.0.into()) => {
+                    finalize_sse_observer(&deadline_ctx, &deadline_observer, StreamOutcome::Deadline);
+                    record_deadline(&deadline_ctx);
+                    let _ = deadline_tx
+                        .try_send(Ok(sse_error_with_code(
+                            "deadline_exceeded",
+                            "proxy request deadline exceeded",
+                        )));
+                }
+                _ = work => {}
+            }
+        } else {
+            work.await;
+        }
+    });
+
+    Response::builder()
+        .status(StatusCode::OK)
+        .header(header::CONTENT_TYPE, "text/event-stream")
+        .header(header::CACHE_CONTROL, "no-cache")
+        .body(Body::from_stream(ReceiverStream::new(rx)))
+        .unwrap()
+}
+
+/// /v1/models, cached so harness catalog polls cost zero rate budget. The
+/// lock is held across the refresh so concurrent misses make one upstream
+/// call (followers see the fresh cache when they get the lock).
+/// Merge the multi-provider registry into a `/v1/models` body. The live
+/// upstream (nvidia) listing stays authoritative for its own models; every
+/// other enabled provider contributes its configured model ids, tagged with
+/// their source provider. Non-JSON bodies pass through untouched, and the
+/// merge is idempotent (already-listed ids are not duplicated).
+/// Live Flock metadata attached to each /v1/models entry: which
+/// provider serves it, whether that provider is usable (keys present) and
+/// healthy, circuit state, probe latency, ELO, and the current
+/// empty-completion strike count for the exact (provider, model) pair.
+///
+/// The nvidia upstream catalog lists every model on the platform, not
+/// every model THIS account is entitled to serve — the unentitled ones
+/// answer 404 "Function not found for account" on chat completions.
+/// NIM_VERIFIED_MODELS is the entitlement-verified working set (the
+/// 2026-10-03 audit: 81 catalog models probed across all account keys,
+/// 7 return real completions). Unverified catalog entries are dropped
+/// from the advertisement so clients never route into a guaranteed 404;
+/// the strike machinery still quarantines anything that starts failing.
+const NIM_VERIFIED_MODELS: &[&str] = &[
+    "nvidia/nemotron-3-super-120b-a12b",
+    "nvidia/nemotron-3-ultra-550b-a55b",
+    "z-ai/glm-5.3-flash",
+    "deepseek-ai/deepseek-v4.1-flash",
+    "openai/gpt-oss-20b",
+    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "z-ai/glm-5.3",
+];
+
+fn flock_model_meta(
+    router: &crate::router::RouterHandle,
+    meta: &crate::router::ProviderMeta,
+    model: &str,
+) -> serde_json::Value {
+    serde_json::json!({
+        "provider": meta.provider,
+        "display_name": meta.display_name,
+        "usable": meta.usable,
+        "healthy": meta.healthy,
+        "latency_ms": meta.latency_ms,
+        "elo": meta.elo,
+        "circuit": meta.circuit,
+        "empty_strikes": router.empty_strike_count(&meta.provider, model),
+    })
+}
+
+fn aggregate_models(body: &Bytes, router: &crate::router::RouterHandle) -> Bytes {
+    let mut v: serde_json::Value = match serde_json::from_slice(body) {
+        Ok(v) => v,
+        Err(_) => return body.clone(),
+    };
+    let data = match v.get_mut("data").and_then(|d| d.as_array_mut()) {
+        Some(d) => d,
+        None => return body.clone(),
+    };
+    let metas = router.provider_metadata();
+    let mut seen: std::collections::HashSet<String> = data
+        .iter()
+        .filter_map(|m| {
+            m.get("id")
+                .and_then(|id| id.as_str())
+                .map(|id| id.to_owned())
+        })
+        .collect();
+    // The upstream listing is nvidia's catalog: enrich every entry with the
+    // live nvidia provider metadata instead of leaving it bare, and drop
+    // catalog entries the account is not entitled to serve (the upstream
+    // lists platform-wide models, not account-entitled ones). The filter
+    // applies only to the real NVIDIA endpoint — a test mock or a local
+    // NIM shim serving as the nvidia provider keeps its own catalog.
+    if let Some(nv) = metas.iter().find(|m| m.provider == "nvidia") {
+        let real_nim = nv.base_url.starts_with("https://integrate.api.nvidia.com");
+        let verified: std::collections::HashSet<&str> =
+            NIM_VERIFIED_MODELS.iter().copied().collect();
+        if real_nim {
+            data.retain(|entry| {
+                entry
+                    .get("id")
+                    .and_then(|i| i.as_str())
+                    .map(|id| verified.contains(id))
+                    .unwrap_or(true)
+            });
+        }
+        for entry in data.iter_mut() {
+            let id = entry
+                .get("id")
+                .and_then(|i| i.as_str())
+                .unwrap_or("")
+                .to_owned();
+            entry["flock"] = flock_model_meta(router, nv, &id);
+        }
+    }
+    // Fix C: quarantine filter. Two layers --
+    //  1. Roost's dead-ID list (static, curated): known-dead IDs never ship.
+    //  2. Live 404 strikes (dynamic): a model the upstream 404'd
+    //     QUARANTINE_STRIKES times stops being advertised until the strikes
+    //     decay (see RouterHandle::EMPTY_STRIKE_DECAY).
+    let dead: std::collections::HashSet<&str> = crate::roost_providers::ROOST_DEAD_IDS
+        .iter()
+        .copied()
+        .collect();
+    for pm in &metas {
+        // Nvidia's ids already came from the authoritative upstream listing
+        // above; the merge only adds the other providers' routable models.
+        if pm.provider == "nvidia" {
+            continue;
+        }
+        for m in &pm.models {
+            if m == "*" {
+                continue;
+            }
+            if dead.contains(m.as_str()) {
+                continue;
+            }
+            if router.empty_strike_count(&pm.provider, m) >= QUARANTINE_STRIKES {
+                continue;
+            }
+            if seen.insert(m.clone()) {
+                data.push(serde_json::json!({
+                    "id": m,
+                    "object": "model",
+                    "owned_by": pm.provider,
+                    "flock": flock_model_meta(router, pm, m),
+                }));
+            }
+        }
+    }
+    serde_json::to_vec(&v)
+        .map(Bytes::from)
+        .unwrap_or_else(|_| body.clone())
+}
+
+/// Refresh the /v1/models cache from upstream. Called with the
+/// `models_refresh` singleflight guard held — only one refresh runs at a time.
+async fn refresh_models_cache(state: &Arc<AppState>, cfg: &Arc<Config>) {
+    let deadline = Instant::now() + Duration::from_secs(30);
+    let Some(slot) = reserve_slot(state, cfg.heartbeat, deadline, None, || true).await else {
+        tracing::warn!("models refresh: no slot available");
+        return;
+    };
+    match fetch_models(&state.http, &cfg.base_url, &slot.key).await {
+        Ok(resp) if resp.status().is_success() => {
+            let body = resp.bytes().await.unwrap_or_default();
+            *state.models_cache.lock().await = Some((Instant::now(), body));
+        }
+        Ok(resp) => {
+            if retryable(resp.status()) {
+                enter_cooldown(&slot, resp.status().as_str(), backoff_for(&resp));
+            }
+            tracing::warn!(status = %resp.status(), "models refresh: upstream error");
+        }
+        Err(e) => {
+            tracing::warn!(error = %e, "models refresh failed");
+        }
+    }
+}
+
+/// /v1/models with singleflight + stale-while-revalidate.
+///
+/// The old code held `models_cache.lock()` across `reserve_slot` (up to 30s)
+/// + the live NVIDIA fetch — one slow upstream blocked ALL concurrent
+/// /v1/models requests behind the mutex. Now:
+/// - Fresh cache: served immediately, lock held only for a clone (µs).
+/// - Stale cache: served immediately; a background refresh is singleflighted
+///   via `models_refreshing` AtomicBool (only one refresh runs; the rest serve stale).
+/// - Cold (no cache): singleflight via blocking lock; followers re-check the
+///   cache after the leader populates it instead of each doing a fetch.
+async fn models(state: Arc<AppState>, cfg: Arc<Config>) -> Response {
+    // Fast path: snapshot the cache without holding the lock across I/O.
+    let cached: Option<(Instant, Bytes)> = { state.models_cache.lock().await.clone() };
+    if let Some((at, body)) = cached {
+        if at.elapsed() < cfg.models_ttl {
+            let merged = aggregate_models(&body, &state.router);
+            return json_response(StatusCode::OK, merged);
+        }
+        // Stale: serve stale NOW, refresh in background (singleflight via AtomicBool).
+        // swap returns the previous value: if it was false, we are the leader.
+        if !state.models_refreshing.swap(true, std::sync::atomic::Ordering::AcqRel) {
+            let state2 = state.clone();
+            let cfg2 = cfg.clone();
+            tokio::spawn(async move {
+                refresh_models_cache(&state2, &cfg2).await;
+                state2.models_refreshing.store(false, std::sync::atomic::Ordering::Release);
+            });
+        }
+        let merged = aggregate_models(&body, &state.router);
+        return json_response(StatusCode::OK, merged);
+    }
+    // Cold start: no cache at all. Singleflight via the refresh lock —
+    // the winner fetches, followers re-check the cache when they get the lock.
+    let _guard = state.models_refresh.lock().await;
+    // Re-check: a concurrent request may have populated the cache while we waited.
+    if let Some((at, body)) = state.models_cache.lock().await.clone() {
+        if at.elapsed() < cfg.models_ttl {
+            let merged = aggregate_models(&body, &state.router);
+            return json_response(StatusCode::OK, merged);
+        }
+    }
+    // We are the leader: fetch synchronously (cold start has nothing stale to serve).
+    let deadline = Instant::now() + Duration::from_secs(30);
+    let Some(slot) = reserve_slot(&state, cfg.heartbeat, deadline, None, || true).await else {
+        return gateway_timeout(&cfg, state.pool().len());
+    };
+    match fetch_models(&state.http, &cfg.base_url, &slot.key).await {
+        Ok(resp) if resp.status().is_success() => {
+            let body = resp.bytes().await.unwrap_or_default();
+            *state.models_cache.lock().await = Some((Instant::now(), body.clone()));
+            let merged = aggregate_models(&body, &state.router);
+            json_response(StatusCode::OK, merged)
+        }
+        Ok(resp) => {
+            if retryable(resp.status()) {
+                enter_cooldown(&slot, resp.status().as_str(), backoff_for(&resp));
+            }
+            let status =
+                StatusCode::from_u16(resp.status().as_u16()).unwrap_or(StatusCode::BAD_GATEWAY);
+            let body = resp.bytes().await.unwrap_or_default();
+            json_response(status, body)
+        }
+        Err(e) => {
+            tracing::warn!(error = %e, "models fetch failed");
+            gateway_timeout(&cfg, state.pool().len())
+        }
+    }
+}
+
+
+
+/// The raw model-catalog fetch with an explicit key — shared by the cached
+/// `/v1/models` path above and the setup wizard's key-validation probe
+/// (which must bypass both the pool and the cache).
+pub async fn fetch_models(
+    http: &reqwest::Client,
+    base_url: &str,
+    key: &str,
+) -> reqwest::Result<reqwest::Response> {
+    http.get(crate::providers::models_url(base_url))
+        .bearer_auth(key)
+        .send()
+        .await
+}
+
+/// Return an upstream response to the client as-is, harvesting the `usage`
+/// object for token accounting on the way past.
+async fn relay(resp: reqwest::Response, ctx: &Ctx) -> Response {
+    let status = StatusCode::from_u16(resp.status().as_u16()).unwrap_or(StatusCode::BAD_GATEWAY);
+    let content_type = resp
+        .headers()
+        .get(header::CONTENT_TYPE)
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/json")
+        .to_owned();
+    // Relay upstream turn handles to the client. keypool stamps
+    // `x-interaction-id` with the Gemini Interactions turn id; without it a
+    // caller cannot send a `function_result` on the next turn, and the tool
+    // loop breaks the moment it routes through flock.
+    let extra: Vec<(String, String)> = ["x-interaction-id"]
+        .iter()
+        .filter_map(|k| {
+            resp.headers()
+                .get(*k)
+                .and_then(|v| v.to_str().ok())
+                .map(|v| ((*k).to_owned(), v.to_owned()))
+        })
+        .collect();
+    let body = match resp.bytes().await {
+        Ok(b) => b,
+        Err(e) => {
+            // Body stalled past the request timeout, or the connection dropped
+            // mid-body. Surface a clear gateway error rather than a truncated
+            // "success" with an empty body.
+            tracing::warn!(error = %e, "upstream body read failed");
+            return bad_gateway();
+        }
+    };
+    if status.is_success() {
+        record_observations(ctx, &observe_buffered(&body));
+    }
+    // BrighTO pattern: x-router-overhead-ms measures ingress->dispatch.
+    // Uses Ctx.started (request ingress time) for the overhead calculation.
+    let overhead_ms = ctx.started.elapsed().as_millis().to_string();
+    let mut builder = Response::builder()
+        .status(status)
+        .header(header::CONTENT_TYPE, content_type)
+        .header("x-router-overhead-ms", overhead_ms);
+    for (k, v) in &extra {
+        builder = builder.header(k.as_str(), v.as_str());
+    }
+    builder.body(Body::from(body)).unwrap()
+}
+
+/// The proxy's standard error envelope: `{"error":{message,type,code}}`.
+fn proxy_error_json(code: &str, message: impl Into<String>) -> serde_json::Value {
+    serde_json::json!({
+        "error": { "message": message.into(), "type": "proxy_error", "code": code }
+    })
+}
+
+fn sse_error_with_code(code: &str, message: &str) -> Bytes {
+    let event = proxy_error_json(code, message);
+    Bytes::from(format!("data: {event}\n\ndata: [DONE]\n\n"))
+}
+
+fn sse_error(message: &str) -> Bytes {
+    sse_error_with_code("upstream_unavailable", message)
+}
+
+fn json_response(status: StatusCode, body: Bytes) -> Response {
+    Response::builder()
+        .status(status)
+        .header(header::CONTENT_TYPE, "application/json")
+        .body(Body::from(body))
+        .unwrap()
+}
+
+fn unauthorized() -> Response {
+    let body = proxy_error_json(
+        "unauthorized",
+        "missing or invalid proxy API key (Authorization: Bearer ...)",
+    );
+    (
+        StatusCode::UNAUTHORIZED,
+        [(header::WWW_AUTHENTICATE, "Bearer")],
+        axum::Json(body),
+    )
+        .into_response()
+}
+
+fn invalid_deadline() -> Response {
+    let body = proxy_error_json(
+        "invalid_deadline",
+        "X-Nim-Proxy-Deadline-Ms must be one unsigned decimal millisecond value",
+    );
+    (StatusCode::BAD_REQUEST, axum::Json(body)).into_response()
+}
+
+fn deadline_exceeded() -> Response {
+    let body = proxy_error_json("deadline_exceeded", "proxy request deadline exceeded");
+    (StatusCode::GATEWAY_TIMEOUT, axum::Json(body)).into_response()
+}
+
+fn overloaded(max_inflight: usize) -> Response {
+    let body = proxy_error_json(
+        "overloaded",
+        format!("proxy at capacity ({max_inflight} concurrent requests); retry shortly"),
+    );
+    (
+        StatusCode::SERVICE_UNAVAILABLE,
+        [(header::RETRY_AFTER, "5")],
+        axum::Json(body),
+    )
+        .into_response()
+}
+
+fn bad_gateway() -> Response {
+    let body = proxy_error_json("bad_gateway", "upstream response failed or timed out");
+    (StatusCode::BAD_GATEWAY, axum::Json(body)).into_response()
+}
+
+fn gateway_timeout(cfg: &Config, pool_len: usize) -> Response {
+    let body = proxy_error_json(
+        "rate_limited",
+        format!(
+            "no upstream slot became available within {}s (all {} keys saturated)",
+            cfg.max_wait.as_secs(),
+            pool_len
+        ),
+    );
+    (StatusCode::GATEWAY_TIMEOUT, axum::Json(body)).into_response()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        bounded_label, count_tools, is_json_mode, label_path, normalize_message_contents,
+        sanitize_label, tool_choice_mode,
+    };
+    use std::collections::HashSet;
+
+    #[test]
+    fn flattens_text_part_arrays() {
+        let mut body: serde_json::Value = serde_json::json!({
+            "model": "m",
+            "messages": [
+                {"role": "system", "content": "plain"},
+                {"role": "user", "content": [
+                    {"type": "text", "text": "hello"},
+                    {"type": "text", "text": "world"}
+                ]}
+            ]
+        });
+        assert!(normalize_message_contents(&mut body));
+        assert_eq!(body["messages"][1]["content"], "hello\nworld");
+        assert_eq!(body["messages"][0]["content"], "plain");
+    }
+
+    #[test]
+    fn non_text_parts_are_preserved_as_json() {
+        let mut body: serde_json::Value = serde_json::json!({
+            "messages": [
+                {"role": "user", "content": [
+                    {"type": "image_url", "image_url": {"url": "data:image/png;base64,x"}}
+                ]}
+            ]
+        });
+        assert!(normalize_message_contents(&mut body));
+        let content = body["messages"][0]["content"].as_str().unwrap();
+        assert!(content.contains("<part type=image_url>"));
+        assert!(content.contains("data:image/png;base64,x"));
+    }
+
+    #[test]
+    fn string_and_null_content_pass_through() {
+        let mut body: serde_json::Value = serde_json::json!({
+            "messages": [
+                {"role": "user", "content": "already a string"},
+                {"role": "assistant", "content": null}
+            ]
+        });
+        assert!(!normalize_message_contents(&mut body));
+        assert_eq!(body["messages"][0]["content"], "already a string");
+        assert!(body["messages"][1]["content"].is_null());
+    }
+
+    #[test]
+    fn missing_messages_is_noop() {
+        let mut body: serde_json::Value = serde_json::json!({"model": "m"});
+        assert!(!normalize_message_contents(&mut body));
+    }
+
+    #[test]
+    fn sanitize_strips_injection_chars() {
+        // Quotes, braces, angle brackets, newlines, ANSI escapes all removed.
+        assert_eq!(sanitize_label("meta/llama-3.3-70b"), "meta/llama-3.3-70b");
+        assert_eq!(sanitize_label("a\"} fake_metric 1"), "afake_metric1");
+        assert_eq!(
+            sanitize_label("<img src=x onerror=alert(1)>"),
+            "imgsrcxonerroralert1"
+        );
+        assert_eq!(sanitize_label("line1\nline2"), "line1line2");
+        assert_eq!(sanitize_label("\x1b[31mred"), "31mred");
+        assert_eq!(sanitize_label(""), "none");
+        assert_eq!(sanitize_label("!!!"), "none");
+    }
+
+    #[test]
+    fn sanitize_caps_length() {
+        let long = "a".repeat(200);
+        assert_eq!(sanitize_label(&long).len(), 64);
+    }
+
+    #[test]
+    fn bounded_label_caps_cardinality() {
+        let mut seen = HashSet::new();
+        assert_eq!(bounded_label(&mut seen, "m1".into(), 2), "m1");
+        assert_eq!(bounded_label(&mut seen, "m2".into(), 2), "m2");
+        // Third distinct value exceeds the cap -> "other".
+        assert_eq!(bounded_label(&mut seen, "m3".into(), 2), "other");
+        // Already-seen values still pass through after the cap.
+        assert_eq!(bounded_label(&mut seen, "m1".into(), 2), "m1");
+    }
+
+    #[test]
+    fn path_label_is_allowlisted() {
+        assert_eq!(label_path("/v1/chat/completions"), "/v1/chat/completions");
+        assert_eq!(label_path("/v1/embeddings"), "/v1/embeddings");
+        assert_eq!(label_path("/v1/anything-else"), "other");
+        assert_eq!(label_path("/v1/../etc"), "other");
+    }
+
+    #[test]
+    fn tool_choice_mode_maps_unknown_strings_to_other() {
+        // auto / none / required / named are covered elsewhere; an unrecognized
+        // string must collapse to the bounded "other" label, not pass through.
+        assert_eq!(
+            tool_choice_mode(&serde_json::json!({"tool_choice": "banana"})),
+            "other"
+        );
+    }
+
+    #[test]
+    fn tool_choice_and_shape_readers() {
+        let auto = serde_json::json!({"tools": [{}], "tool_choice": "auto"});
+        assert_eq!(tool_choice_mode(&auto), "auto");
+        let named = serde_json::json!({"tool_choice": {"type": "function"}});
+        assert_eq!(tool_choice_mode(&named), "named");
+        // tools present, no explicit choice -> provider default (auto)
+        assert_eq!(
+            tool_choice_mode(&serde_json::json!({"tools": [{}]})),
+            "auto"
+        );
+
+        assert_eq!(
+            count_tools(&serde_json::json!({"tools": [{}, {}, {}]})),
+            Some(3)
+        );
+        assert_eq!(
+            count_tools(&serde_json::json!({"functions": [{}]})),
+            Some(1)
+        );
+        assert_eq!(count_tools(&serde_json::json!({"model": "x"})), None);
+
+        assert!(is_json_mode(
+            &serde_json::json!({"response_format": {"type": "json_object"}})
+        ));
+        assert!(!is_json_mode(
+            &serde_json::json!({"response_format": {"type": "text"}})
+        ));
+        assert!(!is_json_mode(&serde_json::json!({"model": "x"})));
+    }
+    #[test]
+    fn upstream_target_url_never_doubles_the_v1_segment() {
+        // Regression: handle() forwards the raw configured base URL; a
+        // versioned base must resolve to a single /v1, never /v1/v1.
+        assert_eq!(
+            super::upstream_target_url(
+                "https://api.groq.com/openai/v1",
+                "/v1/chat/completions"
+            ),
+            "https://api.groq.com/openai/v1/chat/completions"
+        );
+        assert_eq!(
+            super::upstream_target_url("https://api.cerebras.ai/v1/", "/v1/models?limit=5"),
+            "https://api.cerebras.ai/v1/models?limit=5"
+        );
+        // Bare-host bases still gain the /v1 they need.
+        assert_eq!(
+            super::upstream_target_url("https://api.mistral.ai", "/v1/chat/completions"),
+            "https://api.mistral.ai/v1/chat/completions"
+        );
+        // Trailing slash on the base never yields a doubled separator.
+        assert_eq!(
+            super::upstream_target_url("https://api.mistral.ai/", "/v1/embeddings"),
+            "https://api.mistral.ai/v1/embeddings"
+        );
+    }
+
+}
+
+/// Fuzzing-only surface (see fuzz/). Thin wrappers so the fuzz targets can
+/// exercise the untrusted-byte parsers without widening the visibility of
+/// the real items.
+#[cfg(fuzzing)]
+#[doc(hidden)]
+pub mod fuzz {
+    /// Drive the private SSE observer with arbitrary bytes, twice: once as a
+    /// single chunk and once re-fragmented at an input-derived boundary. Must
+    /// never panic; the observer bounds its one unfinished event internally.
+    pub fn sse_scan(data: &[u8]) {
+        let mut whole = crate::observation::SseObserver::default();
+        whole.push(data);
+        let _ = whole.finish(crate::observation::StreamOutcome::Completed);
+
+        let step = data.first().map_or(3, |b| (*b as usize % 17) + 1);
+        let mut frag = crate::observation::SseObserver::default();
+        for chunk in data.chunks(step) {
+            frag.push(chunk);
+        }
+        let _ = frag.finish(crate::observation::StreamOutcome::Completed);
+    }
+
+    /// The sanitizer's output invariants ARE the security property: bounded
+    /// length, never empty, and only chars that are inert in the Prometheus
+    /// exposition format, access logs, and persisted history.
+    pub fn sanitize_label(data: &[u8]) {
+        let raw = String::from_utf8_lossy(data);
+        let out = super::sanitize_label(&raw);
+        assert!(!out.is_empty(), "sanitized label must never be empty");
+        assert!(out.len() <= 64, "sanitized label must be length-capped");
+        assert!(
+            out.chars()
+                .all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-' | '/' | ':')),
+            "sanitized label must stay in the safe charset"
+        );
+    }
+
+}
