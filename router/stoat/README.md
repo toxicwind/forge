@@ -15,7 +15,8 @@ The TypeScript multi-provider LLM router (stoat) (Bun): strategy-based failover,
 
 - **Live replacement:** cuttinggate (`mesh/proxy/cuttinggate/`, `:25200`) — same strategy DNA, new home.
 - **Strategy layer:** vendored into cuttinggate's `src/strategy/`.
-- **Provider data:** the router's `PROVIDERS` table was reconciled into `mesh/catalog/` (`@ranch/roost`), the estate's provider SSOT.
+- **Provider data:** the router's `PROVIDERS` table was reconciled into `mesh/catalog/` (`@toxicwind/pinax`), the estate's provider SSOT.
+
 ## Zen provider restoration (2026-10-04)
 
 The `zen` provider (OpenCode Zen free tier, `https://opencode.ai/zen/v1`) had 10 models
@@ -36,6 +37,7 @@ jev-1.13-free, fledge-alpha-free, space-bunny-free
 (All verified live via :25104/v1/chat/completions)
 
 **Community projects taking zen further:**
+
 - parithosh-varma/opencode-proxy — zero-dep OpenAI-compatible proxy
 - dinhkarate/opencode-zen-free-proxy — OpenAI/Anthropic/Responses APIs
 - markdev11/oc-proxy — thin proxy for muse-spark models (Vercel-ready)
@@ -67,6 +69,7 @@ is no Responses-API surface on Zen; the muse-spark pair serves via
 fingerprint only matters alongside the real key.
 
 **More community projects (beyond the list above):**
+
 - fly143/OpenCode-Zen-free-api — `zen_relay.py` reverse proxy + `zen_check.py`
   ablation self-test; measured the exact gate fingerprint conditions
 - 12errh/zen-proxy — fallback routing, aliases, self-updating model list

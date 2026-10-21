@@ -1,7 +1,7 @@
 package astmatrix
 
 // liveCatalogReader — thin reader for the live catalog JSON exported by the
-// TS package (@ranch/roost ModelCatalog.writeLiveCatalog).
+// TS package (@toxicwind/pinax ModelCatalog.writeLiveCatalog).
 //
 // This file contains NO catalog logic. It does not discover, prune, or
 // quarantine anything. The TS package is the brain: it owns the provider
@@ -12,7 +12,7 @@ package astmatrix
 // 2026-09-30 verdict); the JSON catalog is the contract, the TS package is
 // the brain.
 //
-// Contract: ranch-roost/live-catalog/v1
+// Contract: estate-pinax/live-catalog/v1
 //   { "contract": ..., "generatedAt": ..., "deadIds": [...],
 //     "providers": { "<name>": { "serving": [...], "quarantined": [...],
 //                               "discovered": bool } } }
@@ -48,8 +48,8 @@ type liveCatalogProvider struct {
 }
 
 const (
-	liveCatalogContract       = "ranch-roost/live-catalog/v1"
-	legacyLiveCatalogContract = "estate-scripts-providers/live-catalog/v1"
+	liveCatalogContract       = "estate-pinax/live-catalog/v1"
+	legacyLiveCatalogContract = "estate-scripts-providers/live-catalog/v1" // pre-rename backward-compat alias
 )
 
 type liveCatalogData struct {
