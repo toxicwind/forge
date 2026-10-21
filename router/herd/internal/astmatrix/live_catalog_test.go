@@ -20,7 +20,7 @@ func writeLiveFile(t *testing.T, dir, body string) string {
 }
 
 const liveDoc = `{
-  "contract": "ranch-roost/live-catalog/v1",
+  "contract": "estate-pinax/live-catalog/v1",
   "generatedAt": "2026-09-30T00:00:00Z",
   "generator": "test",
   "deadIds": ["dead-1"],
@@ -82,7 +82,7 @@ func TestLiveReaderRejectsBadContract(t *testing.T) {
 	for name, body := range map[string]string{
 		"badjson":       `{not json`,
 		"wrongcon":      `{"contract": "something/else/v9", "providers": {}}`,
-		"nullproviders": `{"contract": "ranch-roost/live-catalog/v1"}`,
+		"nullproviders": `{"contract": "estate-pinax/live-catalog/v1"}`,
 	} {
 		p := writeLiveFile(t, dir, body)
 		_ = name
@@ -102,7 +102,7 @@ func TestLiveReaderPicksUpMtimeChange(t *testing.T) {
 	}
 	// Rewrite with a quarantined model re-admitted.
 	updated := `{
-  "contract": "ranch-roost/live-catalog/v1",
+  "contract": "estate-pinax/live-catalog/v1",
   "generatedAt": "2026-09-30T01:00:00Z",
   "deadIds": [],
   "providers": {

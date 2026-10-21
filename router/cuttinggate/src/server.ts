@@ -348,7 +348,7 @@ export function buildApp(deps: AppDeps) {
       async ({ body, set, headers }) => {
         const auth = headers["authorization"] ?? "";
         if (!auth.startsWith("Bearer ")) { set.status = CODES.auth_missing; return envelope("auth_missing", "missing bearer token"); }
-        const catStateFn = deps.catalogState ?? (() => ({ status: "ok", source: "default", contract: { name: "ranch-roost/live-catalog/v1" as const, spec: { generation: 2, canonical: true, introduced: "2026-06-01", emittedBy: "test" }, canonical: true }, catalog: { contract: "ranch-roost/live-catalog/v1" as const, generatedAt: "", deadIds: [], providers: {} }, generatedAt: "", ageMs: 0, stale: false }));
+        const catStateFn = deps.catalogState ?? (() => ({ status: "ok", source: "default", contract: { name: "estate-pinax/live-catalog/v1" as const, spec: { generation: 2, canonical: true, introduced: "2026-06-01", emittedBy: "test" }, canonical: true }, catalog: { contract: "estate-pinax/live-catalog/v1" as const, generatedAt: "", deadIds: [], providers: {} }, generatedAt: "", ageMs: 0, stale: false }));
         const cat = catStateFn();
         if (cat.status !== "ok") {
           const code = cat.status === "unknown-contract" ? "catalog_unknown_contract" : "catalog_missing";

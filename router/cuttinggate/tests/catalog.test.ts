@@ -76,7 +76,7 @@ describe("loadLiveCatalog", () => {
       return;
     }
     expect(loaded.contract.saw).toBe("something-else/v9");
-    expect(loaded.contract.expected).toContain("ranch-roost/live-catalog/v1");
+    expect(loaded.contract.expected).toContain("estate-pinax/live-catalog/v1");
   });
 
   test("a missing file is a reason, not a throw", () => {
