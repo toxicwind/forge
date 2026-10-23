@@ -33,7 +33,7 @@ function fixtureEstate() {
   const root = mkdtempSync(join(tmpdir(), "gitignore-estate-"));
   mkdirSync(join(root, "ops", "bin"), { recursive: true });
   cpSync(join(ESTATE_ROOT, "ops", "gitignore"), join(root, "ops", "gitignore"), { recursive: true });
-  cpSync(join(ESTATE_ROOT, "ops", "bin", "gitignore-sync.ts"), join(root, "ops", "bin", "gitignore-sync.ts"));
+  cpSync(join(ESTATE_ROOT, "ops", "bin", "gitignore-sync.ts"), join(root, "ops", "bin"));
   return { root, script: join(root, "ops", "bin", "gitignore-sync.ts") };
 }
 
@@ -55,14 +55,12 @@ test("render is deterministic across calls", () => {
 test("every manifest entry is actually consumed", () => {
   const manifest = loadManifest();
   const { sections } = render(manifest);
-  expect(sections).toHaveLength(
-    manifest.preLayers.length + manifest.templates.length + manifest.postLayers.length,
-  );
+  expect(sections).toHaveLength(manifest.templates.length + manifest.layers.length);
 });
 
-test("layout tiers are ignored: vendored/, var/; ranch/ is a submodule", () => {
+test("layout tiers are ignored: ranch/, vendored/, var/", () => {
   const rules = render().content;
-  // ranch/ is a registered submodule — ignore rules cannot and must not touch it.
+  expect(gitIgnores(rules, "ranch/herd/src/main.rs")).toBe(true);
   expect(gitIgnores(rules, "vendored/Hyprland/README.md")).toBe(true);
   expect(gitIgnores(rules, "var/archives/backup.tgz")).toBe(true);
 });
@@ -123,6 +121,6 @@ test("missing template fails loudly instead of rendering a short file", () => {
 
 test("missing layer fails loudly", () => {
   const manifest = loadManifest();
-  const broken = { ...manifest, postLayers: [...manifest.postLayers, "99-not-a-layer.gitignore"] };
+  const broken = { ...manifest, layers: [...manifest.layers, "99-not-a-layer.gitignore"] };
   expect(() => render(broken)).toThrow(/missing layer/);
 });

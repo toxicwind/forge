@@ -1,0 +1,11 @@
+[Unit]
+Description=Run durability audit daily
+After=network.target
+
+[Timer]
+Unit=durability-audit.service
+OnCalendar=*-*-* 08:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

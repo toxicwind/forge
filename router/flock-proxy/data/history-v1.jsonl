@@ -1,0 +1,2 @@
+{"format":"nimproxy-history","v":1,"kind":"boot","timestamp":1791093285,"boot_id":"d0f0e3689a3e4130efa874d798333184","capacity":{"capacity_rpm":20,"enabled_keys":2,"key_rpms":[10,10]}}
+{"format":"nimproxy-history","v":1,"kind":"sample","timestamp":1791093285,"boot_id":"d0f0e3689a3e4130efa874d798333184","capacity":{"capacity_rpm":20,"enabled_keys":2,"key_rpms":[10,10]},"state":[{"kind":"gauge","metric":"flock_history_persistence_degraded","labels":{},"value":0.0}]}
