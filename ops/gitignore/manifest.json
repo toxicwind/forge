@@ -1,0 +1,34 @@
+{
+  "$comment": "Composition spec for the estate .gitignore. Rendered by ops/bin/gitignore-sync.ts \u2014 never hand-edit estate/.gitignore. Order is load-bearing: preLayers -> templates -> postLayers. Estate-specific rules must be able to override upstream template rules (e.g. Python.gitignore ships `.env`, the estate tracks it), so they come last.",
+  "preLayers": [
+    "00-estate-header.gitignore"
+  ],
+  "templates": [
+    "Global/Linux.gitignore",
+    "Global/macOS.gitignore",
+    "Global/JetBrains.gitignore",
+    "Global/VisualStudioCode.gitignore",
+    "Node.gitignore",
+    "bun.gitignore",
+    "Deno.gitignore",
+    "Python.gitignore",
+    "Rust.gitignore",
+    "Go.gitignore",
+    "Zig.gitignore",
+    "VisualStudio.gitignore"
+  ],
+  "postLayers": [
+    "10-layout-tiers.gitignore",
+    "20-root-compat-symlinks.gitignore",
+    "30-runtime-state.gitignore",
+    "40-config-ownership.gitignore",
+    "50-secrets.gitignore",
+    "60-component-repos.gitignore"
+  ],
+  "vendor": {
+    "repo": "https://github.com/github/gitignore.git",
+    "pinned": "62f3997f1917b30f6eaee0c53ac2d791426513f2",
+    "path": "ops/gitignore/templates",
+    "license": "CC0-1.0"
+  }
+}

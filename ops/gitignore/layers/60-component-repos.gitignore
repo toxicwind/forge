@@ -1,0 +1,81 @@
+
+# nested checkouts that were never meant to be tracked
+hatch/agents/ember/readme-op/work/
+
+# Upstream template rules are unanchored and match at any depth, which
+# silently swallowed source trees. Re-include them; these directories are
+# ours, not Python/VisualStudio build output.
+#   Python.gitignore ships `lib/`, VisualStudio.gitignore ships `**/[Bb]in/*`.
+!**/lib/
+!skills/**/bin/
+!ops/bin/**
+!projects/**/bin/
+
+# Security boundaries (git-mutator): credential material is never committed
+credentials.json
+*.key
+*.pem
+.bak.
+
+# non-secret hodos route; secrets remain in ignored hodos.env
+!config/hodos-ssot/route.env
+
+# config/environment.d/ — purged stale configs (2026-10-12); directory is
+# managed outside git, ignore it to prevent accidental tracking.
+config/environment.d/
+
+# 2026-10-21: a bulk `git add -A` re-indexed these independent checkouts as
+# gitlinks (mode 160000) with no .gitmodules entry — a top-level defect per
+# docs/REPO_TOPOLOGY.md ("Rule - no gitlinks"). The directories stay on disk;
+# the index does not claim them. Same family as ranch/ above.
+grasp-hub/
+sigma/
+pi-skills/
+# kernel-memory state and other machine-local scratch
+.estate/
+
+# estate-owned monorepos: independent checkouts managed via meta (NOT submodules).
+# The whole ranch/ tree is the ranch super-repo's own checkout — the estate
+# does not index it (docs/REPO_TOPOLOGY.md, "Rule - no gitlinks"). The old
+# !ranch/keeper/ exceptions were dead: keeper is a nested repo, so git never
+# descends into it and an un-ignore cannot reach it.
+ranch/
+# 2026-10-21: quarantined by the layout pass — the content lives on disk under
+# var/legacy/quarantine-2026-10-21/, not in the index.
+#   readme-fix-estate-1789408144/  a full copy of this repo inside this repo
+#   session-ses_*.md                session transcripts
+#   .agent/tmp/*.bak.*              agent retry prompt backups
+readme-fix-estate-*/
+session-ses_*.md
+.agent/tmp/*.bak.*
+# ── Cookie-vault, browserless, secretsmith runtime data ──
+*vault*.json
+cookies-*.json
+vncpasswd
+*.sqlite*
+*.db*
+*.cache
+.secretsmith/
+.browserless/
+
+# rig/recall-agent per-workspace scaffolding (unreferenced runtime state)
+AGENT.json
+BOOTSTRAP.md
+MEMORY.md
+TOOLS.md
+USER.md
+config/tau/*.bak
+packages/theta/
+
+# 2026-10-22: desubmodule conversion — all gitlinks removed (zero submodules).
+# These live on disk as independent checkouts coordinated by gitkb/meta per
+# docs/REPO_TOPOLOGY.md; the index no longer claims them. Previously tracked
+# as mode-160000 gitlinks with no .gitmodules declaration.
+config/tau/agent/extensions/hashline-pi/
+engines/herd/beellama.cpp/
+engines/herd/ik_llama.cpp/
+engines/herd/llama-cpp-turboquant/
+packages/theta/
+submodules/phone-sentinel/
+work/airspeak/
+work/tau-extensions/
