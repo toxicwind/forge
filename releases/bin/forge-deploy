@@ -1,0 +1,247 @@
+#!/usr/bin/env bun
+/**
+ * forge-deploy — deploy a built kappa binary to the live estate via pitchfork.
+ *
+ * End-to-end deploy lane: build via nativelink → stage binary → update pitchfork
+ * daemon → health-check. This is the "deploy to live" step that completes the
+ * forge→pitchfork→healthck doctrine.
+ *
+ * Usage:
+ *   forge-deploy --repo <org/repo> --tag <vX.Y.Z> [--dry-run] [--skip-build]
+ *
+ * Options:
+ *   --repo       org/repo for the kappa-code repo (required, default: toxicwind/kappa-code)
+ *   --tag        release tag to find artifact from (required)
+ *   --dry-run    validate everything without touching live daemons (default: false)
+ *   --skip-build skip the nativelink build step (use when binary already exists)
+ *   --help/-h    show help
+ *
+ * Lifecycle:
+ *   1. Resolve kappa-code repo and checkout the tag's artifact
+ *   2. Run `mise run kappa-build` (nativelink REAPI :25155, cache :25148) unless --skip-build
+ *   3. Stage the binary: copy to /home/toxic/.local/bin/kappa (atomic rename)
+ *   4. Update pitchfork daemon: `pitchfork restart estate/kappa-acp`
+ *   5. Health-check: curl http://127.0.0.1:25159/
+ *
+ * DANGER: Steps 3-5 are DESTRUCTIVE to the live daemon. The running kappa-acp
+ * process will be killed and replaced. If THIS session depends on kappa-acp
+ * (as is typical — the session IS running on it), DO NOT execute steps 3-5.
+ * Use --dry-run to validate the pipeline, then manually authorize the swap+restart
+ * from a separate session or terminal.
+ *
+ * Boundary: Linux CLI native only. Cross-platform releases still need the
+ * forge-release lane (see ../README.md for the full lane doc).
+ */
+
+import { parseArgs } from "node:util";
+import { spawnSync } from "node:child_process";
+import { existsSync, renameSync, copyFileSync, statSync } from "node:fs";
+import { resolve, join } from "node:path";
+
+const HELP = `forge-deploy — deploy kappa binary to live estate via pitchfork
+
+Usage:
+  forge-deploy --tag <vX.Y.Z> [opts]
+
+Options:
+  --repo       org/repo (default: toxicwind/kappa-code)
+  --tag        release tag (required)
+  --dry-run    validate without touching live daemons (default: false)
+  --skip-build skip nativelink build (binary already staged)
+  --help/-h    show help
+
+Lifecycle:
+  1. Build via nativelink (mise run kappa-build) or use existing binary
+  2. Stage: copy to /home/toxic/.local/bin/kappa (atomic rename)
+  3. Restart: pitchfork restart estate/kappa-acp
+  4. Health-check: curl http://127.0.0.1:25159/
+
+DANGER: This kills and restarts the live kappa-acp daemon. Do NOT run
+if your current session depends on it. Use --dry-run to validate first.`;
+
+type Flags = {
+  repo: string;
+  tag: string;
+  "dry-run": boolean;
+  "skip-build": boolean;
+};
+
+function run(cmd: string, args: string[], opts: {
+  dryRun?: boolean;
+  silent?: boolean;
+} = {}): string {
+  if (opts.dryRun) {
+    const line = `${cmd} ${args.join(" ")}`;
+    console.log(`[dry-run] ${line}`);
+    return line;
+  }
+  const res = spawnSync(cmd, args, {
+    encoding: "utf8",
+    stdio: opts.silent ? "pipe" : "inherit",
+  });
+  if (!opts.silent && res.status !== 0) {
+    process.exit(res.status ?? 1);
+  }
+  return res.stdout || "";
+}
+
+function healthCheck(): { ok: boolean; code: number; body: string } {
+  const res = spawnSync("curl", [
+    "-s", "-o", "/tmp/kappa-healthcheck.txt", "-w", "%{http_code}",
+    "http://127.0.0.1:25159/",
+  ], { encoding: "utf8" });
+  const code = parseInt(res.stdout.trim(), 10) || 0;
+  const body = existsSync("/tmp/kappa-healthcheck.txt")
+    ? require("node:fs").readFileSync("/tmp/kappa-healthcheck.txt", "utf8")
+    : "";
+  return { ok: code >= 200 && code < 400, code, body: body.slice(0, 200) };
+}
+
+function main(): never {
+  const raw = parseArgs({
+    args: Bun.argv.slice(2),
+    options: {
+      repo: { type: "string", default: "toxicwind/kappa-code" },
+      tag: { type: "string" },
+      "dry-run": { type: "boolean", default: false },
+      "skip-build": { type: "boolean", default: false },
+      help: { type: "boolean", short: "h" },
+    },
+    strict: false,
+    allowPositionals: false,
+  });
+
+  if (raw.values.help) {
+    console.log(HELP);
+    process.exit(0);
+  }
+
+  const flags: Flags = {
+    repo: raw.values.repo,
+    tag: raw.values.tag,
+    "dry-run": raw.values["dry-run"] === true,
+    "skip-build": raw.values["skip-build"] === true,
+  };
+
+  if (!flags.tag) {
+    console.error("error: --tag is required");
+    console.error(HELP);
+    process.exit(2);
+  }
+
+  const dryRun = flags["dry-run"];
+  const { repo, tag } = flags;
+
+  // Step 0: Resolve the kappa-code repo path
+  // Heuristic: try known estate paths, then git-remote resolution
+  const candidatePaths = [
+    "/home/toxic/pens/olympus/products/kappa/kappa-code",
+    join("/home/toxic/pens/ranch", "kappa-code"),
+  ];
+
+  let repoPath: string | null = null;
+  for (const p of candidatePaths) {
+    if (existsSync(join(p, ".git")) || existsSync(join(p, "package.json"))) {
+      repoPath = p;
+      break;
+    }
+  }
+
+  if (!dryRun && !repoPath) {
+    // Try resolving from git remote
+    console.error("[deploy] resolving repo path from remote...");
+    const res = spawnSync("git", ["ls-remote", "--get-url", "origin"], {
+      encoding: "utf8", cwd: "/home/toxic/pens/olympus/products/kappa",
+    });
+    const url = res.stdout.trim();
+    if (/kappa-code/.test(url)) {
+      repoPath = "/home/toxic/pens/olympus/products/kappa/kappa-code";
+    }
+  }
+
+  if (!repoPath) {
+    console.error(`error: could not resolve kappa-code repo for ${repo}`);
+    process.exit(2);
+  }
+
+  console.error(`[deploy] repo: ${repoPath}`);
+  console.error(`[deploy] tag: ${tag}`);
+  console.error(`[deploy] dry-run: ${dryRun}`);
+
+  // Step 1: Build via nativelink (unless --skip-build)
+  if (!flags["skip-build"]) {
+    console.error("[deploy] step 1: building via nativelink (mise run kappa-build)...");
+    run("mise", ["run", "kappa-build"], { dryRun, cwd: repoPath });
+  } else {
+    console.error("[deploy] step 1: skipping build (--skip-build)");
+  }
+
+  // Step 2: Find and stage the binary
+  const binaryCandidates = [
+    join(repoPath, "packages/cli/dist/@kappacode/cli-linux-x64/bin/kappa"),
+    join(repoPath, "packages/cli/dist/@kappacode/kappa/bin/kappa"),
+    join(repoPath, "packages/cli/bin/kappa"),
+  ];
+
+  let binaryPath: string | null = null;
+  for (const p of binaryCandidates) {
+    if (existsSync(p)) {
+      binaryPath = p;
+      break;
+    }
+  }
+
+  if (!binaryPath) {
+    console.error("error: binary not found at any expected path after build");
+    console.error("  candidates:");
+    for (const p of binaryCandidates) {
+      console.error(`    ${p} ${existsSync(p) ? "✓" : "✗"}`);
+    }
+    process.exit(2);
+  }
+
+  const binaryStat = statSync(binaryPath);
+  console.error(`[deploy] binary found: ${binaryPath} (${(binaryStat.size / 1024 / 1024).toFixed(1)} MB)`);
+
+  const destPath = "/home/toxic/.local/bin/kappa";
+  const stagingPath = "/home/toxic/.local/bin/kappa.deploy-staging";
+
+  console.error("[deploy] step 2: staging binary (atomic copy)...");
+  if (dryRun) {
+    console.log(`[dry-run] cp ${binaryPath} ${stagingPath}`);
+    console.log(`[dry-run] mv ${stagingPath} ${destPath}`);
+  } else {
+    // Atomic staging: copy to .staging first, then rename
+    copyFileSync(binaryPath, stagingPath);
+    chmodSync(stagingPath, 0o755);
+    renameSync(stagingPath, destPath);
+    console.error(`[deploy] staged: ${destPath}`);
+  }
+
+  // Step 3: Restart pitchfork daemon
+  console.error("[deploy] step 3: restarting pitchfork daemon...");
+  run("pitchfork", ["restart", "estate/kappa-acp"], { dryRun });
+
+  // Step 4: Health-check
+  console.error("[deploy] step 4: health-checking http://127.0.0.1:25159/...");
+  const hc = dryRun
+    ? { ok: true, code: 0, body: "[dry-run] would curl http://127.0.0.1:25159/" }
+    : healthCheck();
+
+  if (hc.ok) {
+    console.error(`[deploy] health-check PASS: HTTP ${hc.code}`);
+    if (hc.body) console.error(`  response: ${hc.body.slice(0, 100)}`);
+  } else {
+    console.error(`[deploy] health-check FAIL: HTTP ${hc.code}`);
+    console.error(`  The daemon may need time to start. Retry: curl http://127.0.0.1:25159/`);
+    console.error(`  Check logs: pitchfork logs estate/kappa-acp`);
+    process.exit(1);
+  }
+
+  console.error(`[deploy] done: ${repo}@${tag} → live`);
+  console.error(`  URL: https://github.com/${repo}/releases/tag/${tag}`);
+  process.exit(0);
+}
+
+import { chmodSync } from "node:fs";
+main();
