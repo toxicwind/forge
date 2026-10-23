@@ -1,0 +1,4 @@
+# Runtime state — real files on disk (restart-durable), never committed.
+# Committing constantly-mutating JSON would be commit spam; durability comes
+# from the filesystem, not git. The scripts + docs above are the deliverable.
+state/

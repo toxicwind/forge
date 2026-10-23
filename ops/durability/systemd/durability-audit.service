@@ -1,0 +1,9 @@
+[Unit]
+Description=Estate durability audit (anvil) — hunts monkey-patches, alerts to fleet
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/toxic/estate/ops/durability/durability-audit.sh --alert
+# findings exit 2 = successful audit run, not a unit failure
+SuccessExitStatus=2

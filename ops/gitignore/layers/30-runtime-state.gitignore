@@ -83,19 +83,6 @@ doorbell.*.crt
 doorbell.*.key
 config/tau/agent/extensions/*/settings.json
 
-# ── NativeLink runtime state (2026-10-19) ───────────────────────────────
-# NativeLink CAS/AC content stores and worker scratch live under var/runtime
-# (already covered by `var/` in 10-layout-tiers). What's new: bazel symlinks
-# and local rc fragments that any REAPI-connected project materializes.
-# Content-addressed cache output, never source of truth. Root-anchored:
-# the tau repo tracks its own bazel/ rules dir (no dash), and nested repos
-# carry their own .gitignore for these.
-/bazel-bin
-/bazel-out
-/bazel-testlogs
-/bazel-*
-/user.bazelrc
-
 # ── Standing audit artifacts (2026-10-15) ───────────────────────────────
 # Skills may keep versioned reports. The template layers' unanchored
 # `*.log` (Node/bun/Django/VS — 4 occurrences) silently swallows raw audit

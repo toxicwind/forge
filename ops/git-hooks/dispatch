@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# Global git hook dispatcher (core.hooksPath = estate/ops/git-hooks).
+#
+# Every hook name in this directory is a two-line wrapper that execs this
+# script. Two gates run box-wide, in EVERY repo without its own local
+# core.hooksPath:
+#
+#   pre-commit  gitleaks over the staged diff; in estate, the layered
+#               .gitignore is re-rendered and staged if it drifted.
+#   pre-push    gitleaks over exactly the commits being pushed.
+#
+# After the gate, the repo's own hook ($GIT_COMMON_DIR/hooks/<name>) runs, so
+# git-lfs, husky-less repos, and hand-written hooks keep working.
+#
+# Bypass for one command: ESTATE_SECRET_GATE=off git commit ...
+# (git --no-verify skips everything, including the repo's own hook.)
+set -u
+name=$1
+shift
+
+gate_enabled() { [ "${ESTATE_SECRET_GATE:-on}" != off ] && command -v gitleaks >/dev/null 2>&1; }
+
+gate_pre_commit() {
+	local top
+	top=$(git rev-parse --show-toplevel) || return 0
+	if [ -f "$top/ops/bin/gitignore-sync.ts" ] && [ -f "$top/ops/gitignore/manifest.json" ] && command -v bun >/dev/null 2>&1; then
+		local drift
+		if ! drift=$(bun "$top/ops/bin/gitignore-sync.ts" --check 2>&1); then
+			echo "estate-hooks: .gitignore drifted ($drift) — re-rendering and staging it" >&2
+			bun "$top/ops/bin/gitignore-sync.ts" >&2 && git add "$top/.gitignore"
+		fi
+	fi
+	gate_enabled || return 0
+	if ! gitleaks git --staged --no-banner --redact --config /home/toxic/estate/ops/git-hooks/gitleaks.toml "$top" >&2; then
+		echo "estate-hooks: BLOCKED — gitleaks found credential material in the staged diff." >&2
+		echo "estate-hooks: unstage it (git rm --cached <file>) and add it to .gitignore." >&2
+		return 1
+	fi
+}
+
+gate_pre_push() {
+	gate_enabled || return 0
+	local zero=0000000000000000000000000000000000000000 lref lsha rref rsha range top
+	top=$(git rev-parse --show-toplevel) || return 0
+	while read -r lref lsha rref rsha; do
+		[ -n "${lsha:-}" ] || continue
+		[ "$lsha" = "$zero" ] && continue # branch delete
+		if [ "$rsha" = "$zero" ] || ! git cat-file -e "$rsha^{commit}" 2>/dev/null; then
+			# New branch, or the pre-push remote sha is not in this object DB
+			# (never fetched). Either way scan what this ref adds over the remotes.
+			range="$lsha --not --remotes"
+		else
+			range="$rsha..$lsha"
+		fi
+		if ! gitleaks git --no-banner --redact --config /home/toxic/estate/ops/git-hooks/gitleaks.toml --log-opts="$range" "$top" >&2; then
+			echo "estate-hooks: BLOCKED push of $lref -> $rref — gitleaks found credential material in $range." >&2
+			echo "estate-hooks: purge it from history (git filter-repo --invert-paths --path <file>) before pushing." >&2
+			return 1
+		fi
+	done
+}
+
+input=""
+case "$name" in
+pre-commit) gate_pre_commit || exit 1 ;;
+pre-push)
+	input=$(cat)
+	printf '%s\n' "$input" | gate_pre_push || exit 1
+	;;
+esac
+
+common=$(git rev-parse --git-common-dir 2>&1) || exit 0
+local_hook="$common/hooks/$name"
+if [ -x "$local_hook" ]; then
+	if [ "$name" = pre-push ]; then
+		printf '%s\n' "$input" | "$local_hook" "$@"
+		exit $?
+	fi
+	exec "$local_hook" "$@"
+fi
+exit 0

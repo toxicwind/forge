@@ -1,0 +1,28 @@
+# durability allowlist — cmdline substrings that are KNOWN-OK in ephemeral paths.
+# One substring per line. Lines starting with # are comments.
+# Everything else matching /tmp/ or /dev/shm/ in a process cmdline, or holding
+# an uncovered port, is reported as a finding. Keep this tight: an entry here
+# is a claim that the process is session-scoped tooling, not a service.
+
+# desktop session plumbing
+sddm-helper
+# browser crash reporters (session-scoped)
+/usr/lib/firefox-nightly/crashhelper
+/usr/lib/chromium/crashpad_handler
+# bunx / npm one-shot tool installs (agent session MCP servers, not services)
+bunx-
+/.bun/install/cache
+# editor / language-server sockets
+/tmp/.vscode-
+/tmp/nvim
+# ssh agent / gpg agent sockets
+/tmp/ssh-
+# build tool temp outputs
+/tmp/go-build
+/tmp/cargo-
+/tmp/rustc
+# pip / npm / bun temp unpack
+/tmp/pip-
+/tmp/npm-
+# pitchfork-managed nginx: durable binary (/usr/bin/nginx), only its pid FILE is in /tmp
+pid /tmp/nginx-pitchfork.pid

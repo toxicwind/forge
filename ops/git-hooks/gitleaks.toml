@@ -1,0 +1,37 @@
+# Gate config for ops/git-hooks. Extends the default ruleset and allowlists
+# known false positives so the box-wide gate stays useful instead of being
+# bypassed. Add an entry only with the reason it is not a credential.
+title = "estate secret gate"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known non-credentials and build artifacts"
+paths = [
+  # Kotlin @Metadata bytecode strings in decompiled Android sources match the
+  # generic-api-key entropy heuristic; they are compiler metadata, not keys.
+  '''(?i)extracted/.*\.java$''',
+  # Vendored upstream trees keep their own test fixtures and examples.
+  '''(?i)(vendor|vendored|node_modules|testdata|fixtures)/''',
+  # Conformance template artifacts: upstream skill-doc dumps full of example
+  # UUIDs (davila7 llms.md corpora). Docs, not credentials.
+  '''(?i)tests/ext_conformance/artifacts/''',
+  # Bundled / minified distribution artifacts in projects and extensions
+  '''(?i)(dist|build|\.build|out)/''',
+  '''(?i)\.(min\.js|bundle\.js|map|pak|wasm)$''',
+]
+regexes = [
+  # Telemetry instrumentation keys and dummy UUIDs
+  '''(?i)InstrumentationKey=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}''',
+  '''(?i)00000000-0000-0000-0000-000000000000''',
+  # Example placeholders
+  '''(?i)(example|dummy|placeholder|fake|test)[-_]?(api[-_]?key|secret|token)''',
+  # Microsoft Edge Read-Aloud "trusted client token" — a public constant shipped
+  # in every Edge install, not a secret (Speech platform voices list endpoint).
+  '''(?i)trustedclienttoken=6A5AA1D4EAFF4E9FB37E23D68491D6F4''',
+  # Public Anthropic beta feature strings (beta header names, not credentials).
+  '''(?i)anthropic-beta.+(interleaved-thinking|oauth-2025|computer-use)''',
+  # Test-fixture keys with obvious machine/key labels (sk-<machine>-<key>-<hex>).
+  '''(?i)sk-[a-z]+[0-9]+-key[0-9]+-[a-f0-9]{8}''',
+]
