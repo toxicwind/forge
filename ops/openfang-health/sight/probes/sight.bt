@@ -1,0 +1,60 @@
+// sight.bt — combined mcp_sight probe set. One bpftrace process attaches all
+// probe types (tracepoint + fentry) to avoid per-instance attach contention.
+// Every stdout line is pipe-delimited and TAG-prefixed; the collector routes
+// by tag. Read-only observation only: no interception, no throttling.
+//
+// Line formats (ts = wall-clock ISO UTC; net port in network byte order):
+//   EXEC|ts|pid|tid|uid|comm|exe|argv0
+//   P   |ts|pid|comm|request|target_pid
+//   FS  |ts|pid|comm|dfd|flags|filename
+//   NET |ts|pid|comm|ipver|dest|port
+
+tracepoint:syscalls:sys_enter_execve
+{
+  printf("EXEC|%s|%d|%d|%d|%s|%s|%s\n",
+         strftime("%Y-%m-%dT%H:%M:%S", nsecs),
+         pid, tid, uid, comm, str(args->filename), str(args->argv[0]));
+}
+
+tracepoint:syscalls:sys_enter_execveat
+{
+  printf("EXEC|%s|%d|%d|%d|%s|%s|%s\n",
+         strftime("%Y-%m-%dT%H:%M:%S", nsecs),
+         pid, tid, uid, comm, str(args->filename), str(args->argv[0]));
+}
+
+tracepoint:syscalls:sys_enter_ptrace
+{
+  printf("P|%s|%d|%s|%ld|%ld\n",
+         strftime("%Y-%m-%dT%H:%M:%S", nsecs), pid, comm, args->request, args->pid);
+}
+
+tracepoint:syscalls:sys_enter_openat
+{
+  printf("FS|%s|%d|%s|%d|%d|%s\n",
+         strftime("%Y-%m-%dT%H:%M:%S", nsecs),
+         pid, comm, args->dfd, args->flags, str(args->filename));
+}
+
+tracepoint:syscalls:sys_enter_openat2
+{
+  printf("FS|%s|%d|%s|%d|%d|%s\n",
+         strftime("%Y-%m-%dT%H:%M:%S", nsecs),
+         pid, comm, args->dfd, args->how->flags, str(args->filename));
+}
+
+fentry:tcp_v4_connect
+{
+  $s = (struct sockaddr_in *)args->uaddr;
+  printf("NET|%s|%d|%s|4|%s|%u\n",
+         strftime("%Y-%m-%dT%H:%M:%S", nsecs),
+         pid, comm, ntop($s->sin_addr.s_addr), $s->sin_port);
+}
+
+fentry:tcp_v6_connect
+{
+  $s = (struct sockaddr_in6 *)args->uaddr;
+  printf("NET|%s|%d|%s|6|%s|%u\n",
+         strftime("%Y-%m-%dT%H:%M:%S", nsecs),
+         pid, comm, ntop($s->sin6_addr.in6_u.u6_addr32), $s->sin6_port);
+}
