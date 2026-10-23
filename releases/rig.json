@@ -1,0 +1,70 @@
+{
+  "$schema": "https://forge.estate/rig/v1.json",
+  "name": "forge-release",
+  "version": "1.0.0",
+  "description": "GitHub Release drop-in for forge-native build artifacts. Creates and uploads releases via gh CLI, org-agnostic, idempotent with --clobber.",
+  "kind": "task",
+  "lane": "release",
+  "inputs": {
+    "repo": {
+      "type": "string",
+      "description": "org/repo or full URL for the target repository",
+      "required": true
+    },
+    "artifact": {
+      "type": "string",
+      "description": "local file path to upload as the release artifact",
+      "required": true
+    },
+    "tag": {
+      "type": "string",
+      "description": "release tag / version string (e.g. v0.1.0)",
+      "required": true
+    }
+  },
+  "options": {
+    "draft": {
+      "type": "boolean",
+      "default": false,
+      "description": "create as draft release"
+    },
+    "clobber": {
+      "type": "boolean",
+      "default": false,
+      "description": "delete existing tag before creating"
+    },
+    "notes": {
+      "type": "string",
+      "optional": true,
+      "description": "release body text"
+    },
+    "title": {
+      "type": "string",
+      "optional": true,
+      "description": "release title"
+    }
+  },
+  "execution": {
+    "binary": "./releases/bin/forge-release",
+    "runtime": "bun",
+    "env": ["GH_TOKEN", "GITHUB_TOKEN"]
+  },
+  "agent": {
+    "persona": "release-lane operator",
+    "squawk": "forge-release: release lane active — building artifact and publishing to GitHub",
+    "instructions": "Run mise build first, then invoke releases/bin/forge-release with the built artifact path. Honor --clobber for idempotent re-releases. Mark cross-platform and Windows EV-sign as GA-boundary in the output."
+  },
+  "boundaries": {
+    "covers": [
+      "linux-cli-release",
+      "forge-cache-verified-artifact",
+      "draft-or-published-releases",
+      "idempotent-upload"
+    ],
+    "needs_ga_or_equivalent": [
+      "cross-platform-smoke",
+      "windows-ev-signing",
+      "multi-target-publishing"
+    ]
+  }
+}

@@ -1,0 +1,215 @@
+#!/usr/bin/env bun
+/**
+ * forge-release — create + upload a GitHub Release from a built artifact.
+ *
+ * The first-class release lane for forge-native builds. Routes through the
+ * estate `gh` CLI (never hard-coded to toxicwind/* — org-agnostic).
+ *
+ * Usage:
+ *   forge-release --repo <org/repo> --artifact <path> --tag <vX.Y.Z> [opts]
+ *
+ * Options:
+ *   --repo      org/repo or full URL (required)
+ *   --artifact  local path to file to upload (required)
+ *   --tag       release tag / version string (required)
+ *   --draft     create as draft (default: false → published)
+ *   --clobber   delete existing tag first (default: false → fail on existing)
+ *   --dry-run   validate args and print commands without executing (default: false)
+ *   --notes     release body text (default: auto-generated from tag)
+ *   --title     release title (default: same as tag)
+ *   --help/-h   show this help
+ *
+ * Env:
+ *   GH_TOKEN or GITHUB_TOKEN — authentication (gh reads it automatically)
+ *
+ * Boundary: this lane handles Linux-CLI releases only. Cross-platform smoke,
+ * Windows EV-signing, and multi-target publishing still need GA or an
+ * equivalent self-hosted runner.
+ */
+
+import { parseArgs } from "node:util";
+import { spawnSync } from "node:child_process";
+import { existsSync, statSync } from "node:fs";
+import { resolve } from "node:path";
+
+const HELP = `forge-release — GitHub Release drop-in for forge-native builds
+
+Usage:
+  forge-release --repo <org/repo> --artifact <path> --tag <vX.Y.Z> [opts]
+
+Options:
+  --repo      org/repo or full URL (required)
+  --artifact  local path to file to upload (required)
+  --tag       release tag / version string (required)
+  --draft     create as draft (default: false → published)
+  --clobber   delete existing tag first (default: false → fail on existing)
+  --dry-run   validate args and print commands without executing (default: false)
+  --notes     release body text (default: "Release <tag>")
+  --title     release title (default: same as tag)
+  --help/-h   show this help`;
+
+type Flags = {
+  repo: string;
+  artifact: string;
+  tag: string;
+  draft: boolean;
+  clobber: boolean;
+  "dry-run": boolean;
+  notes: string | null;
+  title: string | null;
+};
+
+function run(cmd: string, args: string[], opts: { dryRun: boolean } = { dryRun: false }): string {
+  if (opts.dryRun) {
+    const line = `${cmd} ${args.join(" ")}`;
+    console.log(`[dry-run] ${line}`);
+    return line;
+  }
+  const res = spawnSync(cmd, args, { encoding: "utf8", stdio: "inherit" });
+  if (res.status !== 0) {
+    process.exit(res.status ?? 1);
+  }
+  return res.stdout || "";
+}
+
+function main(): never {
+  const raw = parseArgs({
+    args: Bun.argv.slice(2),
+    options: {
+      repo: { type: "string" },
+      artifact: { type: "string" },
+      tag: { type: "string" },
+      draft: { type: "boolean", default: false },
+      clobber: { type: "boolean", default: false },
+      "dry-run": { type: "boolean", default: false },
+      notes: { type: "string", optional: true },
+      title: { type: "string", optional: true },
+      help: { type: "boolean", short: "h" },
+    },
+    strict: false,
+    allowPositionals: false,
+  });
+
+  if (raw.values.help) {
+    console.log(HELP);
+    process.exit(0);
+  }
+
+  const flags: Flags = {
+    repo: raw.values.repo,
+    artifact: raw.values.artifact,
+    tag: raw.values.tag,
+    draft: raw.values.draft === true,
+    clobber: raw.values.clobber === true,
+    "dry-run": raw.values["dry-run"] === true,
+    notes: raw.values.notes ?? null,
+    title: raw.values.title ?? null,
+  };
+
+  // Validate required args
+  const missing: string[] = [];
+  if (!flags.repo) missing.push("--repo");
+  if (!flags.artifact) missing.push("--artifact");
+  if (!flags.tag) missing.push("--tag");
+  if (missing.length) {
+    console.error(`error: missing required option(s): ${missing.join(", ")}`);
+    console.error(HELP);
+    process.exit(2);
+  }
+
+  // Validate artifact exists
+  const artifactPath = resolve(flags.artifact);
+  if (!existsSync(artifactPath)) {
+    console.error(`error: artifact not found: ${artifactPath}`);
+    process.exit(2);
+  }
+  const st = statSync(artifactPath);
+  if (!st.isFile()) {
+    console.error(`error: artifact is not a file: ${artifactPath}`);
+    process.exit(2);
+  }
+
+  const draftFlag = flags.draft ? "--draft" : "";
+  const releaseNotes = flags.notes || `Release ${flags.tag}`;
+  const releaseTitle = flags.title || flags.tag;
+
+  // Pre-flight: check gh availability
+  const gh = Bun.which("gh");
+  if (!gh) {
+    console.error("error: gh CLI not found on PATH — install from https://github.com/cli/cli");
+    process.exit(2);
+  }
+
+  // Check gh auth
+  if (!flags["dry-run"]) {
+    const auth = spawnSync("gh", ["auth", "status", "--show-token"], { encoding: "utf8" });
+    if (auth.status !== 0) {
+      console.error("error: gh not authenticated — run `gh auth login`");
+      process.exit(2);
+    }
+  }
+
+  // Resolve repo URL for gh (handles org/repo → https://github.com/org/repo)
+  let repoUrl = flags.repo;
+  if (!/^(https?:\/\/|git@)/.test(repoUrl)) {
+    repoUrl = `https://github.com/${repoUrl}.git`;
+  }
+
+  // Step 1: Check for existing tag (+ clobber if requested)
+  if (!flags["dry-run"]) {
+    const existing = spawnSync(
+      "gh", ["release", "view", flags.tag, "--json", "tagName"],
+      { encoding: "utf8" }
+    );
+
+    if (existing.status === 0) {
+      if (flags.clobber) {
+        console.error(`[release] tag ${flags.tag} exists — clobbering (deleting existing release)`);
+        run("gh", ["release", "delete", flags.tag, "--yes"], { dryRun: false });
+      } else {
+        console.error(`error: tag ${flags.tag} already exists — use --clobber to overwrite`);
+        process.exit(1);
+      }
+    }
+  } else {
+    const viewCmd = `gh release view ${flags.tag} --json tagName`;
+    console.log(`[dry-run] check if release exists: ${viewCmd}`);
+    if (flags.clobber) {
+      console.log(`[dry-run] if exists, delete: gh release delete ${flags.tag} --yes`);
+    }
+  }
+
+  // Step 2: Create release
+  const createArgs = [
+    "release", "create", flags.tag,
+    "--title", releaseTitle,
+    "--notes", releaseNotes,
+    ...draftFlag ? [draftFlag] : [],
+  ];
+
+  console.error(`[release] creating release ${flags.tag} on ${flags.repo}`);
+  run("gh", createArgs, { dryRun: flags["dry-run"] });
+
+  // Step 3: Upload artifact
+  console.error(`[release] uploading artifact: ${artifactPath}`);
+  run("gh", ["release", "upload", flags.tag, artifactPath], { dryRun: flags["dry-run"] });
+
+  // Step 4: Summary
+  const repoDisplay = flags.repo.includes("/") && !/https/.test(flags.repo)
+    ? flags.repo
+    : flags.repo.replace(/^(https?:\/\/)?github\.com\//, "").replace(/\.git$/, "");
+
+  const releaseUrl = flags["dry-run"]
+    ? `[dry-run] would be https://github.com/${repoDisplay}/releases/tag/${flags.tag}`
+    : `https://github.com/${repoDisplay}/releases/tag/${flags.tag}`;
+
+  if (flags.draft) {
+    console.error(`[release] draft created: ${releaseUrl}`);
+  } else {
+    console.error(`[release] published: ${releaseUrl}`);
+  }
+
+  process.exit(0);
+}
+
+main();
