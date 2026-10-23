@@ -8,8 +8,36 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-export const ESTATE_ROOT = resolve(import.meta.dir, "..", "..");
-const MANIFEST = join(ESTATE_ROOT, "ops", "gitignore", "manifest.json");
+// Resolve the ops root directory (where manifest.json, layers/, templates/ live).
+// Bun resolves import.meta.dir to the realpath (follows symlinks).
+// We need the manifest/layers/templates relative to the script's location,
+// which may be accessed via symlinks (estate/ops → pens/ranch/forge/ops).
+// Strategy: try the resolved path first; if manifest not found there,
+// fall back to using process.cwd() as base.
+function resolveOpsRoot(): string {
+  // Direct approach: realpath relative (e.g. pens/ranch/forge/ops/gitignore)
+  const direct = join(resolve(import.meta.dir, "..", "gitignore"));
+  if (existsSync(join(direct, "manifest.json"))) {
+    return direct;
+  }
+  // Fallback: use cwd-relative path (works when invoked from estate/ or pens/ranch/forge/)
+  const fromCwd = join(process.cwd(), "ops", "gitignore");
+  if (existsSync(join(fromCwd, "manifest.json"))) {
+    return fromCwd;
+  }
+  // Last resort: direct again
+  return direct;
+}
+
+// OPS_ROOT is the directory containing manifest.json (ops/gitignore/)
+export const OPS_ROOT: string = resolveOpsRoot();
+const MANIFEST = join(OPS_ROOT, "manifest.json");
+const TEMPLATES_DIR = join(OPS_ROOT, "templates");
+const LAYERS_DIR = join(OPS_ROOT, "layers");
+
+// ESTATE_ROOT defaults to the environment variable, otherwise falls back
+// to the parent of ops/.
+export const ESTATE_ROOT: string = process.env.ESTATE_ROOT ?? resolve(OPS_ROOT, "..");
 const OUT = join(ESTATE_ROOT, ".gitignore");
 
 type Manifest = {
@@ -43,9 +71,9 @@ export function loadManifest(path: string = MANIFEST): Manifest {
 }
 
 export function render(
-  manifest: Manifest = loadManifest(),
-  templatesDir = join(ESTATE_ROOT, "ops", "gitignore", "templates"),
-  layersDir = join(ESTATE_ROOT, "ops", "gitignore", "layers"),
+  manifest: Manifest,
+  templatesDir = TEMPLATES_DIR,
+  layersDir = LAYERS_DIR,
 ): { content: string; sections: Section[] } {
   const chunks: string[] = [];
   const sections: Section[] = [];
