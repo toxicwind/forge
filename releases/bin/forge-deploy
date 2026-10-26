@@ -2,12 +2,13 @@
 /**
  * forge-deploy — deploy a built kappa binary to the live estate via pitchfork.
  *
- * End-to-end deploy lane: build via nativelink → stage binary → update pitchfork
- * daemon → health-check. This is the "deploy to live" step that completes the
- * forge→pitchfork→healthck doctrine.
+ * Deploy lane: stage an existing built binary → update pitchfork daemon →
+ * health-check. The build step lives in `forge stack build` (mise run
+ * kappa-build / forge-build); this tool consumes the built artifact. This is
+ * the "deploy to live" step that completes the forge→pitchfork→healthck doctrine.
  *
  * Usage:
- *   forge-deploy --repo <org/repo> --tag <vX.Y.Z> [--dry-run] [--skip-build]
+ *   forge-deploy --repo <org/repo> --tag <vX.Y.Z> --binary <path> [--dry-run]
  *
  * Options:
  *   --repo       org/repo for the kappa-code repo (required, default: toxicwind/kappa-code)
@@ -168,13 +169,9 @@ function main(): never {
   console.error(`[deploy] tag: ${tag}`);
   console.error(`[deploy] dry-run: ${dryRun}`);
 
-  // Step 1: Build via nativelink (unless --skip-build)
-  if (!flags["skip-build"]) {
-    console.error("[deploy] step 1: building via nativelink (mise run kappa-build)...");
-    run("mise", ["run", "kappa-build"], { dryRun, cwd: repoPath });
-  } else {
-    console.error("[deploy] step 1: skipping build (--skip-build)");
-  }
+  // Step 1 removed: the build layer now lives in `forge stack build`
+  // (mise run kappa-build / forge-build). forge-deploy is a pure deploy
+  // lane (stage + restart + health) and must find an existing binary.
 
   // Step 2: Find and stage the binary
   const binaryCandidates = [

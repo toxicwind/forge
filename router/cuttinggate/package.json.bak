@@ -1,0 +1,30 @@
+{
+  "name": "cuttinggate",
+  "version": "0.1.0",
+  "module": "src/server.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "bun run src/server.ts",
+    "dev": "bun --watch src/server.ts",
+    "test": "bun test",
+    "doctor": "bun run src/doctor.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "bun run typecheck",
+    "check": "bun run typecheck && bun test"},
+  "dependencies": {
+    "elysia": "^1.4.30",
+    "zod": "^4.6.5",
+    "pino": "^10.3.1",
+    "bottleneck": "^2.19.5",
+    "opossum": "^10.0.0",
+    "p-limit": "^7.3.3",
+    "@sinclair/typebox": "^0.34.52"
+  },
+  "engines": {
+    "bun": ">=1.4.0"
+  },
+  "devDependencies": {
+    "@types/opossum": "^8.1.9"
+  }
+}

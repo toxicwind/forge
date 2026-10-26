@@ -1,8 +1,8 @@
-# Estate AST Router (flock-router)
+# Sovereign AST Router (flock-router)
 
 *The Bun/TypeScript port of the Python AST router — a 4-way parallel race where the first AST/code-shaped response wins, with sticky sessions and FIFO back-pressure.*
 
-![estate](https://img.shields.io/badge/estate--projects-blue?style=for-the-badge) ![mesh](https://img.shields.io/badge/mesh-router--ts-purple?style=for-the-badge) ![bun](https://img.shields.io/badge/bun-black?style=for-the-badge) ![typescript](https://img.shields.io/badge/typescript-3178C6?style=for-the-badge)
+![sovereign](https://img.shields.io/badge/sovereign--projects-blue?style=for-the-badge) ![mesh](https://img.shields.io/badge/mesh-router--ts-purple?style=for-the-badge) ![bun](https://img.shields.io/badge/bun-black?style=for-the-badge) ![typescript](https://img.shields.io/badge/typescript-3178C6?style=for-the-badge)
 
 ## Why this exists
 
@@ -70,9 +70,9 @@ Local club3090 on `:8020` is automatically eligible as `local`.
 
 ## Dev / contributing
 
-Changes land as commits in the estate-projects repo. This is a port of `../flock-py/` — keep race semantics (winner criteria, cooldowns, sticky duration) identical to the Python reference; divergence between the two is a bug. New code in this tree is Bun/TypeScript per the estate's standing rule.
+Changes land as commits in the sovereign-projects repo. This is a port of `../flock-py/` — keep race semantics (winner criteria, cooldowns, sticky duration) identical to the Python reference; divergence between the two is a bug. New code in this tree is Bun/TypeScript per the estate's standing rule.
 
 ## License & Security
 
-- Follows the estate-projects repo licensing.
+- Follows the sovereign-projects repo licensing.
 - Security: provider keys come from the environment only — never committed, never logged; the server binds loopback by default. The `env_dump` helpers are diagnostics — don't paste their output into issues or chat if keys are present.

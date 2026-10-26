@@ -5,8 +5,17 @@
 // agrees and the exit code actually moves.
 import { test, expect } from "bun:test";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, writeFileSync, mkdirSync, readFileSync, cpSync } from "node:fs";
-import { join } from "node:path";
+import {
+  mkdtempSync,
+  writeFileSync,
+  mkdirSync,
+  readFileSync,
+  cpSync,
+  readlinkSync,
+  symlinkSync,
+  copyFileSync,
+} from "node:fs";
+import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { render, loadManifest, ESTATE_ROOT } from "./gitignore-sync.ts";
 
@@ -33,17 +42,41 @@ function fixtureEstate() {
   const root = mkdtempSync(join(tmpdir(), "gitignore-estate-"));
   mkdirSync(join(root, "ops", "bin"), { recursive: true });
   cpSync(join(ESTATE_ROOT, "ops", "gitignore"), join(root, "ops", "gitignore"), { recursive: true });
-  cpSync(join(ESTATE_ROOT, "ops", "bin", "gitignore-sync.ts"), join(root, "ops", "bin"));
-  return { root, script: join(root, "ops", "bin", "gitignore-sync.ts") };
+  // The estate and forge repos share this script through a HARDLINK (same
+  // inode, two paths), so cpSync with a FILE source + DIRECTORY dest trips
+  // ENOTDIR against the existing ops/bin dir. Copy the contents to the exact
+  // file path the fixture will run.
+  const src = join(ESTATE_ROOT, "ops", "bin", "gitignore-sync.ts");
+  const dest = join(root, "ops", "bin", "gitignore-sync.ts");
+  copyFileSync(src, dest);
+  return { root, script: dest };
 }
 
 function runSync(script: string, arg: string) {
   try {
-    const out = execFileSync("bun", [script, arg], { stdio: "pipe" });
+    // cwd = the fixture root: the script resolves the repo it renders for
+    // from the CWD (symlinked script paths are resolved by Bun before the
+    // script sees them, so the path cannot carry that signal).
+    const out = execFileSync("bun", [script, arg], {
+      stdio: "pipe",
+      cwd: dirname(script),
+    });
     return { code: 0, out: out.toString() };
   } catch (err) {
-    const e = err as { status: number | null; stderr: Buffer };
-    return { code: e.status ?? -1, out: e.stderr.toString() };
+    // Bun's execFileSync error carries stdout/stderr as strings (not Buffers)
+    // and may omit them entirely, so read defensively.
+    const e = err as {
+      status?: number | null;
+      code?: number;
+      stdout?: Buffer | string;
+      stderr?: Buffer | string;
+    };
+    const text = (v: Buffer | string | undefined): string =>
+      v === undefined ? "" : typeof v === "string" ? v : v.toString();
+    return {
+      code: e.status ?? e.code ?? -1,
+      out: text(e.stdout) + text(e.stderr),
+    };
   }
 }
 
@@ -55,14 +88,21 @@ test("render is deterministic across calls", () => {
 test("every manifest entry is actually consumed", () => {
   const manifest = loadManifest();
   const { sections } = render(manifest);
-  expect(sections).toHaveLength(manifest.templates.length + manifest.layers.length);
+  expect(sections).toHaveLength(
+    manifest.preLayers.length +
+      manifest.templates.length +
+      manifest.postLayers.length
+  );
 });
 
-test("layout tiers are ignored: ranch/, vendored/, var/", () => {
+test("layout tiers are ignored: vendored/, var/", () => {
   const rules = render().content;
-  expect(gitIgnores(rules, "ranch/herd/src/main.rs")).toBe(true);
+  // ranch/ is NOT an ignored tier any more: the estate moved its product
+  // repos to pens/ (AGENTS.md "the bin contract"), so ranch/ is a real
+  // source tree at the estate root and must stay tracked.
   expect(gitIgnores(rules, "vendored/Hyprland/README.md")).toBe(true);
   expect(gitIgnores(rules, "var/archives/backup.tgz")).toBe(true);
+  expect(gitIgnores(rules, "ranch/herd/src/main.rs")).toBe(false);
 });
 
 test("control-plane source is NOT ignored", () => {
@@ -72,10 +112,14 @@ test("control-plane source is NOT ignored", () => {
   expect(gitIgnores(rules, "docs/estate-map.md")).toBe(false);
 });
 
-test("estate/.env is tracked while .env.local is ignored", () => {
+test("estate/.env is ignored while .env.example stays tracked", () => {
   const rules = render().content;
-  expect(gitIgnores(rules, ".env")).toBe(false);
+  // The secrets layer (50) ignores .env and .env.* and re-admits only
+  // .env.example -- it lands AFTER the upstream templates, so .env is
+  // ignored. That is the current, intended contract.
+  expect(gitIgnores(rules, ".env")).toBe(true);
   expect(gitIgnores(rules, ".env.local")).toBe(true);
+  expect(gitIgnores(rules, ".env.example")).toBe(false);
 });
 
 test("vendored ecosystem templates are applied, not just the layers", () => {
@@ -121,6 +165,9 @@ test("missing template fails loudly instead of rendering a short file", () => {
 
 test("missing layer fails loudly", () => {
   const manifest = loadManifest();
-  const broken = { ...manifest, layers: [...manifest.layers, "99-not-a-layer.gitignore"] };
+  const broken = {
+    ...manifest,
+    postLayers: [...manifest.postLayers, "99-not-a-layer.gitignore"],
+  };
   expect(() => render(broken)).toThrow(/missing layer/);
 });

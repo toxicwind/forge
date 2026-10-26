@@ -8,36 +8,49 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-// Resolve the ops root directory (where manifest.json, layers/, templates/ live).
-// Bun resolves import.meta.dir to the realpath (follows symlinks).
-// We need the manifest/layers/templates relative to the script's location,
-// which may be accessed via symlinks (estate/ops → pens/ranch/forge/ops).
-// Strategy: try the resolved path first; if manifest not found there,
-// fall back to using process.cwd() as base.
-function resolveOpsRoot(): string {
-  // Direct approach: realpath relative (e.g. pens/ranch/forge/ops/gitignore)
-  const direct = join(resolve(import.meta.dir, "..", "gitignore"));
-  if (existsSync(join(direct, "manifest.json"))) {
-    return direct;
-  }
-  // Fallback: use cwd-relative path (works when invoked from estate/ or pens/ranch/forge/)
-  const fromCwd = join(process.cwd(), "ops", "gitignore");
-  if (existsSync(join(fromCwd, "manifest.json"))) {
-    return fromCwd;
-  }
-  // Last resort: direct again
-  return direct;
+/**
+ * The repo root this script renders FOR.
+ *
+ * Path-based resolution is unreliable here: estate/ops/bin is a SYMLINK to
+ * ranch/forge/ops/bin and the script file is shared via hardlink, so Bun
+ * resolves BOTH process.argv[1] and import.meta.dir to the forge path before
+ * the script ever sees them. The estate's own .gitignore was therefore never
+ * regenerated -- forge's was written instead.
+ *
+ * The CWD is the only signal that survives symlink resolution: whichever repo
+ * you run the command from is the repo it renders for.
+ *
+ * Resolution order:
+ *   1. $GITIGNORE_ROOT                       explicit override
+ *   2. nearest ancestor of the CWD holding ops/gitignore/manifest.json
+ *   3. nearest ancestor of the script's real path holding it
+ */
+function resolveRepoRoot(): string {
+  const hasManifest = (dir: string) =>
+    existsSync(join(dir, "ops", "gitignore", "manifest.json"));
+
+  const override = process.env.GITIGNORE_ROOT;
+  if (override && hasManifest(resolve(override))) return resolve(override);
+
+  const climb = (start: string): string | null => {
+    let dir = resolve(start);
+    while (true) {
+      if (hasManifest(dir)) return dir;
+      const parent = join(dir, "..");
+      if (parent === dir) return null;
+      dir = parent;
+    }
+  };
+
+  return (
+    climb(process.cwd()) ??
+    climb(import.meta.dir) ??
+    resolve(import.meta.dir, "..", "..")
+  );
 }
 
-// OPS_ROOT is the directory containing manifest.json (ops/gitignore/)
-export const OPS_ROOT: string = resolveOpsRoot();
-const MANIFEST = join(OPS_ROOT, "manifest.json");
-const TEMPLATES_DIR = join(OPS_ROOT, "templates");
-const LAYERS_DIR = join(OPS_ROOT, "layers");
-
-// ESTATE_ROOT defaults to the environment variable, otherwise falls back
-// to the parent of ops/.
-export const ESTATE_ROOT: string = process.env.ESTATE_ROOT ?? resolve(OPS_ROOT, "..");
+export const ESTATE_ROOT = resolveRepoRoot();
+const MANIFEST = join(ESTATE_ROOT, "ops", "gitignore", "manifest.json");
 const OUT = join(ESTATE_ROOT, ".gitignore");
 
 type Manifest = {
@@ -71,9 +84,9 @@ export function loadManifest(path: string = MANIFEST): Manifest {
 }
 
 export function render(
-  manifest: Manifest,
-  templatesDir = TEMPLATES_DIR,
-  layersDir = LAYERS_DIR,
+  manifest: Manifest = loadManifest(),
+  templatesDir = join(ESTATE_ROOT, "ops", "gitignore", "templates"),
+  layersDir = join(ESTATE_ROOT, "ops", "gitignore", "layers"),
 ): { content: string; sections: Section[] } {
   const chunks: string[] = [];
   const sections: Section[] = [];

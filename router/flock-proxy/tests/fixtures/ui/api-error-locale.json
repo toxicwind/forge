@@ -1,7 +1,0 @@
-{
-  "error": {
-    "code": "invalid_locale",
-    "message": "locale fixture rejected",
-    "type": "proxy_error"
-  }
-}
