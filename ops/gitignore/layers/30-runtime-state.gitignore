@@ -60,6 +60,10 @@ config/tau/agent/custom-session-files/
 config/tau/run/
 config/tau/marketplaces.json
 
+# Browser profiles written by the browserless/keeper rig: Chrome's own state
+# (Trust Tokens, cookies, History, Local Storage). Runtime data, never source.
+config/tau/browser-profiles/
+
 # sqlite runtime databases (tau, agent orchestration) - regenerated on demand
 *.db
 *.db-shm

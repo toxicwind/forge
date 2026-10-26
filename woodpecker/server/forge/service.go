@@ -22,9 +22,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"go.woodpecker-ci.org/woodpecker/v3/server/forge/local"
 	"go.woodpecker-ci.org/woodpecker/v3/server/model"
-	"go.woodpecker-ci.org/woodpecker/v3/server/pipeline"
 	"go.woodpecker-ci.org/woodpecker/v3/server/store"
 )
 
@@ -32,6 +30,19 @@ var (
 	cacheOnce sync.Once
 	cacheInst *Cache
 	cacheErr  error
+)
+
+// Timeout-cancel wiring, injected by cmd/server at boot.
+//
+// server/forge cannot import these directly:
+//   - server/pipeline imports server (Config global); importing it here
+//     would close the cycle server -> server/cache -> server/forge ->
+//     server/pipeline -> server.
+//   - server/forge/local implements Forge but must not import server/forge
+//     (cycle); its constructor is injected too.
+var (
+	NewLocalForge  func() Forge
+	CancelPipeline func(ctx context.Context, f Forge, s store.Store, r *model.Repo, u *model.User, p *model.Pipeline, info *model.CancelInfo) error
 )
 
 // Root returns the forge state root (FORGE_ROOT or /home/toxic/forge).
@@ -107,8 +118,11 @@ func EnforceTimeout(_store store.Store, repo *model.Repo, user *model.User, pipe
 		}
 		if time.Now().After(deadline) {
 			log.Warn().Int64("pipeline", pipelineID).Msg("forge: job timeout, cancelling")
-			forge := local.New()
-			cancelErr := pipeline.Cancel(context.Background(), forge, _store, repo, user, pl, &model.CancelInfo{
+			if NewLocalForge == nil || CancelPipeline == nil {
+				log.Error().Msg("forge: timeout cancel unavailable (wiring not injected by cmd/server)")
+				return
+			}
+			cancelErr := CancelPipeline(context.Background(), NewLocalForge(), _store, repo, user, pl, &model.CancelInfo{
 				CanceledByUser: "forge-timeout",
 			})
 			if cancelErr != nil {

@@ -1305,6 +1305,10 @@ config/tau/agent/custom-session-files/
 config/tau/run/
 config/tau/marketplaces.json
 
+# Browser profiles written by the browserless/keeper rig: Chrome's own state
+# (Trust Tokens, cookies, History, Local Storage). Runtime data, never source.
+config/tau/browser-profiles/
+
 # sqlite runtime databases (tau, agent orchestration) - regenerated on demand
 *.db
 *.db-shm
@@ -1327,19 +1331,6 @@ config/tau/agent/models.json
 doorbell.*.crt
 doorbell.*.key
 config/tau/agent/extensions/*/settings.json
-
-# ── NativeLink runtime state (2026-10-19) ───────────────────────────────
-# NativeLink CAS/AC content stores and worker scratch live under var/runtime
-# (already covered by `var/` in 10-layout-tiers). What's new: bazel symlinks
-# and local rc fragments that any REAPI-connected project materializes.
-# Content-addressed cache output, never source of truth. Root-anchored:
-# the tau repo tracks its own bazel/ rules dir (no dash), and nested repos
-# carry their own .gitignore for these.
-/bazel-bin
-/bazel-out
-/bazel-testlogs
-/bazel-*
-/user.bazelrc
 
 # ── Standing audit artifacts (2026-10-15) ───────────────────────────────
 # Skills may keep versioned reports. The template layers' unanchored
@@ -1419,11 +1410,6 @@ config/environment.d/
 .env.*
 !.env.example
 *.env
-!.env
-!.envrc
-# re-ignore credential envs the !.env negation would resurrect at depth:
-config/tau/.env
-config/**/.env
 !config/ports.env
 !config/hodos-ssot/route.env
 .secrets

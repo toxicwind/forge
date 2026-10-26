@@ -52,6 +52,7 @@ const Schema = z.object({
     "custom/copilot": "https://api.githubcopilot.com",
     "custom/bodybuilder": "http://127.0.0.1:25193/v1",
     "flock": "http://127.0.0.1:25193/v1",
+    "hodos": "http://127.0.0.1:25193/v1",
     "omniroute": "http://127.0.0.1:20130/v1",
     "vans": "http://127.0.0.1:20128/v1",
   }),

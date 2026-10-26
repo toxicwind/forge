@@ -151,7 +151,7 @@ for f in "${HATCH_MCP_CANDIDATES[@]}"; do
   fi
 done
 if [[ "${found_mcp}" -eq 0 ]]; then
-  log "no hatch-mcp server.ts found at known paths — locate via gatehouse mcp_config (hatch-mcp -> estate/tools/hatch-mcp/server.ts)"
+  log "no hatch-mcp server.ts found at known paths — locate via thresher mcp_config (hatch-mcp -> estate/tools/hatch-mcp/server.ts)"
 fi
 log "================================================"
 log ""

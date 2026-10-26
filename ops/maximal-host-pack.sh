@@ -78,7 +78,7 @@ else
   [ "$ok" -eq 1 ] || echo "WARN: Funnel CLI may need admin ACL; continuing to prove curls"
 fi
 
-# Optional gatehouse upstream patch (@ SHA 0ac68ff5…) — call if present, never invent symlinks
+# Optional thresher upstream patch (@ SHA 0ac68ff5…) — call if present, never invent symlinks
 for pu in \
   "$ESTATE/ops/patch-upstreams.sh" \
   "$ESTATE/bin/patch-upstreams.sh" \
@@ -298,9 +298,9 @@ Monorepo under `~/estate/ranch` (`toxicwind/ranch`). Host ops stay in **estate**
 
 ## MCP
 
-- gatehouse · doorbell · switchboard · lasso
+- thresher · doorbell · switchboard · lasso
 - Doorbell public: `:25202` via Tailscale Funnel (`/doorbell-mcp`, `/gemini-mcp`)
-- Gatehouse MCP shim target typically `:25127` (see arroyo/mcp)
+- Thresher MCP shim target typically `:25127` (see arroyo/mcp)
 
 ## Fleet
 
@@ -315,7 +315,7 @@ Monorepo under `~/estate/ranch` (`toxicwind/ranch`). Host ops stay in **estate**
 | overlord/ | GramJS MTProto — puppertrix / BotFather control |
 | coyote/ | Bun bot path (ex product name "yote") |
 | discord/ | Discord surface |
-| mcp/ | thin shim → gatehouse |
+| mcp/ | thin shim → thresher |
 
 Env: introduce `ARROYO_*`, keep `YOTE_*` aliases until cutover. See `arroyo/MOVE.md`.
 
@@ -380,7 +380,7 @@ Umbrella for overlord · coyote · discord · mcp under ranch.
 - **Host machine** stays **yote** (awrawr-pc).
 - **Product** rename: yote → coyote (Bun path).
 - Env: `ARROYO_*` preferred; keep `YOTE_*` aliases until cutover.
-- MCP shim → gatehouse (typically `:25127`). Do not bind `:25204`.
+- MCP shim → thresher (typically `:25127`). Do not bind `:25204`.
 
 See MOVE.md for migration from legacy yote paths.
 EOF
@@ -403,7 +403,7 @@ cat > "$ARROYO/MOVE.md" << 'EOF'
 | standalone `toxicwind/yote` / `~/yote` | `ranch/arroyo/coyote/` |
 | Overlord / puppertrix GramJS | `ranch/arroyo/overlord/` |
 | Discord bot surface | `ranch/arroyo/discord/` |
-| MCP shim into gatehouse | `ranch/arroyo/mcp/` |
+| MCP shim into thresher | `ranch/arroyo/mcp/` |
 
 ## Rules
 

@@ -2,7 +2,7 @@
 
 *Maximal free coding-agent gateway for Zed — one OpenAI-compatible endpoint that routes across free-tier providers with sticky sessions, fallback chains, and rate-aware selection.*
 
-![estate](https://img.shields.io/badge/estate--projects-blue?style=for-the-badge) ![mesh](https://img.shields.io/badge/mesh-free--gateway-purple?style=for-the-badge) ![python](https://img.shields.io/badge/python-3776AB?style=for-the-badge) ![port 19280](https://img.shields.io/badge/port-19280-orange?style=for-the-badge)
+![sovereign](https://img.shields.io/badge/sovereign--projects-blue?style=for-the-badge) ![mesh](https://img.shields.io/badge/mesh-free--gateway-purple?style=for-the-badge) ![python](https://img.shields.io/badge/python-3776AB?style=for-the-badge) ![port 19280](https://img.shields.io/badge/port-19280-orange?style=for-the-badge)
 
 ## Why this exists
 
@@ -82,9 +82,9 @@ free_zed_gateway/
 
 ## Dev / contributing
 
-Changes land as commits in the estate-projects repo. This concept was folded into the estate router's `free` strategy — treat new routing ideas as candidates for the live router first, and this file as the standalone/experimental edition. Keep keys in env or `.env`, never in the repo.
+Changes land as commits in the sovereign-projects repo. This concept was folded into the sovereign router's `free` strategy — treat new routing ideas as candidates for the live router first, and this file as the standalone/experimental edition. Keep keys in env or `.env`, never in the repo.
 
 ## License & Security
 
-- Follows the estate-projects repo licensing. The design lineage above links the three upstream projects this was synthesized from — check their licenses before lifting their code wholesale.
+- Follows the sovereign-projects repo licensing. The design lineage above links the three upstream projects this was synthesized from — check their licenses before lifting their code wholesale.
 - Security: provider keys live in env/`.env` only — never committed; the sqlite ledger defaults to `/tmp` (ephemeral, not backed up); the server binds loopback. Treat `.env` files as secrets: they are gitignored, and pasting them into issues or chat is a leak.

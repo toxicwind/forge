@@ -39,7 +39,9 @@ import (
 	"go.woodpecker-ci.org/woodpecker/v3/server"
 	cron_scheduler "go.woodpecker-ci.org/woodpecker/v3/server/cron"
 	"go.woodpecker-ci.org/woodpecker/v3/server/forge"
+	forge_local "go.woodpecker-ci.org/woodpecker/v3/server/forge/local"
 	"go.woodpecker-ci.org/woodpecker/v3/server/metric"
+	"go.woodpecker-ci.org/woodpecker/v3/server/pipeline"
 	"go.woodpecker-ci.org/woodpecker/v3/server/router"
 	"go.woodpecker-ci.org/woodpecker/v3/server/router/middleware"
 	"go.woodpecker-ci.org/woodpecker/v3/server/store"
@@ -129,6 +131,12 @@ func run(ctx context.Context, c *cli.Command) error {
 		return fmt.Errorf("forge repo setup: %w", err)
 	}
 	forge.StartCompletionWatcher(ctx, _store)
+
+	// Forge: wire timeout-cancel dependencies. Kept out of server/forge to
+	// avoid import cycles (server/pipeline -> server via the Config global;
+	// server/forge/local must not import server/forge).
+	forge.NewLocalForge = func() forge.Forge { return forge_local.New() }
+	forge.CancelPipeline = pipeline.Cancel
 
 	// wait for all services until one do stops with an error
 	serviceWaitingGroup := errgroup.Group{}
