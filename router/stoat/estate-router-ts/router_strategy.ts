@@ -1,6 +1,6 @@
 import type { ChatBody, RouteResult, RequestCtx } from "./router_types.ts";
-import { state, isWorkerExhausted } from "./router_matrix.ts";
-import { PROVIDERS, PROVIDER_MODELS, catalogModelsFor, modelFree, modelContextWindow, LOCAL_ROLES, CODING, MAX_PARALLEL, FIFO_MAX, STRATEGY, UA, AST_RE, getKey, keyOk, firstModelFor, resolveModel, isLocalSwapModelId, isAst, isExplicit, classifyTask, costTier, json, normalizeModelSpec, isChatCapable, log, CONNECT_MS, TTFT_MS, ATTEMPT_MS, ATTEMPT_STREAM_MS, HEDGE_MS } from "./router_config.ts";
+import { state, BELIEF, isWorkerExhausted } from "./router_matrix.ts";
+import { PROVIDERS, PROVIDER_MODELS, catalogModelsFor, catalog, modelFree, modelContextWindow, LOCAL_ROLES, CODING, MAX_PARALLEL, FIFO_MAX, STRATEGY, UA, AST_RE, getKey, keyOk, firstModelFor, resolveModel, isLocalSwapModelId, isAst, isExplicit, classifyTask, costTier, json, normalizeModelSpec, isChatCapable, log, CONNECT_MS, TTFT_MS, ATTEMPT_MS, ATTEMPT_STREAM_MS, HEDGE_MS } from "./router_config.ts";
 import { resolveSigmaAlias } from "./sigma-enrich.ts";
 import { benchModelBonus } from "./bench-priors.ts";
 // 📒 ledger — the ranch account book: durable Gemini cost accounting.
@@ -10,6 +10,7 @@ import { dispatcherFor } from "./dispatcher.ts";
 import { ProviderRateLimiter } from "./ratelimit.ts";
 import { flockMetrics } from "./flock-metrics.ts";
 import { injectStreamOptions, noteInjectRejected } from "./streamopts.ts";
+import { sanitizePayload, observeLiveCapability, seedCapability, reportDrift } from "./router_emergent.ts";
 
 // ---------------------------------------------------------------------------
 // Flock-port shared state (G6/G7): per-provider FIFO dispatchers are created
@@ -306,6 +307,19 @@ export async function callOne(
   }
   flockMetrics.recordQueueWait(slot.waitedMs / 1000);
   const payload = { ...payloadBody, model, stream };
+  // Emergent capability gate (router_emergent.ts, 2026-10-27): intersect
+  // the outgoing payload keys with the model's fused capability matrix so
+  // model-specific sampling flags the backend does not advertise never
+  // reach it (qwen3.6-35b must not receive thinking/reasoning_effort;
+  // glm-5.3-flash must never receive thinking:{type:"disabled"}). The only
+  // way through is an explicit operator bypass (ESTATE_NO_CAP_GATE=1).
+  if (process.env.ESTATE_NO_CAP_GATE !== "1") {
+    const clean = sanitizePayload(provider, model, payload);
+    Object.keys(payload).forEach((k) => {
+      if (!(k in clean)) delete (payload as Record<string, unknown>)[k];
+    });
+    Object.assign(payload, clean);
+  }
   // Zen free-tier body gate (borrowed: denysvitali/llm-proxy prepareFreeTierBody).
   // Requires stream:true + bash/glob/grep/read tool signatures, else 403.
   if (provider === "zen") applyZenFreeTierBody(payload);
@@ -554,21 +568,33 @@ export async function callOne(
 }
 
 /**
- * firstUsableModelFor — first catalog model that isn't flap-benched or
- * entitlement-benched. Race sets use this instead of firstModelFor so
- * dead IDs never occupy a lane. Exported for regression tests.
+ * firstUsableModelFor — first catalog model that isn't flap-benched,
+ * entitlement-benched, or model-disabled. Race set / chain / cascade use
+ * this instead of firstModelFor so dead IDs never occupy a lane. Exported
+ * for regression tests. (Pre-existing fix: the function was renamed to
+ * rankedPairs during a cutover but two call sites still referenced it —
+ * this restores the real definition and re-binds rankedPairs to it.)
+ */
+export function firstUsableModelFor(p: string): string | undefined {
+  for (const m of catalogModelsFor(p)) {
+    if (state.flapBanned(p, m) || state.isEntitlementDead(p, m)) continue;
+    if (state.disabler.isDisabled(`${p}:${m}`)) continue;
+    return m;
+  }
+  return undefined;
+}
+
+/**
+ * rankedPairs — build (provider, model) pairs ranked by belief cost for a
+ * task. Each provider contributes its first usable model (or an explicit
+ * model id when one is requested).
  */
 export function rankedPairs(model: string | null, task = "chat"): [string, string][] {
   const pairs: [string, string][] = [];
   for (const p of Object.keys(PROVIDERS)) {
-    const live = LIVE_STATUS[p]?.models ?? [];
-    const ms = model && model !== "auto" && !model.startsWith("direct:")
-      ? [model]
-      : (live.length ? live : catalogModelsFor(p));
-    for (const m of ms) pairs.push([p, m]);
-  }
-  if (!pairs.length) {
-    for (const p of ["herd", "openrouter", "nim-local"]) pairs.push([p, "<default>"]);
+    const first = firstUsableModelFor(p);
+    if (!first) continue;
+    pairs.push([p, model && model !== "auto" && !model.startsWith("direct:") ? model : first]);
   }
   pairs.sort((a, b) => {
     const scoreB = BELIEF.costOf(`${b[0]}/${b[1]}/${task}`) + BELIEF.costOf(`${b[0]}/${b[1]}`);
@@ -579,7 +605,17 @@ export function rankedPairs(model: string | null, task = "chat"): [string, strin
 }
 
 export function pickWeighted(n = MAX_PARALLEL, task = "chat"): [string, string][] {
-  return rankedPairs(null, task).slice(0, n);
+  const out = rankedPairs(null, task).slice(0, n);
+  // Local bonus lane (parallel to the bornite bonus in the pre-cutover
+  // pickWeighted): a healthy local llama-swap job ALWAYS joins the race,
+  // appended AFTER the n-cut so no caller can slice it off. Zero-cost local
+  // fallback that holds client 503s down when cloud lanes flap.
+  const p = "llama-swap";
+  if (keyOk(p) && !out.some(([cp]) => cp === p)) {
+    const mid = firstUsableModelFor(p) || LOCAL_ROLES.fast;
+    out.push([p, mid]);
+  }
+  return out;
 }
 
 
