@@ -22,7 +22,8 @@
     "20-root-compat-symlinks.gitignore",
     "30-runtime-state.gitignore",
     "40-config-ownership.gitignore",
-    "50-secrets.gitignore"
+    "50-secrets.gitignore",
+    "60-component-repos.gitignore"
   ],
   "vendor": {
     "repo": "https://github.com/github/gitignore.git",
