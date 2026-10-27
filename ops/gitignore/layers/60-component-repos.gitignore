@@ -72,9 +72,9 @@ packages/theta/
 # docs/REPO_TOPOLOGY.md; the index no longer claims them. Previously tracked
 # as mode-160000 gitlinks with no .gitmodules declaration.
 config/tau/agent/extensions/hashline-pi/
-engines/herd/beellama.cpp/
-engines/herd/ik_llama.cpp/
-engines/herd/llama-cpp-turboquant/
+engines/bornite/beellama.cpp/
+engines/bornite/ik_llama.cpp/
+engines/bornite/llama-cpp-turboquant/
 packages/theta/
 submodules/phone-sentinel/
 work/airspeak/
