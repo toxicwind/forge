@@ -1,3 +1,6 @@
 [submodule "ops/gitignore/templates"]
 	path = ops/gitignore/templates
 	url = https://github.com/github/gitignore.git
+[submodule "web"]
+	path = web
+	url = https://github.com/CriticalMoments/CMSaasStarter.git
