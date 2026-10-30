@@ -1,0 +1,16 @@
+# .gitignore — Forge pen.
+#
+# Submoduleless by design: product checkouts live under products/ as peer
+# standalone clones and are NEVER tracked by this repo. No gitlinks (mode
+# 160000), no nested .git pollution in the index.
+*
+!.gitignore
+!README.md
+!LICENSE
+!package.json
+!mise.toml
+!AGENTS.md
+!bin/
+!bin/**
+!docs/
+!docs/**
