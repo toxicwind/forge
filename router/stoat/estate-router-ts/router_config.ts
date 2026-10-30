@@ -12,7 +12,7 @@ import {
   MODEL_ALIASES as PKG_MODEL_ALIASES,
   DEAD_MODEL_IDS as PKG_DEAD_MODEL_IDS,
   type ProviderDef,
-} from "../../../../../../estate/packages/providers/src/index.ts";
+} from "../../../../../geode/products/mimetite/src/index.ts";
 
 // ---------------------------------------------------------------------------
 // Secrets + local stack env (mise loads these; standalone bun needs them too)
@@ -149,28 +149,36 @@ export const LOCAL_ROLES = loadLocalRoleModels();
 // adapters, seeds, and aliases; this file only applies this box's overrides.
 // ---------------------------------------------------------------------------
 function effectiveDefs(): ProviderDef[] {
-  return PKG_PROVIDER_DEFS.map((d) => {
-    // Local SSOT — always first-class for estate GPU path
-    if (d.name === "llama-swap") return { ...d, baseUrl: LLAMA_SWAP_V1 };
-    // Local NIM proxy (:8000, nim-consolidation track). Shows dead in
-    // /status until the proxy key lands — the router then picks it up via
-    // hot reload (/admin/reload, SIGHUP).
-    if (d.name === "nim-local")
-      return { ...d, baseUrl: process.env.NIM_PROXY_BASE || d.baseUrl };
-    // kimi-auto sidecar shim (pitchfork daemon kimi-auto-shim): rewrites
-    // model "kimi-auto" -> resolver's current best Kimi, forwards to herd.
-    // Kimi-only by design (shim 503s when no Kimi candidate is healthy).
-    if (d.name === "kimi-auto")
-      return {
-        ...d,
-        baseUrl:
-          process.env.KIMI_AUTO_SHIM_BASE ||
-          "http://127.0.0.1:" +
-            (process.env.KIMI_AUTO_SHIM_PORT || "25153") +
-            "/v1",
-      };
-    return d;
-  }).concat([
+  // Router-local defs REPLACE same-named package defs (this box's overlays,
+  // not extra packages). Plain concat duplicated names like "zen" once the
+  // full 47-def SSOT landed and ModelCatalog hard-throws on duplicates.
+  const pkg = PKG_PROVIDER_DEFS.map((d) => {
+    switch (d.name) {
+      // Local SSOT — always first-class for estate GPU path
+      case "llama-swap":
+        return { ...d, baseUrl: LLAMA_SWAP_V1 };
+      // Local NIM proxy (:8000, nim-consolidation track). Shows dead in
+      // /status until the proxy key lands — the router then picks it up via
+      // hot reload (/admin/reload, SIGHUP).
+      case "nim-local":
+        return { ...d, baseUrl: process.env.NIM_PROXY_BASE || d.baseUrl };
+      // kimi-auto sidecar shim (pitchfork daemon kimi-auto-shim): rewrites
+      // model "kimi-auto" -> resolver's current best Kimi, forwards to herd.
+      // Kimi-only by design (shim 503s when no Kimi candidate is healthy).
+      case "kimi-auto":
+        return {
+          ...d,
+          baseUrl:
+            process.env.KIMI_AUTO_SHIM_BASE ||
+            "http://127.0.0.1:" +
+              (process.env.KIMI_AUTO_SHIM_PORT || "25153") +
+              "/v1",
+        };
+      default:
+        return d;
+    }
+  });
+  const localDefs: ProviderDef[] = [
     // Rust-parity (flock roost_providers.rs "google"): keypool :25109 owns
     // the Google EAP key and translates OpenAI bodies onto the Interactions
     // API. This is the only upstream that answers with x-interaction-id,
@@ -205,44 +213,26 @@ function effectiveDefs(): ProviderDef[] {
       ],
       routerLocal: true,
     },
-    // OpenCode Zen free tier (borrowed: samosa-ai-com/opencode-go-multi-auth
-    // dual-upstream pattern + 9router-opencode-fix client identity).
-    // Anonymous — Zen keys free quota on the x-opencode-* client headers,
-    // injected per-request in router_strategy.ts, not on an API key.
-    {
-      name: "zen",
-      displayName: "opencode zen (free tier)",
-      baseUrl: "https://opencode.ai/zen/v1",
-       keyEnv: "OPENCODE_API_KEY",
-       auth: "bearer",
-      adapter: "static",
-       // Upstream catalog 2026-10-04: 45 models, 11 free-tier.
-       // Verified against https://opencode.ai/zen/v1/models AND via router
-       // WITH response-model check — the router fails over on miss, so
-       // HTTP 200 alone does NOT prove the model served.
-       staticModels: [
-         "big-pickle",
-         "fledge-alpha-free",
-         "jev-1.13-free",
-         "ling-3.1-flash-free",
-         "longcat-2.5-preview-free",
-         "mimo-v2.5-free",
-         "mimo-v2.6-flash-free",
-         "muse-spark-1.2-contributor-free",
-         "muse-spark-1.3-contributor-free",
-         "nemotron-3.5-lightning-free",
-         "space-bunny-free",
-       ],
-       seeds: [
-         "mimo-v2.5-free",
-         "mimo-v2.6-flash-free",
-         "ling-3.1-flash-free",
-       ],
-    },
-  ]);
+  ];
+  // Replace same-named package defs with these box's overlays; append the rest.
+  const localNames = new Set(localDefs.map((d) => d.name));
+  return [...pkg.filter((d) => !localNames.has(d.name)), ...localDefs];
 }
 
 const EFFECTIVE_DEFS = effectiveDefs();
+
+/**
+ * CLIENT_IDENTITY — provider name → identity class, from the SSOT defs
+ * (2026-10-27): replaces the hardcoded `provider === "zen"` fingerprint
+ * checks in router_strategy.ts so the opencode identity applies to ANY
+ * provider that declares `clientIdentity: "opencode"`.
+ */
+export const CLIENT_IDENTITY: Record<string, string> = Object.fromEntries(
+  EFFECTIVE_DEFS.filter((d) => d.clientIdentity).map((d) => [
+    d.name,
+    d.clientIdentity as string,
+  ]),
+);
 
 export const PROVIDERS: Record<
   string,

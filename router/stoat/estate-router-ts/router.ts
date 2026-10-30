@@ -53,6 +53,7 @@ import {
   observeLiveCapability,
   reportDrift,
 } from "./router_emergent.ts";
+import { errorQueue } from "./router_error_queue.ts";
 
 // ---------------------------------------------------------------------------
 // Optional client auth (absorbed from the retired :8000 key-proxy).
@@ -1209,6 +1210,16 @@ import("./model_rechecker.ts").then((m) => m.startRechecker()).catch((e) => cons
 
 // Live model discovery: curated list + every model each key can serve.
 startLiveDiscovery();
+
+ // Dynamic error router (2026-10-27): register each SSOT provider's
+ // concurrency cap (mimetite maxConcurrency, e.g. freeinference = 2) so
+ // 429/529s can wait zero-transport for a real slot instead of burning
+ // blind retries against a saturated lane.
+ for (const d of EFFECTIVE_DEFS) {
+   if (typeof d.maxConcurrency === "number" && d.maxConcurrency > 0) {
+     errorQueue.setConcurrency(d.name, d.maxConcurrency);
+   }
+ }
 
  // Emergent capability matrix seed (router_emergent.ts, 2026-10-27):
  // overlay every observed live model's supported_sampling_parameters into

@@ -1,6 +1,7 @@
 import type { ChatBody, RouteResult, RequestCtx } from "./router_types.ts";
 import { state, BELIEF, isWorkerExhausted } from "./router_matrix.ts";
 import { PROVIDERS, PROVIDER_MODELS, catalogModelsFor, catalog, modelFree, modelContextWindow, LOCAL_ROLES, CODING, MAX_PARALLEL, FIFO_MAX, STRATEGY, UA, AST_RE, getKey, keyOk, firstModelFor, resolveModel, isLocalSwapModelId, isAst, isExplicit, classifyTask, costTier, json, normalizeModelSpec, isChatCapable, log, CONNECT_MS, TTFT_MS, ATTEMPT_MS, ATTEMPT_STREAM_MS, HEDGE_MS } from "./router_config.ts";
+import { CLIENT_IDENTITY } from "./router_config.ts";
 import { resolveSigmaAlias } from "./sigma-enrich.ts";
 import { benchModelBonus } from "./bench-priors.ts";
 // 📒 ledger — the ranch account book: durable Gemini cost accounting.
@@ -11,6 +12,7 @@ import { ProviderRateLimiter } from "./ratelimit.ts";
 import { flockMetrics } from "./flock-metrics.ts";
 import { injectStreamOptions, noteInjectRejected } from "./streamopts.ts";
 import { sanitizePayload, observeLiveCapability, seedCapability, reportDrift } from "./router_emergent.ts";
+import { errorQueue } from "./router_error_queue.ts";
 
 // ---------------------------------------------------------------------------
 // Flock-port shared state (G6/G7): per-provider FIFO dispatchers are created
@@ -160,6 +162,7 @@ export async function callOne(
   externalSignal?: AbortSignal,
   rctx?: RequestCtx,
   force = false,
+  noWaitRetry = false,
 ): Promise<RouteResult> {
   const decision = rctx?.decision;
   // 404-entitlement bench (503-forensics 2026-09-21): fail fast with ZERO
@@ -255,11 +258,12 @@ export async function callOne(
     headers["HTTP-Referer"] = "https://zed.dev";
     headers["X-Title"] = "Estate-Router";
   }
-  if (provider === "zen") {
+  if (CLIENT_IDENTITY[provider] === "opencode") {
     // OpenCode Zen free-tier gate (borrowed: denysvitali/llm-proxy, 12errh/zen-proxy).
     // Format-checked, not app-attested: opencode/ UA + ses_/msg_ IDs
     // (26 chars: 12 hex ts + 14 base62) + stream:true + bash/glob/grep/read tools.
     // Without the exact format: 403 FreeTierError.
+    // Dynamic since 2026-10-27: driven by SSOT clientIdentity, not the name.
     Object.assign(headers, zenFingerprintHeaders());
   }
   // Model-pressure governor (flock governor.rs AIMD, per provider/model):
@@ -305,6 +309,9 @@ export async function callOne(
       err: "dispatch_queue_timeout",
     };
   }
+  // Zero-transport queue accounting (router_error_queue.ts): this attempt
+  // now occupies real upstream concurrency on this lane.
+  errorQueue.begin(provider);
   flockMetrics.recordQueueWait(slot.waitedMs / 1000);
   const payload = { ...payloadBody, model, stream };
   // Emergent capability gate (router_emergent.ts, 2026-10-27): intersect
@@ -322,7 +329,7 @@ export async function callOne(
   }
   // Zen free-tier body gate (borrowed: denysvitali/llm-proxy prepareFreeTierBody).
   // Requires stream:true + bash/glob/grep/read tool signatures, else 403.
-  if (provider === "zen") applyZenFreeTierBody(payload);
+  if (CLIENT_IDENTITY[provider] === "opencode") applyZenFreeTierBody(payload);
   const start = performance.now();
   // Failfast signal stack: connect (headers) < TTFT (first byte, stream) <
   // total attempt cap < client deadline / hangup. AbortSignal.any keeps
@@ -423,6 +430,24 @@ export async function callOne(
         noteInjectRejected(injectedKey);
         log(`stream_options injection rejected by ${provider}/${model}; retrying unmodified`);
         return callOne(provider, model, body, stream, externalSignal, rctx);
+      }
+      // Dynamic error router (2026-10-27, architect): a 429 is a signal,
+      // not a verdict. Classify it (7-family), hold it in the GLOBAL
+      // zero-transport queue (≤2s) for this lane's concurrency slot, and
+      // either retry inline (slot opened) or hand the annotated signal to
+      // the strategy layer for emergent reroute. The retry flag prevents
+      // loops: one queued retry per attempt, ever.
+      if ((resp.status === 429 || resp.status === 529) && !noWaitRetry) {
+        const hdrs: Record<string, string | null | undefined> = {};
+        resp.headers.forEach((v, k) => (hdrs[k] = v));
+        const qd = await errorQueue.decide(provider, resp.status, errText, hdrs);
+        if (qd.action === "dispatch") {
+          decision?.push_skip(provider, "error_queue_wait", `${qd.signal?.family} waited ${qd.waitedMs}ms`);
+          log(`error-queue: ${provider}/${model} 429(${qd.signal?.family}) waited ${qd.waitedMs}ms for slot — retrying inline`);
+          return callOne(provider, model, body, stream, externalSignal, rctx, force, true);
+        }
+        decision?.push_skip(provider, "error_queue_reroute", `${qd.signal?.family} horizon ${qd.signal?.horizonSec}s`);
+        log(`error-queue: ${provider}/${model} 429(${qd.signal?.family}, horizon ${qd.signal?.horizonSec}s) — emergent reroute`);
       }
       return withIid({
         ok: false,
@@ -562,6 +587,7 @@ export async function callOne(
       err: String(e),
     };
   } finally {
+    errorQueue.end(provider);
     permit.release();
     slot.release();
   }

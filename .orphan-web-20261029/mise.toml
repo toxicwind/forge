@@ -1,0 +1,6 @@
+[tasks]
+run = "bin/run"
+check = "bin/check"
+dev = "npm run dev"
+build = "npm run build"
+checks = "./checks.sh"

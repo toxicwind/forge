@@ -10,7 +10,7 @@ Agents call tools; tools come from upstream MCP servers; upstream servers can be
 
 ## Status
 
-**Not live.** The code defaults to `:25120`, but that port is canonically estate-chat's per `estate/pitchfork.toml` — do not start the gateway on `:25120` without resolving the collision. No pitchfork stanza, nothing listening. Preserved for reference; MCP federation on the estate is thresher's domain (`barn/thresher`, `:25127`).
+**Not live.** The code defaults to `:25120`, but that port is canonically estate-chat's per `estate/pitchfork.toml` — do not start the gateway on `:25120` without resolving the collision. No pitchfork stanza, nothing listening. Preserved for reference; MCP federation on the estate is gatehouse's domain (`barn/gatehouse`, `:25127`).
 
 ## Layout
 

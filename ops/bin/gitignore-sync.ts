@@ -8,48 +8,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-/**
- * The repo root this script renders FOR.
- *
- * Path-based resolution is unreliable here: estate/ops/bin is a SYMLINK to
- * ranch/forge/ops/bin and the script file is shared via hardlink, so Bun
- * resolves BOTH process.argv[1] and import.meta.dir to the forge path before
- * the script ever sees them. The estate's own .gitignore was therefore never
- * regenerated -- forge's was written instead.
- *
- * The CWD is the only signal that survives symlink resolution: whichever repo
- * you run the command from is the repo it renders for.
- *
- * Resolution order:
- *   1. $GITIGNORE_ROOT                       explicit override
- *   2. nearest ancestor of the CWD holding ops/gitignore/manifest.json
- *   3. nearest ancestor of the script's real path holding it
- */
-function resolveRepoRoot(): string {
-  const hasManifest = (dir: string) =>
-    existsSync(join(dir, "ops", "gitignore", "manifest.json"));
-
-  const override = process.env.GITIGNORE_ROOT;
-  if (override && hasManifest(resolve(override))) return resolve(override);
-
-  const climb = (start: string): string | null => {
-    let dir = resolve(start);
-    while (true) {
-      if (hasManifest(dir)) return dir;
-      const parent = join(dir, "..");
-      if (parent === dir) return null;
-      dir = parent;
-    }
-  };
-
-  return (
-    climb(process.cwd()) ??
-    climb(import.meta.dir) ??
-    resolve(import.meta.dir, "..", "..")
-  );
-}
-
-export const ESTATE_ROOT = resolveRepoRoot();
+export const ESTATE_ROOT = resolve(import.meta.dir, "..", "..");
 const MANIFEST = join(ESTATE_ROOT, "ops", "gitignore", "manifest.json");
 const OUT = join(ESTATE_ROOT, ".gitignore");
 
@@ -84,7 +43,7 @@ export function loadManifest(path: string = MANIFEST): Manifest {
 }
 
 export function render(
-  manifest: Manifest = loadManifest(),
+  manifest: Manifest,
   templatesDir = join(ESTATE_ROOT, "ops", "gitignore", "templates"),
   layersDir = join(ESTATE_ROOT, "ops", "gitignore", "layers"),
 ): { content: string; sections: Section[] } {
