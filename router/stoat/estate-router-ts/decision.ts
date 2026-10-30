@@ -35,11 +35,17 @@ export type SkipReason =
   | "rate_limited"
   | "websocket_disabled"
   | "websocket_unsupported"
-  | "context_too_small";
+  | "context_too_small"
+  // Dynamic error router (2026-10-27): the 429/529 was classified by the
+  // global zero-transport queue; family + horizon ride in RoutingSkip.detail.
+  | "error_queue_wait"
+  | "error_queue_reroute";
 
 export interface RoutingSkip {
   provider: string;
   reason: SkipReason;
+  /** Optional classifier detail (rate-limit family, horizon, wait ms). */
+  detail?: string;
 }
 
 export interface RoutingAttempt {
@@ -54,9 +60,9 @@ export class RoutingDecision {
   skipped: RoutingSkip[] = [];
   attempts: RoutingAttempt[] = [];
 
-  push_skip(provider: string, reason: SkipReason): void {
+  push_skip(provider: string, reason: SkipReason, detail?: string): void {
     if (this.skipped.length < MAX_ROUTING_SKIPS) {
-      this.skipped.push({ provider, reason });
+      this.skipped.push({ provider, reason, ...(detail ? { detail } : {}) });
     }
   }
 

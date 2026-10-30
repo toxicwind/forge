@@ -65,17 +65,20 @@ MEMORY.md
 TOOLS.md
 USER.md
 config/tau/*.bak
-packages/theta/
 
-# 2026-10-22: desubmodule conversion — all gitlinks removed (zero submodules).
-# These live on disk as independent checkouts coordinated by gitkb/meta per
-# docs/REPO_TOPOLOGY.md; the index no longer claims them. Previously tracked
-# as mode-160000 gitlinks with no .gitmodules declaration.
-config/tau/agent/extensions/hashline-pi/
-engines/bornite/beellama.cpp/
-engines/bornite/ik_llama.cpp/
-engines/bornite/llama-cpp-turboquant/
-packages/theta/
-submodules/phone-sentinel/
-work/airspeak/
-work/tau-extensions/
+# ── Peer products (NOT submodules, RE: docs/REPO_TOPOLOGY.md "Rule - no gitlinks") ──
+# estate/products/ holds standalone product checkouts — each has its own origin,
+# referenced-not-owned. Never indexed here, no gitlinks (mode 160000), no
+# .gitmodules. This ignore wins over the upstream `!**/lib/` / `!**/[Bb]in/*`
+# negations above: a later negative cannot reach into an ignored directory.
+/products/
+
+# 2026-10-28 consolidation: scattered/orphaned content previously at these gitlink
+# paths was moved into products/estate-orphans/ (tau-extensions/, devices/lg-webos/).
+# The old locations are gone; the index no longer claims them.
+#   config/tau/agent/extensions/hashline-pi/  -> products/estate-orphans/tau-extensions/
+#   work/tau-extensions/                      -> products/estate-orphans/tau-extensions/
+#   packages/theta/ (empty gitlink)           -> removed
+#   engines/bornite/* (empty gitlinks)        -> removed
+#   submodules/phone-sentinel/ (empty)        -> removed
+#   work/airspeak/ (empty)                    -> removed

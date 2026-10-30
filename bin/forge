@@ -14,9 +14,7 @@
 import { parseArgs } from "node:util";
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
-
-const NATIVELINK_GRPC = process.env.FORGE_REMOTE_CACHE || "grpc://127.0.0.1:25155";
-const NATIVELINK_HTTP = process.env.FORGE_REMOTE_HTTP || "http://127.0.0.1:25157";
+import { NATIVELINK_GRPC, NATIVELINK_HTTP, nlStatus, runWithCache } from "../lib/forge-nl-lib.ts";
 
 const { positionals } = parseArgs({
   args: Bun.argv.slice(2),
@@ -52,11 +50,9 @@ switch (cmd) {
   }
   case "build":
   case "bazel": {
-    // NativeLink is default remote cache for every build.
-    const hasCache = subArgs.some((a) => a.startsWith("--remote_cache") || a.startsWith("--remote_executor"));
-    const args = hasCache ? subArgs : [...subArgs, `--remote_cache=${NATIVELINK_GRPC}`];
-    runTool("bazel", args);
-    break;
+    // NativeLink is default remote cache for every build (forge-nl-lib).
+    const res = await runWithCache("bazel", subArgs, { tool: "bazel" });
+    process.exit(res.code ?? 1);
   }
   case "merge":
   case "weave": {

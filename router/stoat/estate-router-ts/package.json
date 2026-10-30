@@ -9,6 +9,8 @@
     "check": "bun build router.ts --outdir=/tmp/estate-scripts-router-ts-check --target=bun"
   },
   "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "bun-types": "^1.4.4",
     "@types/bun": "latest"
   },
   "dependencies": {

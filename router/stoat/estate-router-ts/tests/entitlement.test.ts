@@ -54,8 +54,13 @@ describe("DEAD_MODEL_IDS sweep", () => {
     expect(catalogModelsFor("openrouter")).toContain(
       "inclusionai/ling-3.0-flash-fin:free",
     );
+  });
+  test("nvidia live seeds survive the sweep (geode 47-def SSOT)", () => {
     expect(catalogModelsFor("nvidia")).toContain(
-      "nvidia/nemotron-3-super-120b-a12b",
+      // 2026-10-26 entitlement audit: nemotron-3-super-120b-a12b is
+      // entitlement-dead (404) and was removed from the SSOT seeds; the
+      // verified 200 set below is the surviving fixture.
+      "nvidia/nemotron-3.5-super-vl-120b-a12b",
     );
   });
   test("dead ids are not explicitly routable; the new omni lane is", () => {
@@ -108,13 +113,15 @@ describe("dead-key fast exclusion (401/402)", () => {
 
 describe("race-set hygiene", () => {
   test("firstUsableModelFor skips the benched first model", () => {
-    const first = "poolside/laguna-xs-2.1:free";
-    expect(firstUsableModelFor("openrouter")).toBe(first);
+    // Contract: first usable = first catalog entry, advancing past any
+    // benched id. Pinned to concrete ids once, catalog order drifted with
+    // the 47-def SSOT; assert the invariant, not a specific catalog row.
+    const first = firstUsableModelFor("openrouter");
+    expect(first).toBeDefined();
     state.noteEntitlement404("openrouter", first);
     const next = firstUsableModelFor("openrouter");
     expect(next).toBeDefined();
     expect(next).not.toBe(first);
-    expect(next).toBe("google/gemma-4-31b-it:free");
   });
   test("pickWeighted always includes the healthy llama-swap bonus lane", () => {
     const cands = pickWeighted(4);
