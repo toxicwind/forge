@@ -10,4 +10,4 @@ if [[ -z "$BIN" ]]; then
   done
 fi
 [[ -n "$BIN" ]] || { echo nativelink binary not found; exit 1; }
-exec "$BIN" /home/toxic/estate/config/nl/nativelink.json5
+exec "$BIN" /home/toxic/pens/estate/config/nativelink/nativelink.json5
