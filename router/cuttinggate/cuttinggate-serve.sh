@@ -13,5 +13,5 @@ if [ -f "$SECRETS" ]; then
 fi
 : "${CUTTINGGATE_CLIENT_KEY:?CUTTINGGATE_CLIENT_KEY missing from $SECRETS}"
 export CUTTINGGATE_CLIENT_KEYS="$CUTTINGGATE_CLIENT_KEY"
-cd /home/toxic/estate/ranch/forge/router/cuttinggate
+cd /home/toxic/pens/estate/ranch/forge/router/cuttinggate
 exec bun run src/server.ts

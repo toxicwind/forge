@@ -53,7 +53,7 @@ PORT = int(
 )
 
 
-DB = os.getenv("ESTATE_DB", "/home/toxic/estate/var/data/ast_matrix.db")
+DB = os.getenv("ESTATE_DB", "/home/toxic/pens/estate/var/data/ast_matrix.db")
 
 
 MAX_PARALLEL = 4

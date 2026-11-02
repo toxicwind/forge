@@ -22,7 +22,7 @@ const flags = new Set(args.filter((a) => a.startsWith("--")));
 const positional = args.filter((a) => !a.startsWith("--"));
 
 /** Ports come from the estate SSOT; fall back to the documented defaults. */
-const PORTS_ENV = process.env.ESTATE_PORTS_ENV ?? "/home/toxic/estate/config/ports.env";
+const PORTS_ENV = process.env.ESTATE_PORTS_ENV ?? "/home/toxic/pens/estate/config/ports.env";
 function portFromEnv(name: string, fallback: string): string {
   try {
     const text = readFileSync(PORTS_ENV, "utf8");

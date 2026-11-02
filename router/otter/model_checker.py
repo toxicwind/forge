@@ -35,7 +35,7 @@ def _load_secrets() -> None:
 _load_secrets()
 
 # ─── Imports after secrets loaded ──────────────────────────────────────────
-sys.path.insert(0, "/home/toxic/estate/tools/ast-matrix/estate-ast-matrix")
+sys.path.insert(0, "/home/toxic/pens/estate/tools/ast-matrix/estate-ast-matrix")
 from router import (
     PROVIDER_MODELS,
     PROVIDERS,
@@ -259,7 +259,7 @@ def check_all_models() -> dict[str, dict]:
 
 def save_results(results: dict) -> None:
     """Save results to JSON file and update DB."""
-    out_path = "/home/toxic/estate/var/data/model_check_results.json"
+    out_path = "/home/toxic/pens/estate/var/data/model_check_results.json"
     with open(out_path, "w") as f:
         json.dump({"timestamp": time.time(), "results": results}, f, indent=2)
     print(f"\nResults saved to {out_path}")

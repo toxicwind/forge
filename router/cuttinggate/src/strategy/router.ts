@@ -612,7 +612,7 @@ strategy_detail: STRATEGY === "auto" ? "auto: ast_race (code-shaped) -> free rac
 const SECRET_FILES = [
   `${process.env.HOME}/.secrets`,
   "/home/toxic/.secrets",
-  "/home/toxic/estate/.env.local",
+  "/home/toxic/pens/estate/.env.local",
 ];
 function hotReload(source: string): Record<string, unknown> {
   for (const f of SECRET_FILES) loadEnvFile(f, true);

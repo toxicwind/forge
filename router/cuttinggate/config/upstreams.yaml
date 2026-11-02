@@ -6,7 +6,7 @@
 
   routes_from_herd'
 : oracle-judge-a:
-    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+    cmd: python3 /home/toxic/pens/estate/config/herd.d/alias-shim.py --port ${PORT} --target
       openrouter-ling/inclusionai/ling-3.0-flash-sante:free --standby openrouter-free/poolside/laguna-s-2.1:free
     description: Oracle judge A (alias -> inclusionai/ling-3.0-flash-sante:free) --
       fastest exact-output free judge (489ms census)
@@ -14,7 +14,7 @@
       alias_of: inclusionai/ling-3.0-flash-sante:free
       role: oracle-judge
   oracle-judge-b:
-    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+    cmd: python3 /home/toxic/pens/estate/config/herd.d/alias-shim.py --port ${PORT} --target
       openrouter-ling/inclusionai/ling-3.0-flash-sante:free --standby openrouter-free/poolside/laguna-s-2.1:free
     description: Oracle judge B (alias -> inclusionai/ling-3.0-flash-sante:free) --
       exact-output NEX complement (799ms census)
@@ -22,7 +22,7 @@
       alias_of: inclusionai/ling-3.0-flash-sante:free
       role: oracle-judge
   oracle-judge-c:
-    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+    cmd: python3 /home/toxic/pens/estate/config/herd.d/alias-shim.py --port ${PORT} --target
       openrouter-free/poolside/laguna-s-2.1:free --standby openrouter-ling/inclusionai/ling-3.0-flash-sante:free
     description: Oracle judge C (alias -> poolside/laguna-s-2.1:free) -- third model
       family (2161ms census)
@@ -30,7 +30,7 @@
       alias_of: poolside/laguna-s-2.1:free
       role: oracle-judge
   kimi:
-    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+    cmd: python3 /home/toxic/pens/estate/config/herd.d/alias-shim.py --port ${PORT} --target
       openrouter-free/moonshotai/kimi-k3:free --standby openrouter-free/moonshotai/kimi-k2.6:free
       --standby openrouter-free/moonshotai/kimi-k2.5:free --standby openrouter-free/moonshotai/kimi-k2.7-code:free
       --standby hf-free/moonshotai/Kimi-K3 --advance-on 5xx,conn,429,402,404 --name
@@ -41,7 +41,7 @@
       chain: free-kimi-maximal
       selection: router-config
   kimi-k2:
-    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+    cmd: python3 /home/toxic/pens/estate/config/herd.d/alias-shim.py --port ${PORT} --target
       openrouter-free/moonshotai/kimi-k3:free --standby openrouter-free/moonshotai/kimi-k2.6:free
       --standby openrouter-free/moonshotai/kimi-k2.5:free --standby openrouter-free/moonshotai/kimi-k2.7-code:free
       --standby hf-free/moonshotai/Kimi-K3 --advance-on 5xx,conn,429,402,404 --name
@@ -52,7 +52,7 @@
       chain: free-kimi-maximal
       selection: router-config
   kimi-code:
-    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+    cmd: python3 /home/toxic/pens/estate/config/herd.d/alias-shim.py --port ${PORT} --target
       openrouter-free/moonshotai/kimi-k3:free --standby openrouter-free/moonshotai/kimi-k2.6:free
       --standby openrouter-free/moonshotai/kimi-k2.5:free --standby openrouter-free/moonshotai/kimi-k2.7-code:free
       --standby hf-free/moonshotai/Kimi-K3 --advance-on 5xx,conn,429,402,404 --name
@@ -63,7 +63,7 @@
       chain: free-kimi-maximal
       selection: router-config
   kimi-k3-nim:
-    cmd: python3 /home/toxic/estate/config/herd.d/alias-shim.py --port ${PORT} --target
+    cmd: python3 /home/toxic/pens/estate/config/herd.d/alias-shim.py --port ${PORT} --target
       nim-kimi/moonshotai/kimi-k3 --name kimi-k3-nim
     env:
     - SHIM_CONNECT_TIMEOUT=240

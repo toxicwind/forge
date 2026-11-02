@@ -122,7 +122,7 @@ describe("keypools.yaml parsing", () => {
   });
 
   test("the estate's real keypools.yaml loads", () => {
-    const pools = loadPoolsFromYaml("/home/toxic/estate/config/keypools.yaml");
+    const pools = loadPoolsFromYaml("/home/toxic/pens/estate/config/keypools.yaml");
     expect(pools.length).toBeGreaterThan(0);
     expect(pools.every((p) => p.keys.length > 0)).toBe(true);
     expect(pools.some((p) => p.cooldown[429] === 60)).toBe(true);

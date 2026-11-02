@@ -11,7 +11,7 @@
 # so the vendored woodpecker fork's imports stay valid.
 set -uo pipefail
 
-ROOT="${1:-/home/toxic/estate/ranch/forge}"
+ROOT="${1:-/home/toxic/pens/estate/ranch/forge}"
 LOGS="$(mktemp)"
 renamed_bin=0
 

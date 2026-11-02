@@ -5,8 +5,8 @@ repository on this machine, without each repo having to opt in.
 
 ## Install
 
-    git config --global core.hooksPath /home/toxic/estate/ops/git-hooks
-    git config --global core.excludesFile /home/toxic/estate/ops/gitignore/layers/50-secrets.gitignore
+    git config --global core.hooksPath /home/toxic/pens/estate/ops/git-hooks
+    git config --global core.excludesFile /home/toxic/pens/estate/ops/gitignore/layers/50-secrets.gitignore
 
 ## What runs
 

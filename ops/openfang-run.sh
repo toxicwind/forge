@@ -11,9 +11,9 @@ export HOME=/home/toxic
 # WS2 (ferrous-warden 2026-09-20): SQLite startup integrity — self-heals
 # ~/.openfang/openfang.db from ~/.openfang/backups, or refuses boot on
 # unrecoverable corruption (a green health over a 0-byte DB is silent data loss).
-/home/toxic/estate/ops/openfang-sqlite-check.sh || exit 1
+/home/toxic/pens/estate/ops/openfang-sqlite-check.sh || exit 1
 KERNEL=/home/toxic/.local/bin/openfang
-CFG=${OPENFANG_CONFIG:-/home/toxic/estate/config/openfang-25196.toml}
+CFG=${OPENFANG_CONFIG:-/home/toxic/pens/estate/config/openfang-25196.toml}
 CLI=/home/toxic/.local/bin/openfang
 RELAY_AGENT_ID=69ac0683-9483-42a5-a22c-7710cba8da61
 

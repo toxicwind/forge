@@ -63,7 +63,7 @@ flock is a first-class routing module for herd that provides intelligent dispatc
 
 The live configuration is the **`flock:` delegation key** (see the retired
 `astMatrix:` block below for what NOT to use). From the live
-`/home/toxic/estate/config/herd.yaml`:
+`/home/toxic/pens/estate/config/herd.yaml`:
 
 ```yaml
 # RETIRED 2026-09-17: astMatrix in-process router replaced by Flock delegation.

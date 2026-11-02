@@ -8,7 +8,7 @@
 # shared, freeing disk space. Safe to run on live trees.
 #
 # Wired as a weekly cron (toxic's crontab, Sundays 05:23). Also safe to run
-# by hand: /home/toxic/estate/ops/dedup-weekly.sh
+# by hand: /home/toxic/pens/estate/ops/dedup-weekly.sh
 #
 # Added 2026-10-04 (Deduper, Forge's crew): the 2026-10-03 fclones audit
 # found ~34.9 GB reclaimable across cold-storage + estate; top waste =

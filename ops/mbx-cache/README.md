@@ -20,7 +20,7 @@ configuration belongs in `ops/` because it is estate infrastructure.
 curl -fsS http://127.0.0.1:25148/v1/status
 curl -fsS http://127.0.0.1:25148/v1/capabilities
 
-cd /home/toxic/estate/vendored/mr-boxington-cache
+cd /home/toxic/pens/estate/vendored/mr-boxington-cache
 mise exec -- cargo build --release
 pitchfork restart mbx-cache
 ```
