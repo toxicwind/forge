@@ -159,10 +159,10 @@ func run(ctx context.Context, c *cli.Command) error {
 	})
 
 	// Flicker: the multi-user web UI is stripped. Unmatched routes get a
-	// minimal flicker-branded landing page; the HTTP API is the interface.
+	// minimal forge-branded landing page; the HTTP API is the interface.
 	webUIServe := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		fmt.Fprint(w, `<!doctype html><html><head><title>flicker</title></head><body><h1>flicker</h1><p>The ranch build daemon. API docs: <code>POST /api/jobs</code></p></body></html>`)
+		fmt.Fprint(w, `<!doctype html><html><head><title>forge</title></head><body><h1>forge</h1><p>The ranch build daemon. API docs: <code>POST /api/jobs</code></p></body></html>`)
 	}
 
 	// setup the server and start the listener

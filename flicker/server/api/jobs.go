@@ -199,7 +199,7 @@ func FlickerHealth(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"ok":        true,
-		"service":   "flicker",
+		"service":   "forge",
 		"time":      time.Now().UTC().Format(time.RFC3339),
 		"running":   len(active),
 		"cache":     flicker.CacheStats(),
