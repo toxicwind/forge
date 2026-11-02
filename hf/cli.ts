@@ -4,6 +4,7 @@
 //   forge hf classify <text> --labels "Sports:sports channel,Movies:movie channel"
 //   forge hf embed <text>...
 import { embedClassify, embedMany } from "./hf.ts";
+import { w1, w2, w3, w4, w5, w6, w7, w8 } from "./oracle.ts";
 
 function parseLabels(raw: string): Array<{ label: string; prompt: string }> {
   return raw.split(",").map((pair) => {
@@ -19,9 +20,32 @@ async function main(): Promise<void> {
       [
         "forge hf classify  <text> --labels 'Sports:sports chan,Movies:movie chan'",
         "forge hf embed     <text>...",
+        "forge hf oracle    w1..w8|all — bge-m3 black-box experiments (live)",
       ].join("\n"),
     );
     process.exit(cmd === "--help" ? 0 : 64);
+  }
+  if (cmd === "oracle") {
+    const which = rest.find((a) => !a.startsWith("--"));
+    const WORKSTREAMS: Record<string, () => Promise<unknown>> = {
+      w1, w2, w3, w4, w5, w6, w7, w8,
+    };
+    if (!which || which === "help") {
+      console.log("forge hf oracle w1..w8|all — bge-m3 black-box experiments");
+      process.exit(which === "help" ? 0 : 64);
+    }
+    if (which === "all") {
+      console.log("=== bge-m3 oracle: W1..W8 ===\n");
+      for (const fn of Object.values(WORKSTREAMS)) await fn();
+      return;
+    }
+    const fn = WORKSTREAMS[which];
+    if (!fn) {
+      console.error(`unknown oracle workstream: ${which} (w1..w8 or all)`);
+      process.exit(64);
+    }
+    await fn();
+    return;
   }
   if (cmd === "classify") {
     const text = rest.find((a) => !a.startsWith("--"));
