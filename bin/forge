@@ -73,6 +73,16 @@ switch (cmd) {
     runTool("curl", ["-sI", NATIVELINK_HTTP]);
     break;
   }
+  case "overlay":
+  case "live": {
+    // Headed control overlay — serves the Hisense/Android TV's live screen
+    // frame (:9101) as a PiP-able HTTP surface while adb drives it headless.
+    // Durable service pattern (no detached eval that dies with its kernel).
+    const srv = new URL("../bin/livetv-overlay.ts", import.meta.url);
+    if (!existsSync(srv.pathname)) { console.error(`overlay server not found at ${srv.pathname}`); process.exit(1); }
+    runTool(Bun.which("bun") || "/home/toxic/.bun/bin/bun", [srv.pathname, ...subArgs]);
+    break;
+  }
   default:
     console.log("Usage: forge <command> [args...]");
     console.log("  status        Health of NativeLink + weave + jj triad");
@@ -80,5 +90,6 @@ switch (cmd) {
     console.log("  merge|weave   Weave entity-level AST merge driver");
     console.log("  vcs|jj        Jujutsu VCS operations");
     console.log("  cache         Inspect NativeLink cache endpoint");
+    console.log("  overlay|live  Live TV screen-frame PiP overlay server (:9101)");
     break;
 }
