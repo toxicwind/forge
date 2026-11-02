@@ -4,7 +4,7 @@
 //   forge hf classify <text> --labels "Sports:sports channel,Movies:movie channel"
 //   forge hf embed <text>...
 import { embedClassify, embedMany } from "./hf.ts";
-import { w1, w2, w3, w4, w5, w6, w7, w8 } from "./oracle.ts";
+import { w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, firewallClassify } from "./oracle.ts";
 
 function parseLabels(raw: string): Array<{ label: string; prompt: string }> {
   return raw.split(",").map((pair) => {
@@ -21,14 +21,25 @@ async function main(): Promise<void> {
         "forge hf classify  <text> --labels 'Sports:sports chan,Movies:movie chan'",
         "forge hf embed     <text>...",
         "forge hf oracle    w1..w8|all — bge-m3 black-box experiments (live)",
+        "forge hf firewall  <text> — W2 stream-leak detector (prose vs markup)",
       ].join("\n"),
     );
     process.exit(cmd === "--help" ? 0 : 64);
   }
+  if (cmd === "firewall") {
+    const text = rest.find((a) => !a.startsWith("--"));
+    if (!text) {
+      console.error("firewall needs <text> — a stream chunk to classify");
+      process.exit(64);
+    }
+    const r = await firewallClassify(text);
+    console.log(JSON.stringify(r));
+    return;
+  }
   if (cmd === "oracle") {
     const which = rest.find((a) => !a.startsWith("--"));
     const WORKSTREAMS: Record<string, () => Promise<unknown>> = {
-      w1, w2, w3, w4, w5, w6, w7, w8,
+      w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11,
     };
     if (!which || which === "help") {
       console.log("forge hf oracle w1..w8|all — bge-m3 black-box experiments");
@@ -41,7 +52,7 @@ async function main(): Promise<void> {
     }
     const fn = WORKSTREAMS[which];
     if (!fn) {
-      console.error(`unknown oracle workstream: ${which} (w1..w8 or all)`);
+      console.error(`unknown oracle workstream: ${which} (w1..w11 or all)`);
       process.exit(64);
     }
     await fn();
