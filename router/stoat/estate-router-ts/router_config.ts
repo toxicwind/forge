@@ -42,9 +42,9 @@ loadEnvFile(`${homedir()}/.secrets`);
 
 loadEnvFile("/home/toxic/.secrets");
 
-loadEnvFile("/home/toxic/estate/config/ports.env");
+loadEnvFile("/home/toxic/pens/estate/config/ports.env");
 
-loadEnvFile("/home/toxic/estate/.env.local");
+loadEnvFile("/home/toxic/pens/estate/.env.local");
 
 // Port SSOT: service-specific ESTATE_ROUTER_PORT wins; ESTATE_PORT is legacy fallback.
 export const _portRaw =
@@ -59,7 +59,7 @@ if (!_portRaw) {
 export const PORT = parseInt(_portRaw, 10);
 
 export const DB_PATH =
-  process.env.ESTATE_DB || "/home/toxic/estate/data/estate_router.db";
+  process.env.ESTATE_DB || "/home/toxic/pens/estate/data/estate_router.db";
 
 export const MAX_PARALLEL = 4;
 
@@ -122,7 +122,9 @@ export function loadLocalRoleModels(): {
     longctx: "beellama/qwen-flash-256k",
   };
   try {
-    const p = "/home/toxic/estate/.state/best-models.json";
+    const p =
+      process.env.ESTATE_BEST_MODELS_STATE ||
+      "/home/toxic/pens/estate/var/state/best-models.json";
     if (!existsSync(p)) return defaults;
     const j = JSON.parse(readFileSync(p, "utf8"));
     return {
@@ -261,7 +263,7 @@ export const PROVIDERS: Record<
 // ---------------------------------------------------------------------------
 export const CATALOG_STATE_PATH =
   process.env.ESTATE_CATALOG_STATE ||
-  "/home/toxic/estate/.state/provider-catalog.json";
+  "/home/toxic/pens/estate/var/state/provider-catalog.json";
 
 export const catalog = new ModelCatalog(EFFECTIVE_DEFS, {
   aliases: PKG_MODEL_ALIASES,

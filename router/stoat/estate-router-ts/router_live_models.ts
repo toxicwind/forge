@@ -32,8 +32,8 @@ import { discover } from "../../../../../../estate/packages/providers/src/index.
 import { applySigmaBackfill, sigmaCatalogInfo } from "./sigma-enrich.ts";
 
 const META_STATE_PATHS = [
-  "/home/toxic/estate/.state/live-models.json",
-  "/home/toxic/estate/.state/live-models.json", // deprecated symlink path
+  process.env.ESTATE_LIVE_MODELS_STATE ||
+    "/home/toxic/pens/estate/var/state/live-models.json",
 ];
 function metaStatePath(): string {
   for (const p of META_STATE_PATHS) {
