@@ -17,7 +17,7 @@ import { dirname } from "node:path";
 
 export type LedgerEntry = { model: string; provider: string; wins: number; total: number; lastLatencyMs: number };
 
-const DEFAULT_PATH = "/home/toxic/estate/var/cuttinggate/ledger.jsonl";
+const DEFAULT_PATH = "/home/toxic/pens/estate/var/cuttinggate/ledger.jsonl";
 const FLUSH_MS = 1_000;
 const SEP = "\u001f";
 

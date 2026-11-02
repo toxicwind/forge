@@ -48,17 +48,17 @@ flowchart LR
 ## Quick start
 
 ```bash
-/home/toxic/estate/ops/durability/durability-audit.sh          # print only
-/home/toxic/estate/ops/durability/durability-audit.sh --alert  # print + fleet alert
+/home/toxic/pens/estate/ops/durability/durability-audit.sh          # print only
+/home/toxic/pens/estate/ops/durability/durability-audit.sh --alert  # print + fleet alert
 ```
 
 ## Install / reinstall
 
 ```bash
 mkdir -p ~/.config/systemd/user
-ln -sf /home/toxic/estate/ops/durability/systemd/durability-audit.service \
+ln -sf /home/toxic/pens/estate/ops/durability/systemd/durability-audit.service \
        ~/.config/systemd/user/durability-audit.service
-ln -sf /home/toxic/estate/ops/durability/systemd/durability-audit.timer \
+ln -sf /home/toxic/pens/estate/ops/durability/systemd/durability-audit.timer \
        ~/.config/systemd/user/durability-audit.timer
 systemctl --user daemon-reload
 systemctl --user enable --now durability-audit.timer

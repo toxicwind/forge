@@ -46,7 +46,7 @@ Then merge `zed_settings.json` into your Zed `settings.json` and pick any routed
 5. **circuit_chain** — sequential with open/half-open circuit breakers
 6. **hybrid** (default) — sticky → ast_race of top-weighted → circuit_chain
 
-Header override: `X-Estate-Strategy: ast_race` (etc.). Env override: `ESTATE_STRATEGY=hybrid`. Port: `ESTATE_PORT` / `AST_MATRIX_PORT`, default **25104** (router_config.py). Health DB: `ESTATE_DB` (default `/home/toxic/estate/var/data/ast_matrix.db`).
+Header override: `X-Estate-Strategy: ast_race` (etc.). Env override: `ESTATE_STRATEGY=hybrid`. Port: `ESTATE_PORT` / `AST_MATRIX_PORT`, default **25104** (router_config.py). Health DB: `ESTATE_DB` (default `/home/toxic/pens/estate/var/data/ast_matrix.db`).
 
 Local club3090 (or any OpenAI-compatible) on `:8020` is auto-eligible.
 
@@ -85,7 +85,7 @@ Get a free key at <https://build.nvidia.com> (starts with `nvapi-`), export `NVI
 |---|---|---|
 | `ESTATE_STRATEGY` | `hybrid` | routing strategy |
 | `ESTATE_PORT` / `AST_MATRIX_PORT` | `25104` | listen port |
-| `ESTATE_DB` | `/home/toxic/estate/var/data/ast_matrix.db` | WAL health DB |
+| `ESTATE_DB` | `/home/toxic/pens/estate/var/data/ast_matrix.db` | WAL health DB |
 | `OPENROUTER_API_KEY` (+ `GROQ_API_KEY`, `NVIDIA_API_KEY`, `CEREBRAS_API_KEY`, `GOOGLE_API_KEY`, `MISTRAL_API_KEY`) | — | provider keys |
 
 ## Dev / contributing

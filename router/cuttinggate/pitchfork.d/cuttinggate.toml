@@ -6,7 +6,7 @@
 
 [daemons.cuttinggate]
 run = "exec bun run src/server.ts"
-dir = "/home/toxic/estate/ranch/mesh/proxy/cuttinggate"
+dir = "/home/toxic/pens/estate/ranch/mesh/proxy/cuttinggate"
 retry = true
 ready_http = "http://127.0.0.1:25200/health"
 health_http = { url = "http://127.0.0.1:25200/health", interval = "30s", timeout = "5s", retries = 3 }

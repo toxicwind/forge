@@ -2,7 +2,7 @@
 
 **Status:** Active as of 2026-09-30. Blessed binary sha256:
 `e1d70dd074bf6c1218ce45be5e2cf9ebb609cf7439d279989d2429c2f08e2e4e`
-Immutable copy: `/home/toxic/estate/projects/herd/herd.20260930-052800`
+Immutable copy: `/home/toxic/pens/estate/projects/herd/herd.20260930-052800`
 
 ## If herd fails to start or dies
 
@@ -43,7 +43,7 @@ If the immutable copy itself is corrupt, rebuild from source:
 ```bash
 curl -sf http://127.0.0.1:25100/health        # expect: OK
 curl -sf http://127.0.0.1:25100/v1/models     # expect: model list JSON
-/home/toxic/estate/bin/estate-reconcile check  # expect: exit 0
+/home/toxic/pens/estate/bin/estate-reconcile check  # expect: exit 0
 ```
 
 ## Why fallback, not rollback (the Architect 2026-09-30)

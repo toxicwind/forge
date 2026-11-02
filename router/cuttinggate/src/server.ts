@@ -480,7 +480,7 @@ export async function main(): Promise<void> {
   const ledger = new Ledger();
   let credentials: CredentialPlane | undefined;
   try {
-    const pools = loadPoolsFromYaml(process.env.KEYPOOLS_YAML ?? "/home/toxic/estate/config/keypools.yaml");
+    const pools = loadPoolsFromYaml(process.env.KEYPOOLS_YAML ?? "/home/toxic/pens/estate/config/keypools.yaml");
     credentials = pools.length ? new CredentialPlane(pools) : undefined;
   } catch (e) { console.error(`keypool config unreadable, running without the credential plane: ${(e as Error).message}`); }
 

@@ -2,8 +2,8 @@
 # Owned by the ranch/flicker project; the parent only composes it.
 
 [daemons.flicker-agent]
-run = "exec /home/toxic/estate/var/reconciliation/flicker/bin/flicker-agent"
-dir = "/home/toxic/estate/var/reconciliation/flicker"
+run = "exec /home/toxic/pens/estate/var/reconciliation/flicker/bin/flicker-agent"
+dir = "/home/toxic/pens/estate/var/reconciliation/flicker"
 mise = false
 retry = true
 boot_start = true
@@ -18,8 +18,8 @@ auto = ["start"]
 
 [daemons.flicker]
 port = 25148
-run = "exec /home/toxic/estate/var/reconciliation/flicker/bin/flicker-server"
-dir = "/home/toxic/estate/var/reconciliation/flicker"
+run = "exec /home/toxic/pens/estate/var/reconciliation/flicker/bin/flicker-server"
+dir = "/home/toxic/pens/estate/var/reconciliation/flicker"
 mise = false
 retry = true
 boot_start = true

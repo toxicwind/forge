@@ -2,11 +2,11 @@
 # herd-selfheal.sh — one-shot herd health check + safe auto-repair.
 #
 # Run this before asking "is herd broken?":
-#   /home/toxic/estate/ranch/mesh/router/herd/herd-selfheal.sh
+#   /home/toxic/pens/estate/ranch/mesh/router/herd/herd-selfheal.sh
 #
 # What it does:
 #   1. Verifies the engines/ symlink target is live (3 engine binaries);
-#      re-points it to the canonical /home/toxic/estate/engines/herd if stale.
+#      re-points it to the canonical /home/toxic/pens/estate/engines/herd if stale.
 #   2. Verifies the canonical config parses as YAML (values never printed).
 #   3. Verifies the repo config.yaml resolves to the canonical config.
 #   4. Runs `go build ./...` on the herd module.
@@ -21,7 +21,7 @@
 set -uo pipefail
 
 HERD_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SOV="/home/toxic/estate"
+SOV="/home/toxic/pens/estate"
 CANON_CONFIG="$SOV/config/herd.yaml"
 ENGINES_LINK="$HERD_DIR/engines"
 ENGINES_CANON="$SOV/engines/herd"

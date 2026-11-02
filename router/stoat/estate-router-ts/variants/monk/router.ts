@@ -993,11 +993,11 @@ strategy_detail: STRATEGY === "auto" ? "auto: ast_race (code-shaped) -> free rac
 const SECRET_FILES = [
   `${process.env.HOME}/.secrets`,
   "/home/toxic/.secrets",
-  "/home/toxic/estate/.secrets",
-  "/home/toxic/estate/config/.secrets",
-  "/home/toxic/estate/.env.local",
-  "/home/toxic/estate/.env",
-  "/home/toxic/estate/config/tau/.env",
+  "/home/toxic/pens/estate/.secrets",
+  "/home/toxic/pens/estate/config/.secrets",
+  "/home/toxic/pens/estate/.env.local",
+  "/home/toxic/pens/estate/.env",
+  "/home/toxic/pens/estate/config/tau/.env",
   "/home/toxic/.tau/.env",
 ];
 function hotReload(source: string): Record<string, unknown> {

@@ -20,9 +20,9 @@ client -> :25100 (herd) -> peer herd-race -> :25161 (this service)
 ```
 
 - **Service:** Go, `main.go` → binary `herd-race`, supervised by pitchfork
-  (`estate/herd-race`), config `/home/toxic/estate/config/herd-race.json`,
+  (`estate/herd-race`), config `/home/toxic/pens/estate/config/herd-race.json`,
   port `25161` (`HERD_RACE_PORT` in `ports.env`).
-- **Herd wiring:** peer `herd-race` in `/home/toxic/estate/config/herd.yaml`
+- **Herd wiring:** peer `herd-race` in `/home/toxic/pens/estate/config/herd.yaml`
   (`proxy: http://127.0.0.1:25161`, `models: [herd/race]`). Herd's
   `--watch-config` picks it up without restart; it appears in `/v1/models`
   as `herd-race/herd/race` (house peer-qualified convention).
@@ -65,7 +65,7 @@ client -> :25100 (herd) -> peer herd-race -> :25161 (this service)
 curl -s http://127.0.0.1:25161/health | python3 -m json.tool
 
 # supervised lifecycle
-/home/toxic/estate/stack/pf.sh start|stop estate/herd-race
+/home/toxic/pens/estate/stack/pf.sh start|stop estate/herd-race
 
 # model visible through the router?
 curl -s http://127.0.0.1:25100/v1/models | python3 -c \
@@ -94,7 +94,7 @@ shaped the config:
 | ---- | ---- |
 | `main.go`, `main_test.go`, `go.mod` | Service source (also mirrored in `~/workspace/audit-fix/race-port/herd-race/`) |
 | `herd-race` | Built binary (rebuilt on yote; `go build -o herd-race .`) |
-| `/home/toxic/estate/config/herd-race.json` | Contestants, timeouts, breaker, log path |
-| `/home/toxic/estate/config/herd.yaml` | `herd-race` peer block |
-| `/home/toxic/estate/pitchfork.toml` | `[daemons.herd-race]` supervision |
-| `/home/toxic/estate/config/ports.env` | `HERD_RACE_PORT=25161` |
+| `/home/toxic/pens/estate/config/herd-race.json` | Contestants, timeouts, breaker, log path |
+| `/home/toxic/pens/estate/config/herd.yaml` | `herd-race` peer block |
+| `/home/toxic/pens/estate/pitchfork.toml` | `[daemons.herd-race]` supervision |
+| `/home/toxic/pens/estate/config/ports.env` | `HERD_RACE_PORT=25161` |

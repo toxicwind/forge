@@ -7,7 +7,7 @@
  */
 import { loadLiveCatalog, servingIds, type Probe, type LiveCatalog } from "./catalog";
 
-export const DEFAULT_REPORT_PATH = "/home/toxic/estate/.state/provider-catalog-audit.json";
+export const DEFAULT_REPORT_PATH = "/home/toxic/pens/estate/.state/provider-catalog-audit.json";
 
 export type AuditReport = {
   readonly probes: readonly Probe[];

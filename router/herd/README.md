@@ -127,7 +127,7 @@ graph TD
 ```bash
 # Build with Zen 4 AVX-512 and maximal Go compiler flags
 go build -v -ldflags="-s -w" -o herd ./cmd
-./herd --config /home/toxic/estate/config/herd.yaml
+./herd --config /home/toxic/pens/estate/config/herd.yaml
 ```
 The main build entry is `scripts/mise-build.sh` — it submits the canonical
 build+test (`go build ./... && go test -short -count=1 ./internal/...`, matching

@@ -190,14 +190,14 @@ estate (`pitchfork start mcpproxy` / `mise run restart-mcpproxy` -> `mcpproxy se
 
 ## 🔌 Port SSOT
 
-`/home/toxic/estate/config/ports.env` — all 25xxx, never invent.
+`/home/toxic/pens/estate/config/ports.env` — all 25xxx, never invent.
 
 ---
 
 ## 📁 Directory Structure
 
 ```
-/home/toxic/estate/
+/home/toxic/pens/estate/
 ├── agents/              # Agent profiles & identities
 ├── audit/               # Session deltas, fix history, AGENTS.md inventory
 ├── docs/                # Architecture docs

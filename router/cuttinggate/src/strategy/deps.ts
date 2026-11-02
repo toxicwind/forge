@@ -81,7 +81,7 @@ export class PolicyBackedDeps implements StrategyDeps {
     this.elo = new EloEngine();
     this.circuit = new CircuitPolicy();
     this.health = new PolicyHealthDB(
-      opts.dbPath ?? "/home/toxic/estate/.state/health.db",
+      opts.dbPath ?? "/home/toxic/pens/estate/.state/health.db",
     );
     this.catalog = new ModelCatalog(PROVIDER_DEFS, {
       aliases: MODEL_ALIASES,

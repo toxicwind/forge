@@ -198,8 +198,8 @@ $ forge-deploy --tag v0.15.0 --dry-run
 
 - `pitchfork list` → `estate/kappa-acp` is in **errored** state (exit code 127).
 - `curl http://127.0.0.1:25159/` → **connection refused** (no listener).
-- The daemon is configured in `/home/toxic/estate/pitchfork.toml`:
-  `run = "exec /home/toxic/estate/bin/kappa-serve.sh"`, ready on port 25159.
+- The daemon is configured in `/home/toxic/pens/estate/pitchfork.toml`:
+  `run = "exec /home/toxic/pens/estate/bin/kappa-serve.sh"`, ready on port 25159.
 - **The live swap+restart is deferred** until the parent authorizes. Executing
   `pitchfork restart estate/kappa-acp` from this session would kill the running
   daemon and terminate THIS conversation. Use `--dry-run` to validate, then

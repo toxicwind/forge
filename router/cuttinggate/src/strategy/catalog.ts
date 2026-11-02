@@ -58,7 +58,7 @@ const DEFAULT_ROLES: LocalRoles = {
 
 export function loadLocalRoleModels(): LocalRoles {
   try {
-    const p = "/home/toxic/estate/.state/best-models.json";
+    const p = "/home/toxic/pens/estate/.state/best-models.json";
     if (!existsSync(p)) return DEFAULT_ROLES;
     const j = JSON.parse(readFileSync(p, "utf8"));
     return {

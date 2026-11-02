@@ -74,7 +74,7 @@ No polling daemon ships with this. If you want push-on-change, add a systemd pat
 ```ini
 # /etc/systemd/system/bg-tracker.path
 [Path]
-PathChanged=/home/toxic/estate/projects/ops/bg-tracker/state
+PathChanged=/home/toxic/pens/estate/projects/ops/bg-tracker/state
 [Install]
 WantedBy=multi-user.target
 ```
@@ -82,7 +82,7 @@ WantedBy=multi-user.target
 ## Deep links
 
 - Estate ops conventions: [`../README.md`](../README.md)
-- Master README: [`/home/toxic/estate/README.md`](../../README.md)
+- Master README: [`/home/toxic/pens/estate/README.md`](../../README.md)
 - Fleet knowledgebase: `docs/fleet-knowledgebase.md`
 - Standing rules: no monkeypatching, permanence, durability across bridge restart + yote power-cycle. The script is the deliverable.
 

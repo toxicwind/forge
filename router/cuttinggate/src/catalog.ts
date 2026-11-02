@@ -105,7 +105,7 @@ export type CatalogLoad =
     };
 
 export const DEFAULT_CATALOG_PATH =
-  "/home/toxic/estate/.state/provider-catalog.live.json";
+  "/home/toxic/pens/estate/.state/provider-catalog.live.json";
 export const DEFAULT_STALE_MS = 15 * 60_000;
 
 export function loadLiveCatalog(
