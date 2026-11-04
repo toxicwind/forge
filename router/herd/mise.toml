@@ -1,7 +1,7 @@
 # Herd — Go inference backplane & Llama-Swap fork
 [tools]
 go = "1.23.1"
-bun = "1.4.2"
+# bun inherited from pens-root mise.toml (1.4.4)
 
 [env]
 _.file = "../../config/ports.env"
