@@ -28,6 +28,10 @@ const DEFAULT_MODEL = "bge-m3";
 const DEFAULT_BASE = "https://freeinference.org/v1/embeddings";
 
 async function keyringKey(): Promise<string> {
+  // Ambient env wins (the caller may have injected FREEINFERENCE_API_KEY via
+  // kryptos/secretsmith already) — avoids a shell-out when the key is present.
+  const ambient = process.env.FREEINFERENCE_API_KEY?.trim();
+  if (ambient) return ambient;
   const p = Bun.spawn(
     ["sh", "-c", "secretsmith env | grep '^FREEINFERENCE_API_KEY=' | cut -d= -f2- | tr -d \"'\" | tr -d '\\n'"],
     { stdout: "pipe" },
@@ -63,7 +67,18 @@ export async function embedMany(
       throw new Error(`embeddings http ${res.status}: ${(await res.text()).slice(0, 200)}`);
     }
     const j = (await res.json()) as { data: Array<{ embedding: number[] }> };
-    for (const d of j.data) vectors.push(d.embedding);
+    if (!Array.isArray(j.data) || j.data.length !== slice.length) {
+      throw new Error(`embeddings response data length mismatch: expected ${slice.length}, got ${j.data?.length ?? "null"}`);
+    }
+    for (const d of j.data) {
+      if (!d.embedding || !Array.isArray(d.embedding)) {
+        throw new Error(`embeddings response missing embedding array`);
+      }
+      vectors.push(d.embedding);
+    }
+  }
+  if (vectors.length !== inputs.length) {
+    throw new Error(`embedMany: vector count mismatch: ${vectors.length} vs ${inputs.length}`);
   }
   return vectors;
 }
