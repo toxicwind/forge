@@ -1,0 +1,27 @@
+{
+  "name": "forge",
+  "version": "0.1.0",
+  "description": "The estate's build daemon + REAPI remote-execution layer.",
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "bin": {
+    "forge": "./bin/forge.ts"
+  },
+  "scripts": {
+    "dev": "bun --hot run ./bin/forge.ts",
+    "test": "bun test",
+    "typecheck": "tsgo --noEmit -p tsconfig.json",
+    "lint": "biome check .",
+    "fmt": "biome format . --write",
+    "build": "bun build ./bin/forge.ts --target bun --outdir ./dist"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "bun-types": "latest",
+    "typescript": "^5.3.3",
+    "@biomejs/biome": "^1.7.3"
+  },
+  "dependencies": {},
+  "private": true
+}

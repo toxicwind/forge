@@ -73,10 +73,13 @@ switch (cmd) {
     runTool("curl", ["-sI", NATIVELINK_HTTP]);
     break;
   }
-  case "hf": {
-    // bge-m3 embedding lane (classify/embed/oracle) — canonical @forge/hf CLI.
-    const cli = new URL("../hf/cli.ts", import.meta.url);
-    if (!existsSync(cli.pathname)) { console.error(`hf cli not found at ${cli.pathname}`); process.exit(1); }
+  case "hf":
+  case "bge": {
+    // bge-m3 embedding lane (classify/embed/oracle) — canonical home is
+    // geode/products/bge-oracle/bge/cli.ts (moved from forge/hf 2026-11-02;
+    // forge imports the bge-m3 product, never holds the lane itself).
+    const cli = new URL("/home/toxic/pens/geode/products/bge-oracle/bge/cli.ts", import.meta.url);
+    if (!existsSync(cli.pathname)) { console.error(`bge cli not found at ${cli.pathname}`); process.exit(1); }
     runTool(Bun.which("bun") || "/home/toxic/.bun/bin/bun", [cli.pathname, ...subArgs]);
     break;
   }
@@ -94,7 +97,7 @@ switch (cmd) {
     console.log("Usage: forge <command> [args...]");
     console.log("  status        Health of NativeLink + weave + jj triad");
     console.log("  build [args]  Bazel build via NativeLink remote cache (default :25155)");
-    console.log("  hf            bge-m3 lane: hf classify | embed | oracle w1..w8|all");
+    console.log("  hf|bge        bge-m3 lane: bge classify | embed | oracle w1..w11|all | firewall");
     console.log("  merge|weave   Weave entity-level AST merge driver");
     console.log("  vcs|jj        Jujutsu VCS operations");
     console.log("  cache         Inspect NativeLink cache endpoint");
