@@ -28,12 +28,10 @@ const DEFAULT_MODEL = "bge-m3";
 const DEFAULT_BASE = "https://freeinference.org/v1/embeddings";
 
 async function keyringKey(): Promise<string> {
-  // Ambient env wins (the caller may have injected FREEINFERENCE_API_KEY via
-  // kryptos/secretsmith already) — avoids a shell-out when the key is present.
   const ambient = process.env.FREEINFERENCE_API_KEY?.trim();
   if (ambient) return ambient;
   const p = Bun.spawn(
-    ["sh", "-c", "secretsmith env | grep '^FREEINFERENCE_API_KEY=' | cut -d= -f2- | tr -d \"'\" | tr -d '\\n'"],
+    ["sh", "-c", "/home/toxic/pens/olympus/products/kryptos/bin/kryptos env 2>/dev/null | grep '^FREEINFERENCE_API_KEY=' | cut -d= -f2- | tr -d \"'\" | tr -d '\\n'"],
     { stdout: "pipe" },
   );
   const out = new TextDecoder().decode(await Bun.readableStreamToBytes(p.stdout));
@@ -43,27 +41,56 @@ async function keyringKey(): Promise<string> {
   return key;
 }
 
+async function nvidiaKey(): Promise<string> {
+  const ambient = process.env.NVIDIA_API_KEY?.trim();
+  if (ambient) return ambient;
+  const p = Bun.spawn(
+    ["sh", "-c", "/home/toxic/pens/olympus/products/kryptos/bin/kryptos env 2>/dev/null | grep '^NVIDIA_API_KEY=' | cut -d= -f2- | tr -d \"'\" | tr -d '\\n'"],
+    { stdout: "pipe" },
+  );
+  const out = new TextDecoder().decode(await Bun.readableStreamToBytes(p.stdout));
+  await p.exited;
+  const key = out.trim();
+  if (!key) throw new Error("NVIDIA_API_KEY not resolvable via secretsmith env");
+  return key;
+}
+
 /** Embed many strings; returns dense vectors (await per-batch semantics). */
 export async function embedMany(
   inputs: string[],
   opts: EmbedOptions = {},
 ): Promise<number[][]> {
   const batchSize = opts.batchSize ?? 64;
-  const key = await keyringKey();
+  let key = "";
+  try { key = await keyringKey(); } catch { key = ""; }
   const vectors: number[][] = [];
   for (let i = 0; i < inputs.length; i += batchSize) {
     const slice = inputs.slice(i, i + batchSize);
-    const res = await fetch(opts.baseUrl ?? DEFAULT_BASE, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: opts.model ?? DEFAULT_MODEL, input: slice }),
-    });
-    if (!res.ok) {
-      // 429-rate-limit: back off 2s/4s/6s/8s then retry once.
-      if (res.status === 429) {
-        await Bun.sleep(2000);
-        continue;
+    let res: Response;
+    let usedNvidia = false;
+    try {
+      res = await fetch(opts.baseUrl ?? DEFAULT_BASE, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model: opts.model ?? DEFAULT_MODEL, input: slice }),
+      });
+      if (!res.ok) throw new Error(`freeinference ${res.status}`);
+    } catch (e) {
+      // Fallback to NVIDIA embeddings
+      usedNvidia = true;
+      const nkey = await nvidiaKey();
+      res = await fetch("https://integrate.api.nvidia.com/v1/embeddings", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${nkey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "nvidia/nemotron-3-embed-1b", input: slice, input_type: "passage" }),
+      });
+      if (!res.ok) {
+        if (res.status === 429) { await Bun.sleep(2000); continue; }
+        throw new Error(`nvidia embeddings http ${res.status}: ${(await res.text()).slice(0, 200)}`);
       }
+    }
+    if (!res.ok) {
+      if (res.status === 429) { await Bun.sleep(2000); continue; }
       throw new Error(`embeddings http ${res.status}: ${(await res.text()).slice(0, 200)}`);
     }
     const j = (await res.json()) as { data: Array<{ embedding: number[] }> };
