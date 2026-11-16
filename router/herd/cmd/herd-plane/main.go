@@ -9,7 +9,7 @@ import (
 
 func loadPortsEnv() map[string]string {
 	m := map[string]string{}
-	for _, p := range []string{"../../config/ports.env", "/home/toxic/estate/config/ports.env", "config/ports.env"} {
+	for _, p := range []string{"/home/toxic/pens/barn/products/pens/config/ports.env", "../../config/ports.env", "config/ports.env"} {
 		if b, err := os.ReadFile(p); err == nil {
 			for _, line := range strings.Split(string(b), "\n") {
 				line = strings.TrimSpace(line)
