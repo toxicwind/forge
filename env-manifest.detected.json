@@ -1915,7 +1915,7 @@
       "router/weasel/scripts/research/gen-budget-card-svg.mjs"
     ],
     "BASE": [
-      "router/stoat/estate-router-ts/router_emergent.live.test.ts",
+      "router/stoat/Pens-router-ts/router_emergent.live.test.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin/tests/fetch-interceptor.test.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/ad-hoc/diag-trae-auth.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/homolog/run.mjs",
@@ -2431,7 +2431,7 @@
       "router/weasel/src/shared/utils/logRedaction.ts"
     ],
     "CEREBRAS_API_KEY": [
-      "router/stoat/estate-router-ts/provider-bench.test.ts"
+      "router/stoat/Pens-router-ts/provider-bench.test.ts"
     ],
     "CERT_DIR": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/antigravity-bridge.mjs",
@@ -3555,8 +3555,8 @@
     ],
     "COOKIE_NAME": [
       "router/cuttinggate/src/strategy/router_auth.ts",
-      "router/stoat/estate-router-ts/auth_test.ts",
-      "router/stoat/estate-router-ts/router_auth.ts"
+      "router/stoat/Pens-router-ts/auth_test.ts",
+      "router/stoat/Pens-router-ts/router_auth.ts"
     ],
     "COOLDOWN_BADGE_COLOR": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/app/(dashboard)/dashboard/combos/live/nodes/ProviderCascadeNode.tsx",
@@ -7563,15 +7563,15 @@
     ],
     "DB_PATH": [
       "router/cuttinggate/src/strategy/router.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts",
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/reset-password.mjs",
       "router/weasel/bin/reset-password.mjs"
     ],
@@ -8440,182 +8440,182 @@
       "router/weasel/scripts/quality/collect-metrics.mjs",
       "router/weasel/scripts/quality/run-eslint-json.mjs"
     ],
-    "ESTATE": [
+    "Pens": [
       "ops/maximal-host-pack.sh"
     ],
     "ESTATE_ATTEMPT_MS": [
       "router/cuttinggate/src/strategy/catalog.ts",
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "ESTATE_ATTEMPT_STREAM_MS": [
       "router/cuttinggate/src/strategy/catalog.ts",
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "ESTATE_AUTH_TRUST_PROXY": [
       "router/cuttinggate/src/strategy/router_auth.ts",
-      "router/stoat/estate-router-ts/router_auth.ts"
+      "router/stoat/Pens-router-ts/router_auth.ts"
     ],
     "ESTATE_AUTH_USERS": [
       "router/cuttinggate/src/strategy/router_auth.ts",
-      "router/stoat/estate-router-ts/router_auth.ts"
+      "router/stoat/Pens-router-ts/router_auth.ts"
     ],
     "ESTATE_AUTH_USERS_FILE": [
       "router/cuttinggate/src/strategy/router_auth.ts",
-      "router/stoat/estate-router-ts/router_auth.ts"
+      "router/stoat/Pens-router-ts/router_auth.ts"
     ],
     "ESTATE_BENCH_PRIORS": [
-      "router/stoat/estate-router-ts/bench-priors.ts",
-      "router/stoat/estate-router-ts/tests/router_max.test.ts"
+      "router/stoat/Pens-router-ts/bench-priors.ts",
+      "router/stoat/Pens-router-ts/tests/router_max.test.ts"
     ],
     "ESTATE_CATALOG_STATE": [
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/governor_test.ts",
-      "router/stoat/estate-router-ts/router_config.ts",
-      "router/stoat/estate-router-ts/tests/elo_persist.test.ts",
-      "router/stoat/estate-router-ts/tests/entitlement.test.ts",
-      "router/stoat/estate-router-ts/tests/hedge.test.ts",
-      "router/stoat/estate-router-ts/tests/route_auto_2m.test.ts",
-      "router/stoat/estate-router-ts/tests/router_max.test.ts"
+      "router/stoat/Pens-router-ts/governor_test.ts",
+      "router/stoat/Pens-router-ts/router_config.ts",
+      "router/stoat/Pens-router-ts/tests/elo_persist.test.ts",
+      "router/stoat/Pens-router-ts/tests/entitlement.test.ts",
+      "router/stoat/Pens-router-ts/tests/hedge.test.ts",
+      "router/stoat/Pens-router-ts/tests/route_auto_2m.test.ts",
+      "router/stoat/Pens-router-ts/tests/router_max.test.ts"
     ],
     "ESTATE_CLIENT_KEYS": [
       "router/cuttinggate/src/server.ts",
       "router/cuttinggate/src/strategy/router.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "ESTATE_COALESCE": [
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "ESTATE_COALESCE_TTL_MS": [
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "ESTATE_CONNECT_MS": [
       "router/cuttinggate/src/strategy/catalog.ts",
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "ESTATE_DB": [
       "router/otter/router_config.py",
-      "router/stoat/estate-router-ts/governor_test.ts",
-      "router/stoat/estate-router-ts/router_config.ts",
-      "router/stoat/estate-router-ts/tests/elo_persist.test.ts",
-      "router/stoat/estate-router-ts/tests/entitlement.test.ts",
-      "router/stoat/estate-router-ts/tests/hedge.test.ts",
-      "router/stoat/estate-router-ts/tests/route_auto_2m.test.ts",
-      "router/stoat/estate-router-ts/tests/router_max.test.ts"
+      "router/stoat/Pens-router-ts/governor_test.ts",
+      "router/stoat/Pens-router-ts/router_config.ts",
+      "router/stoat/Pens-router-ts/tests/elo_persist.test.ts",
+      "router/stoat/Pens-router-ts/tests/entitlement.test.ts",
+      "router/stoat/Pens-router-ts/tests/hedge.test.ts",
+      "router/stoat/Pens-router-ts/tests/route_auto_2m.test.ts",
+      "router/stoat/Pens-router-ts/tests/router_max.test.ts"
     ],
     "ESTATE_DECISION_LOG": [
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "ESTATE_DISPATCH_WAIT_MS": [
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts"
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts"
     ],
     "ESTATE_EMERGENT_LOG": [
-      "router/stoat/estate-router-ts/router.ts"
+      "router/stoat/Pens-router-ts/router.ts"
     ],
     "ESTATE_ERROR_QUEUE_WAIT_MS": [
-      "router/stoat/estate-router-ts/router_error_queue.ts"
+      "router/stoat/Pens-router-ts/router_error_queue.ts"
     ],
     "ESTATE_FLAIL_THRESHOLD": [
-      "router/stoat/estate-router-ts/router_emergent.test.ts",
-      "router/stoat/estate-router-ts/router_emergent.ts"
+      "router/stoat/Pens-router-ts/router_emergent.test.ts",
+      "router/stoat/Pens-router-ts/router_emergent.ts"
     ],
     "ESTATE_HEDGE_MS": [
       "router/cuttinggate/src/strategy/catalog.ts",
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "ESTATE_HOME": [
       "ops/mbx-cache/run.sh"
     ],
     "ESTATE_LIVE_REFRESH": [
-      "router/stoat/estate-router-ts/router_live_models.ts"
+      "router/stoat/Pens-router-ts/router_live_models.ts"
     ],
     "ESTATE_LONGCTX_2M": [
       "router/cuttinggate/src/strategy/router_strategy.ts",
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/tests/route_auto_2m.test.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts"
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/tests/route_auto_2m.test.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts"
     ],
     "ESTATE_LONGCTX_PIN": [
       "router/cuttinggate/src/strategy/router_strategy.ts",
       "router/cuttinggate/src/strategy/strategy.ts",
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts"
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts"
     ],
     "ESTATE_MAX_INFLIGHT": [
-      "router/stoat/estate-router-ts/request-gates.ts"
+      "router/stoat/Pens-router-ts/request-gates.ts"
     ],
     "ESTATE_MODEL_BONUS": [
       "router/cuttinggate/src/strategy/router_strategy.ts",
       "router/cuttinggate/src/strategy/strategy.ts"
     ],
     "ESTATE_NO_CAP_GATE": [
-      "router/stoat/estate-router-ts/router_strategy.ts"
+      "router/stoat/Pens-router-ts/router_strategy.ts"
     ],
     "ESTATE_NO_FLAIL": [
-      "router/stoat/estate-router-ts/router.ts"
+      "router/stoat/Pens-router-ts/router.ts"
     ],
     "ESTATE_PORT": [
       "router/cuttinggate/src/strategy/router_config.ts",
       "router/otter/router_config.py",
-      "router/stoat/estate-router-ts/router_config.ts",
-      "router/stoat/estate-router-ts/tests/port_precedence.test.ts"
+      "router/stoat/Pens-router-ts/router_config.ts",
+      "router/stoat/Pens-router-ts/tests/port_precedence.test.ts"
     ],
     "ESTATE_PORTS_ENV": [
       "router/atlas/bin/catalog-audit.ts",
@@ -8625,15 +8625,15 @@
     ],
     "ESTATE_QUARANTINE_BASE_S": [
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "ESTATE_QUARANTINE_MAX_S": [
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "ESTATE_QUARANTINE_PROBE_MS": [
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "ESTATE_REPO": [
       "ops/durability/durability-audit.sh"
@@ -8643,42 +8643,42 @@
     ],
     "ESTATE_ROUTER_PORT": [
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "ESTATE_SSE_HEARTBEAT_MS": [
-      "router/stoat/estate-router-ts/dispatcher.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/dispatcher.ts",
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "ESTATE_STRATEGY": [
       "router/cuttinggate/src/strategy/catalog.ts",
       "router/cuttinggate/src/strategy/deps.ts",
       "router/cuttinggate/src/strategy/router_config.ts",
       "router/otter/router_config.py",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "ESTATE_STREAM_IDLE_MS": [
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "ESTATE_TTFT_MS": [
       "router/cuttinggate/src/strategy/catalog.ts",
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "EU_BASE_URL": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/openrouter-models-baseurl-override.test.ts",
@@ -8999,10 +8999,10 @@
       "router/weasel/scripts/check/check-changelog-integrity.mjs"
     ],
     "FREEINFERENCE_API_KEY": [
-      "router/stoat/estate-router-ts/router_emergent.live.test.ts"
+      "router/stoat/Pens-router-ts/router_emergent.live.test.ts"
     ],
     "FREEINFERENCE_BASE": [
-      "router/stoat/estate-router-ts/router_emergent.live.test.ts"
+      "router/stoat/Pens-router-ts/router_emergent.live.test.ts"
     ],
     "FREEMODEL_5H_REQUEST_LIMIT": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/freemodel-quota-fetcher.test.ts",
@@ -9547,7 +9547,7 @@
       "router/herd/scripts/sandbox_test.sh",
       "router/mink/env.ts",
       "router/mink/race.ts",
-      "router/stoat/estate-router-ts/provider-bench.test.ts"
+      "router/stoat/Pens-router-ts/provider-bench.test.ts"
     ],
     "GROQ_USER_AGENT": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/groq-client-user-agent-15632.test.ts"
@@ -9744,24 +9744,24 @@
       "router/cuttinggate/bin/catalog-sync.ts",
       "router/cuttinggate/src/strategy/router.ts",
       "router/herd/scripts/sandbox_test.sh",
-      "router/stoat/estate-router-ts/obelisk_engine.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/obelisk_engine.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/obelisk_engine.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/obelisk_engine.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/obelisk_engine.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/obelisk_engine.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/obelisk_engine.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/obelisk_engine.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/obelisk_engine.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts",
+      "router/stoat/Pens-router-ts/obelisk_engine.ts",
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/obelisk_engine.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/obelisk_engine.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/obelisk_engine.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/obelisk_engine.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/obelisk_engine.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/obelisk_engine.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/obelisk_engine.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/obelisk_engine.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/antigravity-bridge.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/data-dir.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/tray/autostart.mjs",
@@ -11003,23 +11003,23 @@
     ],
     "KIMI_AUTO_SHIM_BASE": [
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "KIMI_AUTO_SHIM_PORT": [
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "KIMI_AUTO_STATE": [
       "router/cuttinggate/src/strategy/router.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "KIMI_CLI_VERSION": [
       "router/weasel/open-sse/config/providers/registry/kimi/coding/runtime.ts"
@@ -11322,7 +11322,7 @@
       "router/herd/docker/unified/build-image.sh"
     ],
     "LLAMA_SWAP_V1": [
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "LLMLINGUA_BASE_URL": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/compression/engines/llmlingua/index.ts"
@@ -11340,7 +11340,7 @@
     ],
     "LLM_BASE_URL": [
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "LMARENA_API_BASE": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/executors/lmarena/models.ts",
@@ -11908,7 +11908,7 @@
     "MISTRAL_API_KEY": [
       "router/mink/env.ts",
       "router/mink/race.ts",
-      "router/stoat/estate-router-ts/provider-bench.test.ts"
+      "router/stoat/Pens-router-ts/provider-bench.test.ts"
     ],
     "MITM_IDLE_TIMEOUT_MS": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/mitm/socketTimeouts.ts",
@@ -12146,7 +12146,7 @@
       "router/weasel/tests/unit/cliproxyapi-dedicated-credential-7645.test.ts"
     ],
     "NEEDLE": [
-      "router/stoat/estate-router-ts/seed/longctx.ts"
+      "router/stoat/Pens-router-ts/seed/longctx.ts"
     ],
     "NEEDS_JSON": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/quality/admission-verdict.mjs",
@@ -12381,8 +12381,8 @@
     "NIM_PROXY_BASE": [
       "router/cuttinggate/src/strategy/provider-bench.ts",
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/provider-bench.ts",
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "NINEROUTER_HOST": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/executors/ninerouter.ts",
@@ -12791,8 +12791,8 @@
     ],
     "NVIDIA_API_KEY": [
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/provider-bench.test.ts",
-      "router/stoat/estate-router-ts/router_config.ts",
+      "router/stoat/Pens-router-ts/provider-bench.test.ts",
+      "router/stoat/Pens-router-ts/router_config.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/ad-hoc/nvidia-startswith-diag.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/check/check-nvidia-catalog-drift.ts",
       "router/weasel/scripts/ad-hoc/nvidia-startswith-diag.ts",
@@ -12801,8 +12801,8 @@
     "NVIDIA_API_KEYS": [
       "router/cuttinggate/src/strategy/catalog.ts",
       "router/cuttinggate/src/strategy/router_config.ts",
-      "router/stoat/estate-router-ts/provider-bench.test.ts",
-      "router/stoat/estate-router-ts/router_config.ts"
+      "router/stoat/Pens-router-ts/provider-bench.test.ts",
+      "router/stoat/Pens-router-ts/router_config.ts"
     ],
     "NVIDIA_BASE_URL": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/ad-hoc/nvidia-startswith-diag.ts",
@@ -15895,7 +15895,7 @@
     ],
     "PBKDF2_ITERS": [
       "router/cuttinggate/src/auth/tokens.ts",
-      "router/stoat/estate-router-ts/auth_test.ts"
+      "router/stoat/Pens-router-ts/auth_test.ts"
     ],
     "PCT": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/quality/relax-baselines.mjs",
@@ -16120,16 +16120,16 @@
       "router/herd/internal/server/selector_test.go",
       "router/herd/scripts/install.sh",
       "router/mink/router.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/tests/serve404.test.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts",
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/tests/serve404.test.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts",
       "router/warren/gateway.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/antigravity-bridge.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/api.mjs",
@@ -16454,10 +16454,10 @@
       "router/weasel/tests/unit/quota-multiprovider.test.ts"
     ],
     "PROVIDER_BENCH_POOL": [
-      "router/stoat/estate-router-ts/provider-bench.test.ts"
+      "router/stoat/Pens-router-ts/provider-bench.test.ts"
     ],
     "PROVIDER_BENCH_SOLO": [
-      "router/stoat/estate-router-ts/provider-bench.test.ts"
+      "router/stoat/Pens-router-ts/provider-bench.test.ts"
     ],
     "PROVIDER_CC_BRIDGE": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/systemTransforms.ts",
@@ -17541,7 +17541,7 @@
       "router/weasel/tests/integration/free-models-tpm-stress.test.ts"
     ],
     "ROUTER": [
-      "router/stoat/estate-router-ts/seed/run-v2.ts",
+      "router/stoat/Pens-router-ts/seed/run-v2.ts",
       "router/stoat/probes/run.ts"
     ],
     "ROUTER_API_KEY": [
@@ -17944,7 +17944,7 @@
       "router/weasel/tests/unit/uc.test.ts"
     ],
     "SIDECAR": [
-      "router/stoat/estate-router-ts/seed/verifier_client.ts"
+      "router/stoat/Pens-router-ts/seed/verifier_client.ts"
     ],
     "SKILLS": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/issue-14200-anthropic-skills-beta-toolless.test.ts",
@@ -18262,15 +18262,15 @@
     ],
     "STRATEGY": [
       "router/cuttinggate/src/strategy/router.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "STREAM_DISCONNECT_GRACE_PERIOD_MS": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/chat-streaming-concurrency-override.test.ts"
@@ -20197,7 +20197,7 @@
       "router/weasel/tests/unit/helpers/maxaiMockConstants.ts"
     ],
     "after": [
-      "router/stoat/estate-router-ts/seed/longctx.ts",
+      "router/stoat/Pens-router-ts/seed/longctx.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/vendor/codex-chatgpt-web/adapters/chatgpt-web/browser-worker.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/dev/diff-chatcore-leaves.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/docs/sync-wiki.mjs",
@@ -21098,7 +21098,7 @@
     ],
     "arg1": [
       "router/cuttinggate/src/strategy/ledger.ts",
-      "router/stoat/estate-router-ts/ledger.ts"
+      "router/stoat/Pens-router-ts/ledger.ts"
     ],
     "argOne": [
       "router/herd/internal/config/config_test.go"
@@ -21148,7 +21148,7 @@
       "router/weasel/tests/unit/opencode-egress-throttle.test.ts"
     ],
     "armKey": [
-      "router/stoat/estate-router-ts/seed/run-v2.ts"
+      "router/stoat/Pens-router-ts/seed/run-v2.ts"
     ],
     "arrow": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/telemetry.mjs",
@@ -21260,7 +21260,7 @@
       "router/cuttinggate/src/pauser.ts"
     ],
     "attempts": [
-      "router/stoat/estate-router-ts/decision.ts",
+      "router/stoat/Pens-router-ts/decision.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/adobeFireflyResponses.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/integration/batch-e2e-rate-limit.test.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/noauth-refresh-guard.test.ts",
@@ -21269,7 +21269,7 @@
       "router/weasel/tests/unit/noauth-refresh-guard.test.ts"
     ],
     "attr": [
-      "router/stoat/estate-router-ts/auth_test.ts",
+      "router/stoat/Pens-router-ts/auth_test.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/dashboard/hydration-extension-attrs.test.ts",
       "router/weasel/tests/unit/dashboard/hydration-extension-attrs.test.ts"
     ],
@@ -21499,7 +21499,7 @@
     ],
     "backoff": [
       "router/cuttinggate/src/strategy/router_matrix.ts",
-      "router/stoat/estate-router-ts/router_matrix.ts",
+      "router/stoat/Pens-router-ts/router_matrix.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/credential-health-backoff-retry.test.ts",
       "router/weasel/tests/unit/credential-health-backoff-retry.test.ts"
     ],
@@ -21615,7 +21615,7 @@
       "router/cuttinggate/src/strategy/provider-bench.ts",
       "router/herd/internal/config/macro_in_macro_test.go",
       "router/mink/race.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts",
+      "router/stoat/Pens-router-ts/provider-bench.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin/tests/fetch-interceptor.test.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-provider/src/index.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/configure.mjs",
@@ -21805,7 +21805,7 @@
       "router/weasel/src/shared/utils/providerModelAliases.ts"
     ],
     "baseClean": [
-      "router/stoat/estate-router-ts/router_strategy.ts"
+      "router/stoat/Pens-router-ts/router_strategy.ts"
     ],
     "baseCommit": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/check/check-ts7-diagnostics-ratchet.mjs",
@@ -22311,7 +22311,7 @@
       "router/weasel/scripts/docs/fix-internal-links.mjs"
     ],
     "basic": [
-      "router/stoat/estate-router-ts/auth_test.ts"
+      "router/stoat/Pens-router-ts/auth_test.ts"
     ],
     "basicAuth": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/tokenRefresh/providers/qoder.ts",
@@ -22385,7 +22385,7 @@
       "router/weasel/src/lib/providers/validation/webProvidersA.ts"
     ],
     "before": [
-      "router/stoat/estate-router-ts/seed/longctx.ts",
+      "router/stoat/Pens-router-ts/seed/longctx.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/vendor/codex-chatgpt-web/adapters/chatgpt-web/browser-worker.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/docs/sync-wiki.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/quality/refresh-model-lifecycle.mjs",
@@ -22803,15 +22803,15 @@
       "router/weasel/src/lib/quota/redisQuotaStore.ts"
     ],
     "bucketKey": [
-      "router/stoat/estate-router-ts/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/allin/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/chaos/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/luddite/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/monk/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/oracle/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/model_disabler.ts",
+      "router/stoat/Pens-router-ts/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/allin/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/monk/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/model_disabler.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/wafRateLimit.ts",
       "router/weasel/open-sse/services/wafRateLimit.ts"
     ],
@@ -23158,15 +23158,15 @@
     ],
     "canon": [
       "router/cuttinggate/src/strategy/router.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "canonical": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/config/embeddingRegistry.ts",
@@ -23703,15 +23703,15 @@
       "router/weasel/open-sse/utils/functionalGatewayMirrors.ts"
     ],
     "chunk": [
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts",
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/handlers/chatCore/nonStreamingSse.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/utils/requestLogger.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/utils/streamReadiness.ts",
@@ -23767,7 +23767,7 @@
       "router/weasel/tests/unit/provider-assets-third-party-notices.test.ts"
     ],
     "claimed": [
-      "router/stoat/estate-router-ts/router.ts"
+      "router/stoat/Pens-router-ts/router.ts"
     ],
     "claims": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/check/check-docs-counts-sync.mjs",
@@ -25233,13 +25233,13 @@
       "router/weasel/tests/unit/adaptive-admission-latency-collapse.test.ts"
     ],
     "convH": [
-      "router/stoat/estate-router-ts/scripts/speculative_learning_demo.ts"
+      "router/stoat/Pens-router-ts/scripts/speculative_learning_demo.ts"
     ],
     "convS": [
-      "router/stoat/estate-router-ts/scripts/speculative_learning_demo.ts"
+      "router/stoat/Pens-router-ts/scripts/speculative_learning_demo.ts"
     ],
     "convT": [
-      "router/stoat/estate-router-ts/scripts/speculative_learning_demo.ts"
+      "router/stoat/Pens-router-ts/scripts/speculative_learning_demo.ts"
     ],
     "conversationCacheKey": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/taskAwareRouting.ts",
@@ -25744,7 +25744,7 @@
       "router/weasel/tests/unit/deepseek-web-streaming-dsml-14628.test.ts"
     ],
     "cumulative": [
-      "router/stoat/estate-router-ts/flock-metrics.ts"
+      "router/stoat/Pens-router-ts/flock-metrics.ts"
     ],
     "cur": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/completion.mjs",
@@ -26092,7 +26092,7 @@
     ],
     "dbPath": [
       "router/cuttinggate/src/strategy/router_matrix.ts",
-      "router/stoat/estate-router-ts/router_matrix.ts",
+      "router/stoat/Pens-router-ts/router_matrix.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/doctor.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/reset-encrypted-columns.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/setup.mjs",
@@ -27530,15 +27530,15 @@
       "router/weasel/tests/unit/model-spec-lookup-index-8697.test.ts"
     ],
     "entry": [
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts",
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/check/check-provider-asset-provenance.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/mitm/dns/dnsConfig.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/build/check-bundle-size-unmeasurable.test.ts",
@@ -28114,7 +28114,7 @@
       "router/weasel/tests/unit/compression/memory-mitigations-edge-cases.test.ts",
       "router/weasel/tests/unit/compression/oom-memo-memory.test.ts"
     ],
-    "estate": [
+    "Pens": [
       "router/cuttinggate/src/strategy/router_config.ts"
     ],
     "estimate": [
@@ -29118,15 +29118,15 @@
       "router/weasel/open-sse/utils/proxyDispatcher.ts"
     ],
     "family": [
-      "router/stoat/estate-router-ts/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/allin/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/chaos/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/luddite/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/monk/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/oracle/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/model_disabler.ts",
+      "router/stoat/Pens-router-ts/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/allin/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/monk/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/model_disabler.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/adobeFireflyModels.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/antigravityQuotaFamily.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/autoCombo/modelFamily.ts",
@@ -29339,7 +29339,7 @@
     "file": [
       "flicker/.vscode/launch.json",
       "router/cuttinggate/src/strategy/router_auth.ts",
-      "router/stoat/estate-router-ts/router_auth.ts",
+      "router/stoat/Pens-router-ts/router_auth.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin-v2/src/cache.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin-v2/tests/disk-snapshot-atomicity.test.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/audit.mjs",
@@ -29628,15 +29628,15 @@
       "router/weasel/scripts/ad-hoc/sync-provider-auto-fetch-i18n-keys.mjs"
     ],
     "fill": [
-      "router/stoat/estate-router-ts/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/allin/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/chaos/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/luddite/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/monk/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/oracle/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/model_disabler.ts",
+      "router/stoat/Pens-router-ts/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/allin/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/monk/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/model_disabler.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/guardrails/videoBridgeDrilldownLifecycle.test.ts",
       "router/weasel/tests/unit/guardrails/videoBridgeDrilldownLifecycle.test.ts"
     ],
@@ -30019,7 +30019,7 @@
     "frag": [
       "router/cuttinggate/src/auth/users.ts",
       "router/cuttinggate/src/strategy/router_auth.ts",
-      "router/stoat/estate-router-ts/router_auth.ts"
+      "router/stoat/Pens-router-ts/router_auth.ts"
     ],
     "fragment": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/cursor-registry-claude-families.test.ts",
@@ -30623,7 +30623,7 @@
     ],
     "healthy": [
       "router/cuttinggate/src/strategy/provider-bench.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts",
+      "router/stoat/Pens-router-ts/provider-bench.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/executors/chatgpt-web-codex/tunnelClient.ts",
       "router/weasel/open-sse/executors/chatgpt-web-codex/tunnelClient.ts"
     ],
@@ -30660,7 +30660,7 @@
       "router/weasel/tests/unit/proxy-pool-skips-refused-member.test.ts"
     ],
     "help": [
-      "router/stoat/estate-router-ts/flock-metrics.ts"
+      "router/stoat/Pens-router-ts/flock-metrics.ts"
     ],
     "helper": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/mcp-server-handler-extraction-15159.test.ts",
@@ -31810,7 +31810,7 @@
     ],
     "iters": [
       "router/cuttinggate/src/strategy/router_auth.ts",
-      "router/stoat/estate-router-ts/router_auth.ts"
+      "router/stoat/Pens-router-ts/router_auth.ts"
     ],
     "itl": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/stream-timing.test.ts",
@@ -31830,15 +31830,15 @@
     ],
     "job": [
       "router/cuttinggate/src/strategy/router_strategy.ts",
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts",
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/build/release-green-workflow-verdict.test.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/quality-rail-gate-membership.test.ts",
       "router/weasel/tests/unit/build/release-green-workflow-verdict.test.ts",
@@ -31995,15 +31995,15 @@
       "router/weasel/src/lib/db/core.ts"
     ],
     "keyHash": [
-      "router/stoat/estate-router-ts/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/allin/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/chaos/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/luddite/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/monk/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/oracle/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/model_disabler.ts",
+      "router/stoat/Pens-router-ts/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/allin/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/monk/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/model_disabler.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/lib/db/apiKeys.ts",
       "router/weasel/src/lib/db/apiKeys.ts"
     ],
@@ -32853,7 +32853,7 @@
       "router/weasel/src/lib/db/core.ts"
     ],
     "legacyCount": [
-      "router/stoat/estate-router-ts/fold-roundup-weights.ts"
+      "router/stoat/Pens-router-ts/fold-roundup-weights.ts"
     ],
     "legacyRequest": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/shared/components/RequestLoggerDetail.tsx",
@@ -32913,7 +32913,7 @@
     ],
     "level": [
       "router/cuttinggate/src/strategy/router_matrix.ts",
-      "router/stoat/estate-router-ts/router_matrix.ts",
+      "router/stoat/Pens-router-ts/router_matrix.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/config/providerModels.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/executors/opencode.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/executors/xai.ts",
@@ -33139,16 +33139,16 @@
       "router/cuttinggate/src/strategy/router.ts",
       "router/cuttinggate/src/strategy/router_config.ts",
       "router/otter/router_config.py",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/router_config.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/router_config.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "localModelPath": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/compression/engines/llmlingua/modelStore.ts",
@@ -33706,7 +33706,7 @@
     ],
     "maxAge": [
       "router/cuttinggate/src/strategy/router_auth.ts",
-      "router/stoat/estate-router-ts/router_auth.ts"
+      "router/stoat/Pens-router-ts/router_auth.ts"
     ],
     "maxAgeDays": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/compression/engines/rtk/rawOutput.ts",
@@ -33855,15 +33855,15 @@
     ],
     "maxRequests": [
       "router/cuttinggate/src/strategy/router_strategy.ts",
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts"
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts"
     ],
     "maxRetries": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/claudeWebAutoRefresh.ts",
@@ -34403,17 +34403,17 @@
     "mid": [
       "router/cuttinggate/src/strategy/router.ts",
       "router/cuttinggate/src/strategy/router_strategy.ts",
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/tests/router_max.test.ts",
-      "router/stoat/estate-router-ts/v1paths.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts",
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/tests/router_max.test.ts",
+      "router/stoat/Pens-router-ts/v1paths.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/adobeFireflyArp.ts",
       "router/weasel/@omniroute/opencode-plugin-v2/tests/auto-combos.test.ts",
       "router/weasel/open-sse/services/adobeFireflyArp.ts"
@@ -34469,7 +34469,7 @@
       "router/weasel/src/app/api/v1beta/models/[...path]/convertGeminiToInternal.ts"
     ],
     "min": [
-      "router/stoat/estate-router-ts/race/run.ts",
+      "router/stoat/Pens-router-ts/race/run.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/compression/engines/cavemanAdapter.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/compression/engines/codexResponses/index.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/app/(dashboard)/dashboard/usage/components/FreeBudgetCard.tsx",
@@ -34809,21 +34809,21 @@
       "router/cuttinggate/src/strategy/router_matrix.ts",
       "router/cuttinggate/src/strategy/router_strategy.ts",
       "router/cuttinggate/src/strategy/strategy.ts",
-      "router/stoat/estate-router-ts/bench-priors.ts",
-      "router/stoat/estate-router-ts/flock-metrics.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts",
-      "router/stoat/estate-router-ts/router_emergent.ts",
-      "router/stoat/estate-router-ts/router_matrix.ts",
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/v1paths.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts",
+      "router/stoat/Pens-router-ts/bench-priors.ts",
+      "router/stoat/Pens-router-ts/flock-metrics.ts",
+      "router/stoat/Pens-router-ts/provider-bench.ts",
+      "router/stoat/Pens-router-ts/router_emergent.ts",
+      "router/stoat/Pens-router-ts/router_matrix.ts",
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/v1paths.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/cli-manifest.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/run.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/setup-5dive.mjs",
@@ -35790,7 +35790,7 @@
     ],
     "models": [
       "router/cuttinggate/src/strategy/provider-bench.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts",
+      "router/stoat/Pens-router-ts/provider-bench.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/completion.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/lib/copilot/tools.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/e2e-tool-calls.sh",
@@ -36092,12 +36092,12 @@
       "router/cuttinggate/bin/catalog-sync.ts",
       "router/cuttinggate/src/strategy/provider-bench.ts",
       "router/cuttinggate/src/zen.ts",
-      "router/stoat/estate-router-ts/auth_test.ts",
-      "router/stoat/estate-router-ts/flock-metrics.ts",
-      "router/stoat/estate-router-ts/fold-roundup-weights.ts",
-      "router/stoat/estate-router-ts/governor_test.ts",
-      "router/stoat/estate-router-ts/provider-bench.test.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts",
+      "router/stoat/Pens-router-ts/auth_test.ts",
+      "router/stoat/Pens-router-ts/flock-metrics.ts",
+      "router/stoat/Pens-router-ts/fold-roundup-weights.ts",
+      "router/stoat/Pens-router-ts/governor_test.ts",
+      "router/stoat/Pens-router-ts/provider-bench.test.ts",
+      "router/stoat/Pens-router-ts/provider-bench.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin-v2/src/catalog.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/combo.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/compression.mjs",
@@ -37916,7 +37916,7 @@
     ],
     "outDir": [
       "router/cuttinggate/src/strategy/provider-bench.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts"
+      "router/stoat/Pens-router-ts/provider-bench.ts"
     ],
     "outFile": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/quality/run-eslint-json.mjs",
@@ -38103,10 +38103,10 @@
       "router/herd/docker/build-image.sh"
     ],
     "p50": [
-      "router/stoat/estate-router-ts/race/run.ts"
+      "router/stoat/Pens-router-ts/race/run.ts"
     ],
     "p99": [
-      "router/stoat/estate-router-ts/race/run.ts"
+      "router/stoat/Pens-router-ts/race/run.ts"
     ],
     "pKey": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/dashboard/modelCatalogPage.test.tsx",
@@ -38370,8 +38370,8 @@
       "router/weasel/tests/unit/webdav-server-3485.test.ts"
     ],
     "passed": [
-      "router/stoat/estate-router-ts/auth_test.ts",
-      "router/stoat/estate-router-ts/governor_test.ts",
+      "router/stoat/Pens-router-ts/auth_test.ts",
+      "router/stoat/Pens-router-ts/governor_test.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/eval.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/test/combo-live-vps.mjs",
       "router/weasel/bin/cli/commands/eval.mjs",
@@ -38426,19 +38426,19 @@
       "router/herd/internal/config/macro_in_macro_test.go",
       "router/mink/orchestrator.ts",
       "router/mink/switchover.ts",
-      "router/stoat/estate-router-ts/flock-metrics.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/router_config.ts",
-      "router/stoat/estate-router-ts/v1paths.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts",
+      "router/stoat/Pens-router-ts/flock-metrics.ts",
+      "router/stoat/Pens-router-ts/provider-bench.ts",
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/router_config.ts",
+      "router/stoat/Pens-router-ts/v1paths.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin/src/index.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/api.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/keys.mjs",
@@ -40051,8 +40051,8 @@
     ],
     "priorsPath": [
       "router/cuttinggate/src/strategy/merge-provider-priors.ts",
-      "router/stoat/estate-router-ts/fold-roundup-weights.ts",
-      "router/stoat/estate-router-ts/merge-provider-priors.ts"
+      "router/stoat/Pens-router-ts/fold-roundup-weights.ts",
+      "router/stoat/Pens-router-ts/merge-provider-priors.ts"
     ],
     "privateIdentity": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/session-leases-route.test.ts",
@@ -40294,7 +40294,7 @@
     ],
     "prov": [
       "router/cuttinggate/src/strategy/router_matrix.ts",
-      "router/stoat/estate-router-ts/router_matrix.ts",
+      "router/stoat/Pens-router-ts/router_matrix.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/handlers/chatCore/executorProxy.ts",
       "router/weasel/open-sse/handlers/chatCore/executorProxy.ts"
     ],
@@ -40308,30 +40308,30 @@
       "router/cuttinggate/src/strategy/provider-bench.ts",
       "router/cuttinggate/src/strategy/router_strategy.ts",
       "router/cuttinggate/src/strategy/strategy.ts",
-      "router/stoat/estate-router-ts/bench-priors.ts",
-      "router/stoat/estate-router-ts/flock-metrics.ts",
-      "router/stoat/estate-router-ts/merge-provider-priors.ts",
-      "router/stoat/estate-router-ts/model_disabler.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts",
-      "router/stoat/estate-router-ts/router_emergent.ts",
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/v1paths.ts",
-      "router/stoat/estate-router-ts/variants/allin/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts",
+      "router/stoat/Pens-router-ts/bench-priors.ts",
+      "router/stoat/Pens-router-ts/flock-metrics.ts",
+      "router/stoat/Pens-router-ts/merge-provider-priors.ts",
+      "router/stoat/Pens-router-ts/model_disabler.ts",
+      "router/stoat/Pens-router-ts/provider-bench.ts",
+      "router/stoat/Pens-router-ts/router_emergent.ts",
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/v1paths.ts",
+      "router/stoat/Pens-router-ts/variants/allin/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin-v2/src/shared/enrich.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin/src/index.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/login.mjs",
@@ -41782,7 +41782,7 @@
       "router/weasel/tests/unit/ui/combo-health-null-quota.test.tsx"
     ],
     "rank": [
-      "router/stoat/estate-router-ts/race/run.ts",
+      "router/stoat/Pens-router-ts/race/run.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/executors/grok-web/tool-bridge.ts",
       "router/weasel/open-sse/executors/grok-web/tool-bridge.ts"
     ],
@@ -41929,15 +41929,15 @@
     ],
     "rawModel": [
       "router/cuttinggate/src/strategy/router.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts",
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/lib/modelCapabilities.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/integration/combo-live/cost-and-fusion.live.test.ts",
       "router/weasel/src/lib/modelCapabilities.ts",
@@ -42834,19 +42834,19 @@
     ],
     "req_total": [
       "router/cuttinggate/src/strategy/router.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "reqs": [
       "router/cuttinggate/src/strategy/provider-bench.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts"
+      "router/stoat/Pens-router-ts/provider-bench.ts"
     ],
     "requestBodyModel": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/sse/handlers/chat/resolvedModelPolicy.ts"
@@ -43528,7 +43528,7 @@
       "router/weasel/open-sse/services/taskAwareRouting.ts"
     ],
     "rounds": [
-      "router/stoat/estate-router-ts/scripts/speculative_learning_demo.ts",
+      "router/stoat/Pens-router-ts/scripts/speculative_learning_demo.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/integration/freeModelBenchmarkShared.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/integration/historical-tool-call-leak.test.ts",
       "router/weasel/tests/integration/freeModelBenchmarkShared.ts",
@@ -43668,7 +43668,7 @@
       "router/weasel/src/app/(dashboard)/dashboard/usage/components/EvalsTab.tsx"
     ],
     "runDir": [
-      "router/stoat/estate-router-ts/seed/run-v2.ts",
+      "router/stoat/Pens-router-ts/seed/run-v2.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/router-eval/compare.ts",
       "router/weasel/scripts/router-eval/compare.ts"
     ],
@@ -43702,7 +43702,7 @@
     ],
     "runsDir": [
       "router/cuttinggate/src/strategy/merge-provider-priors.ts",
-      "router/stoat/estate-router-ts/merge-provider-priors.ts"
+      "router/stoat/Pens-router-ts/merge-provider-priors.ts"
     ],
     "runsOn": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/check-workflows-provenance-runner.test.ts",
@@ -44231,15 +44231,15 @@
       "router/weasel/tests/unit/video-bridge-log-redaction.test.ts"
     ],
     "seconds": [
-      "router/stoat/estate-router-ts/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/allin/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/chaos/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/luddite/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/monk/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/oracle/model_disabler.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/model_disabler.ts",
+      "router/stoat/Pens-router-ts/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/allin/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/monk/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/model_disabler.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/model_disabler.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/serve.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/claudeWebAutoRefresh.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/webSessionPoolHealth.ts",
@@ -44873,7 +44873,7 @@
     ],
     "sigmaN": [
       "router/cuttinggate/src/strategy/router_live_models.ts",
-      "router/stoat/estate-router-ts/router_live_models.ts"
+      "router/stoat/Pens-router-ts/router_live_models.ts"
     ],
     "sign": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/telemetry.mjs",
@@ -45074,7 +45074,7 @@
       "router/weasel/scripts/test/combo-live-vps.mjs"
     ],
     "skips": [
-      "router/stoat/estate-router-ts/decision.ts"
+      "router/stoat/Pens-router-ts/decision.ts"
     ],
     "skuText": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/usage/github.ts",
@@ -45210,15 +45210,15 @@
     ],
     "source": [
       "router/cuttinggate/src/strategy/router.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts",
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/autoCombo/taskFitness.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/compression/ruleLoader.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/rateLimitManager.ts",
@@ -45658,8 +45658,8 @@
     ],
     "stamp": [
       "router/cuttinggate/src/strategy/provider-bench.ts",
-      "router/stoat/estate-router-ts/provider-bench.ts",
-      "router/stoat/estate-router-ts/seed/run-v2.ts",
+      "router/stoat/Pens-router-ts/provider-bench.ts",
+      "router/stoat/Pens-router-ts/seed/run-v2.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/services/quotaResetParsing.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/call-log-error-type.test.ts",
       "router/weasel/open-sse/services/quotaResetParsing.ts",
@@ -45734,9 +45734,9 @@
     ],
     "status": [
       "router/cuttinggate/src/keypool.ts",
-      "router/stoat/estate-router-ts/flock-metrics.ts",
-      "router/stoat/estate-router-ts/router_matrix.ts",
-      "router/stoat/estate-router-ts/seed/run-v2.ts",
+      "router/stoat/Pens-router-ts/flock-metrics.ts",
+      "router/stoat/Pens-router-ts/router_matrix.ts",
+      "router/stoat/Pens-router-ts/seed/run-v2.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/api.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/combo.mjs",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/config.mjs",
@@ -46142,7 +46142,7 @@
     "step": [
       "flicker/web/src/lib/api/index.ts",
       "router/cuttinggate/src/strategy/router_matrix.ts",
-      "router/stoat/estate-router-ts/router_matrix.ts",
+      "router/stoat/Pens-router-ts/router_matrix.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/app/api/providers/[id]/login/route.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/db/call-logs-family-agg.test.ts",
       "router/weasel/src/app/api/providers/[id]/login/route.ts",
@@ -46220,26 +46220,26 @@
     ],
     "strat": [
       "router/cuttinggate/src/strategy/router.ts",
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "stratName": [
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts"
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts"
     ],
     "strategy": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/combo.mjs",
@@ -46704,15 +46704,15 @@
       "router/weasel/tests/unit/sse-error-passthrough-3324.test.ts"
     ],
     "swMs": [
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts"
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts"
     ],
     "sym": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/check/check-tracked-artifacts.mjs",
@@ -46892,7 +46892,7 @@
     "tag": [
       "router/herd/docker/unified/build-image.sh",
       "router/herd/internal/config/macro_in_macro_test.go",
-      "router/stoat/estate-router-ts/tests/hedge.test.ts",
+      "router/stoat/Pens-router-ts/tests/hedge.test.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin-v2/src/shared/logger.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin/src/index.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/@omniroute/opencode-plugin/src/logger.ts",
@@ -47227,15 +47227,15 @@
       "router/weasel/src/lib/copilot/tools.ts"
     ],
     "task": [
-      "router/stoat/estate-router-ts/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/allin/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/monk/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router_strategy.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router_strategy.ts",
+      "router/stoat/Pens-router-ts/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router_strategy.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router_strategy.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/check/check-model-lifecycle.mjs",
       "router/weasel/scripts/check/check-model-lifecycle.mjs"
     ],
@@ -47262,15 +47262,15 @@
       "router/weasel/src/lib/a2a/taskManager.ts"
     ],
     "taskPath": [
-      "router/stoat/estate-router-ts/router.ts",
-      "router/stoat/estate-router-ts/variants/allin/router.ts",
-      "router/stoat/estate-router-ts/variants/champion_k3/router.ts",
-      "router/stoat/estate-router-ts/variants/chaos/router.ts",
-      "router/stoat/estate-router-ts/variants/gaslight/router.ts",
-      "router/stoat/estate-router-ts/variants/luddite/router.ts",
-      "router/stoat/estate-router-ts/variants/monk/router.ts",
-      "router/stoat/estate-router-ts/variants/oracle/router.ts",
-      "router/stoat/estate-router-ts/variants/paranoid/router.ts"
+      "router/stoat/Pens-router-ts/router.ts",
+      "router/stoat/Pens-router-ts/variants/allin/router.ts",
+      "router/stoat/Pens-router-ts/variants/champion_k3/router.ts",
+      "router/stoat/Pens-router-ts/variants/chaos/router.ts",
+      "router/stoat/Pens-router-ts/variants/gaslight/router.ts",
+      "router/stoat/Pens-router-ts/variants/luddite/router.ts",
+      "router/stoat/Pens-router-ts/variants/monk/router.ts",
+      "router/stoat/Pens-router-ts/variants/oracle/router.ts",
+      "router/stoat/Pens-router-ts/variants/paranoid/router.ts"
     ],
     "taskStatusCode": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/executors/nimble-fetch.ts",
@@ -47961,8 +47961,8 @@
       "router/cuttinggate/src/auth/users.ts",
       "router/cuttinggate/src/catalog.ts",
       "router/cuttinggate/src/strategy/router_auth.ts",
-      "router/stoat/estate-router-ts/auth_test.ts",
-      "router/stoat/estate-router-ts/router_auth.ts",
+      "router/stoat/Pens-router-ts/auth_test.ts",
+      "router/stoat/Pens-router-ts/router_auth.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/config/grokBuild.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/config/ocrRegistry.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/open-sse/config/registryUtils.ts",
@@ -48247,7 +48247,7 @@
       "router/weasel/src/app/api/v1/vscode/combos/[token]/[[...slug]]/route.ts"
     ],
     "tokenCount": [
-      "router/stoat/estate-router-ts/router.ts"
+      "router/stoat/Pens-router-ts/router.ts"
     ],
     "tokenCountdown": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/src/app/(dashboard)/dashboard/usage/components/ProviderLimits/parts/QuotaCardHeader.tsx",
@@ -50283,7 +50283,7 @@
       "router/weasel/src/app/(dashboard)/dashboard/combos/page.tsx"
     ],
     "weightsPath": [
-      "router/stoat/estate-router-ts/fold-roundup-weights.ts"
+      "router/stoat/Pens-router-ts/fold-roundup-weights.ts"
     ],
     "what": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/bin/cli/commands/resilience.mjs",
@@ -50349,7 +50349,7 @@
     "why": [
       "router/cuttinggate/src/audit.ts",
       "router/cuttinggate/src/strategy/merge-provider-priors.ts",
-      "router/stoat/estate-router-ts/merge-provider-priors.ts",
+      "router/stoat/Pens-router-ts/merge-provider-priors.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/authz/credential-export-always-protected.test.ts",
       "router/weasel/.claude/worktrees/openrouter-recon-merge/tests/unit/combo-preset-models-resolve-14077.test.ts",
       "router/weasel/tests/unit/authz/credential-export-always-protected.test.ts",
@@ -50580,7 +50580,7 @@
       "router/weasel/bin/cli/commands/setup-codex.mjs"
     ],
     "wroteVal": [
-      "router/stoat/estate-router-ts/tests/elo_persist.test.ts"
+      "router/stoat/Pens-router-ts/tests/elo_persist.test.ts"
     ],
     "wsKey": [
       "router/weasel/.claude/worktrees/openrouter-recon-merge/scripts/dev/responses-ws-proxy.mjs",

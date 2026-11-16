@@ -5,14 +5,14 @@ repository on this machine, without each repo having to opt in.
 
 ## Install
 
-    git config --global core.hooksPath /home/toxic/pens/estate/ops/git-hooks
-    git config --global core.excludesFile /home/toxic/pens/estate/ops/gitignore/layers/50-secrets.gitignore
+    git config --global core.hooksPath /home/toxic/pens/Pens/ops/git-hooks
+    git config --global core.excludesFile /home/toxic/pens/Pens/ops/gitignore/layers/50-secrets.gitignore
 
 ## What runs
 
 | Hook | Gate |
 |---|---|
-| `pre-commit` | `gitleaks git --staged` over the staged diff. In the estate repo, also re-renders the layered `.gitignore` and stages it when it drifted. |
+| `pre-commit` | `gitleaks git --staged` over the staged diff. In the Pens repo, also re-renders the layered `.gitignore` and stages it when it drifted. |
 | `pre-push` | `gitleaks git --log-opts=<range>` over exactly the commits being pushed, computed per ref-update from stdin. |
 
 ## Chaining

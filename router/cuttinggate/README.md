@@ -1,12 +1,12 @@
 # cuttinggate
 
-*The canonical live router for the estate: one OpenAI-compatible endpoint fans requests across cloud providers and local inference with strategy-based failover, circuit breakers, and sticky sessions.*
+*The canonical live router for the Pens: one OpenAI-compatible endpoint fans requests across cloud providers and local inference with strategy-based failover, circuit breakers, and sticky sessions.*
 
 ![ranch](https://img.shields.io/badge/toxicwind-ranch-blue?style=for-the-badge) ![mesh](https://img.shields.io/badge/mesh-cuttinggate-purple?style=for-the-badge) ![bun](https://img.shields.io/badge/bun-black?style=for-the-badge) ![port 25200](https://img.shields.io/badge/port-25200-green?style=for-the-badge)
 
 ## Why this exists
 
-Every model an agent can think with should be one request away. cuttinggate is that one request: **strategy names — not model names — decide where traffic goes**, so clients never rewire when providers change. It superseded the estate-scripts-router on `:25104` (still serving — pitchfork `auto = ["start"]`, verified 2026-10-02) and absorbed the flock-proxy role (`:25193`, live again 2026-10-04, key-gated).
+Every model an agent can think with should be one request away. cuttinggate is that one request: **strategy names — not model names — decide where traffic goes**, so clients never rewire when providers change. It superseded the Pens-scripts-router on `:25104` (still serving — pitchfork `auto = ["start"]`, verified 2026-10-02) and absorbed the flock-proxy role (`:25193`, live again 2026-10-04, key-gated).
 
 - **Strategy-based routing** — `hybrid` (default: sticky → ast_race → circuit_chain), `free`, `ast_race`, `sticky_affinity`, `weighted_elo`, `circuit_chain`, `fifo_matrix`.
 - **Zero-cost by default** — the `free` strategy races local herd inference against every `:free` cloud model; cost-sensitive agents never touch a paid endpoint by accident.
@@ -18,7 +18,7 @@ Every model an agent can think with should be one request away. cuttinggate is t
 ```bash
 curl -sf http://127.0.0.1:25200/health      # router health
 curl -sf http://127.0.0.1:25200/v1/models   # model list
-curl -H "X-Estate-Strategy: free" http://127.0.0.1:25200/v1/chat/completions
+curl -H "X-Pens-Strategy: free" http://127.0.0.1:25200/v1/chat/completions
 ```
 
 Run it: `bun run src/server.ts` — port via `CUTTINGGATE_PORT`; the code default is `:25194` (`src/config.ts`, which collides with ralph-dashboard) and `:25200` comes from the pitchfork stanza in `pitchfork.d/`. Bun ≥ 1.4.0.
@@ -29,7 +29,7 @@ Run it: `bun run src/server.ts` — port via `CUTTINGGATE_PORT`; the code defaul
 src/
   server.ts       HTTP entry (Elysia)
   router/         strategy engine: decision, governor, strategy selection
-  strategy/       vendored estate-scripts-router TS strategy layer (router_*.ts)
+  strategy/       vendored Pens-scripts-router TS strategy layer (router_*.ts)
   catalog.ts      provider catalog, generated from mesh/catalog
   keypool.ts      key-pool client (talks to mesh/keypool)
   circuit.ts      circuit breakers
@@ -42,7 +42,7 @@ tests/            bun test suite (`bun test`)
 
 ## Where it sits
 
-Part of the [mesh](../../README.md) routing plane at `ranch/mesh/proxy/cuttinggate/`. It superseded `:25104` (estate-scripts-router, still serving) and absorbed the `:25193` flock-proxy role (live again 2026-10-04, key-gated). Herd (`:25100`) is its local-inference leg when up.
+Part of the [mesh](../../README.md) routing plane at `ranch/mesh/proxy/cuttinggate/`. It superseded `:25104` (Pens-scripts-router, still serving) and absorbed the `:25193` flock-proxy role (live again 2026-10-04, key-gated). Herd (`:25100`) is its local-inference leg when up.
 
 
 ## Providers: OpenCode Zen free tier
@@ -64,7 +64,7 @@ applies the full shape per request (`src/zen.ts`, via `Router.call`):
 - the SSE stream is folded back into one JSON completion (non-content frames
   such as `inference-cost` are stripped) so the race engine's contract holds
 
-Auth: `ZEN_API_KEY`, or `OPENCODE_API_KEY` (mirrors estate-scripts-router-ts).
+Auth: `ZEN_API_KEY`, or `OPENCODE_API_KEY` (mirrors Pens-scripts-router-ts).
 The provider is also registered in the mesh catalog
 (`mesh/catalog/src/data.ts`, adapter `openai`), so generated artifacts
 (`providers.json`/`.go`/`.rs`, `tau-models.yml`) carry it. The vendored
@@ -110,7 +110,7 @@ below stays routable even when the live catalog lags an upstream rotation.
   on chat-completions, MiniMax/Qwen on `/messages`, GPT/Grok on `/responses`
 - nexusrun/nexus_aigateway — session-header forwarding for the Go tier
 - blaspat/opencode-tk-proxy — header-injecting proxy for the Go tier
-- (earlier set documented in `mesh/router/estate-scripts-router/README.md`:
+- (earlier set documented in `mesh/router/Pens-scripts-router/README.md`:
   parithosh-varma/opencode-proxy, dinhkarate/opencode-zen-free-proxy,
   markdev11/oc-proxy, JulienMaille/opencode-free-proxy,
   vyn-7/opencode-bypass, parithosh-varma/zen-proxy)

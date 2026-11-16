@@ -84,7 +84,7 @@ class H(BaseHTTPRequestHandler):
                 json.dumps(
                     {
                         "status": "ok",
-                        "router": "estate-ast-matrix",
+                        "router": "Pens-ast-matrix",
                         "version": "v3.1",
                         "strategy": STRATEGY,
                         "parallel": MAX_PARALLEL,
@@ -145,7 +145,7 @@ class H(BaseHTTPRequestHandler):
                 json.dumps(body.get("messages", [])[:1]).encode()
             ).hexdigest()[:12]
         )
-        strat = self.headers.get("X-Estate-Strategy", STRATEGY)
+        strat = self.headers.get("X-Pens-Strategy", STRATEGY)
         is_stream: bool = body.get("stream", False)
         if is_stream:
             self._handle_stream(body, sid, strat)
@@ -221,7 +221,7 @@ class H(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    print(f"Estate AST Matrix v3.1 on http://127.0.0.1:{PORT}/v1")
+    print(f"Pens AST Matrix v3.1 on http://127.0.0.1:{PORT}/v1")
     print(
         f"Strategy={STRATEGY} | 5 routes: fifo_matrix, ast_race, sticky_affinity,"
         f" weighted_elo, circuit_chain (+ hybrid)"

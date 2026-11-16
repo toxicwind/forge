@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# dedup-weekly.sh — weekly btrfs block-level dedup for the estate.
+# dedup-weekly.sh — weekly btrfs block-level dedup for the Pens.
 #
 # Uses fclones (znver4 build): `fclones group` finds duplicate content by
 # size+hash, `fclones dedupe` merges identical extents via FIDEDUPERANGE.
@@ -8,15 +8,15 @@
 # shared, freeing disk space. Safe to run on live trees.
 #
 # Wired as a weekly cron (toxic's crontab, Sundays 05:23). Also safe to run
-# by hand: /home/toxic/pens/estate/ops/dedup-weekly.sh
+# by hand: /home/toxic/pens/Pens/ops/dedup-weekly.sh
 #
 # Added 2026-10-04 (Deduper, Forge's crew): the 2026-10-03 fclones audit
-# found ~34.9 GB reclaimable across cold-storage + estate; top waste =
+# found ~34.9 GB reclaimable across cold-storage + Pens; top waste =
 # duplicated daily cell-backup tarballs and rescued worktree copies.
 
 set -euo pipefail
 
-REPO=/home/toxic/estate
+REPO=/home/toxic/pens/Pens
 LOG_DIR="$REPO/var/log"
 RUN_DIR="$REPO/var/run"
 LOCK="$RUN_DIR/dedup-weekly.lock"
@@ -25,7 +25,7 @@ GROUP_FILE="$LOG_DIR/dedup-groups-$(date -u +%Y%m%dT%H%M%SZ).txt"
 FCLONES=/usr/bin/fclones
 
 # Scopes: the trees the 2026-10-03 fclones audit covered.
-SCOPES=(/home/toxic/cold-storage /home/toxic/estate)
+SCOPES=(/home/toxic/cold-storage /home/toxic/pens/Pens)
 
 mkdir -p "$LOG_DIR" "$RUN_DIR"
 

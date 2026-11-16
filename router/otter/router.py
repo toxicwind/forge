@@ -1,5 +1,5 @@
 """
-Estate AST Matrix v3 — Maximal free coding gateway for Zed
+Pens AST Matrix v3 — Maximal free coding gateway for Zed
 =============================================================
 5 routing strategies (research-backed: RouteLLM, agent-router, PORT,
 LLM-Runner-Router, radlab llm-router, circuit-breaker patterns):

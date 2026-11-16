@@ -1,5 +1,5 @@
 /**
- * Estate MCP Gateway — testable core logic.
+ * Pens MCP Gateway — testable core logic.
  *
  * Extracted from gateway.ts so the routing/circuit/sticky/discover logic can be
  * unit-tested without binding a socket. gateway.ts is a thin Bun.serve entry
@@ -209,7 +209,7 @@ export function buildDiscover(s: GatewayState, upstreams: Upstream[]): any {
     result: {
       supported_versions: ["2024-11-05"],
       capabilities: caps,
-      server_info: { name: "estate-mcp-gateway", version: "v1" },
+      server_info: { name: "Pens-mcp-gateway", version: "v1" },
       instructions:
         "Tools are namespaced as <upstream>__<tool>. The gateway load-balances and circuit-breaks across upstreams.",
       tools,

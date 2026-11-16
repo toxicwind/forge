@@ -41,6 +41,6 @@ Kept live. Act on these; never locked into one approach.
    never expires. Add max_stale (e.g. 24h) after which NO-WINNER is honest.
 9. **hodos around squawk sequence allocation** in loop.sh's transition post
    (concurrent writers could collide on filename).
-10. **coyote :25143.** Estate/coyote is configured but absent from the live
+10. **coyote :25143.** Pens/coyote is configured but absent from the live
     pitchfork set. Recon only — do not start without checking with the
     coordinator (may be intentionally parked).

@@ -2,7 +2,7 @@
 /**
  * 📒 ledger — the ranch account book.
  *
- * Multi-provider request/token/cost accounting for the whole estate.
+ * Multi-provider request/token/cost accounting for the whole Pens.
  * Every provider key that serves traffic gets its tokens counted and,
  * where a verified per-token price exists, its dollars accounted.
  *

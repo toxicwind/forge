@@ -1,7 +1,7 @@
 {
-  "$comment": "Composition spec for the estate .gitignore. Rendered by ops/bin/gitignore-sync.ts \u2014 never hand-edit estate/.gitignore. Order is load-bearing: preLayers -> templates -> postLayers. Estate-specific rules must be able to override upstream template rules (e.g. Python.gitignore ships `.env`, the estate tracks it), so they come last.",
+  "$comment": "Composition spec for the Pens .gitignore. Rendered by ops/bin/gitignore-sync.ts \u2014 never hand-edit Pens/.gitignore. Order is load-bearing: preLayers -> templates -> postLayers. Pens-specific rules must be able to override upstream template rules (e.g. Python.gitignore ships `.env`, the Pens tracks it), so they come last.",
   "preLayers": [
-    "00-estate-header.gitignore"
+    "00-Pens-header.gitignore"
   ],
   "templates": [
     "Global/Linux.gitignore",

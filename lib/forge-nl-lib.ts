@@ -1,7 +1,7 @@
 /**
  * forge-nl-lib — shared NativeLink (REAPI) remote-cache wrapper.
  *
- * Every build script in the estate should route through here so builds hit the
+ * Every build script in the Pens should route through here so builds hit the
  * NativeLink cache plane (grpc :25155, http :25157) by default. Falls back to
  * a plain local invocation when the cache plane is offline — never blocks a build.
  *

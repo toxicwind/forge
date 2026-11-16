@@ -11,7 +11,7 @@
 
 # ⚒️ forge
 
-**The estate's build daemon + REAPI remote-execution layer.** Forge is the one
+**The Pens's build daemon + REAPI remote-execution layer.** Forge is the one
 builder the ranch routes through: it *caches and executes* builds (Bazel/REAPI
 at `:25155`, mise task cache at `:25148`), *deploys* the sites, and *borrows
 prior art* for the hard problems. Forge pairs with **weave** (entity-level git
@@ -28,7 +28,7 @@ agents edit (weave-aware git) → clean merges → CI hits forge (:25155) → ca
 | Piece | Where | Port | Role |
 |---|---|---|---|
 | **NativeLink (REAPI)** | `barn/nativelink` | `:25155` / `:25157` | Remote Execution API + CAS — the remote build cache/executor. Docs: `barn/nativelink/web` (fumadocs `docs/weave.mdx`). |
-| **forge build daemon** (`forge-server`) | `pitchfork estate/forge` + `estate/forge-agent` | `:25148` HTTP / `:25240` gRPC | The woodpecker-CI fork: job queue, content-hash cache, health. `POST /api/jobs`. |
+| **forge build daemon** (`forge-server`) | `pitchfork Pens/forge` + `Pens/forge-agent` | `:25148` HTTP / `:25240` gRPC | The woodpecker-CI fork: job queue, content-hash cache, health. `POST /api/jobs`. |
 | **woodpecker source** | `forge/woodpecker/` | — | The CI engine we fork for the daemon (`go.woodpecker-ci.org/woodpecker/v3`). |
 | **pattern-borrow** | `scripts/pattern-borrow.ts` | — | Borrow a proven pattern before solving. |
 | **emergent (research)** | `emergent/` | — | Paper-finder + prior-art ingestion. |
@@ -84,8 +84,8 @@ and `DEPLOY.md` as the record.
 ## 🏗️ Live daemons
 
 ```bash
-estate/forge          running   :25148 HTTP  (forge-server)
-estate/forge-agent    running   :25240 gRPC  (forge-agent)
+Pens/forge          running   :25148 HTTP  (forge-server)
+Pens/forge-agent    running   :25240 gRPC  (forge-agent)
 ```
 
 > Note: the running binary's internal `service` string still reads `flicker`;

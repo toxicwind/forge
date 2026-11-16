@@ -153,7 +153,7 @@ func (a *AstMatrixConfig) Defaults() {
 		a.MaxParallel = 4
 	}
 	if a.DbPath == "" {
-		a.DbPath = "/home/toxic/estate/var/data/ast_matrix.db"
+		a.DbPath = "/home/toxic/pens/Pens/var/data/ast_matrix.db"
 	}
 	if a.StickyTTL <= 0 {
 		a.StickyTTL = 1800
@@ -209,7 +209,7 @@ type Config struct {
 	RequiredAPIKeys        []string             `yaml:"apiKeys"`
 	Peers                  PeerDictionaryConfig `yaml:"peers"`
 	Upstream               UpstreamConfig       `yaml:"upstream"`
-	// AstMatrix configures the AST Matrix cloud router (estate-scripts extension - autonomous first-class).
+	// AstMatrix configures the AST Matrix cloud router (Pens-scripts extension - autonomous first-class).
 	// When enabled, cloud model requests are routed through the matrix to remote providers.
 	AstMatrix *AstMatrixConfig `yaml:"astMatrix"`
 

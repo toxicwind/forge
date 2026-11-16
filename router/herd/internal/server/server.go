@@ -217,7 +217,7 @@ func New(cfg config.Config, muxlog *logmon.Monitor, proxylog *logmon.Monitor, up
 		return nil, fmt.Errorf("creating peer router: %w", err)
 	}
 	// Maximal modular freeproxy (pollinations, ovh, openrouter, cf-gw) — borrows tau providers concept
-	// Default cache is global home/toxic: $HOME/cache/freeproxy (estate-scripts global, not /tmp)
+	// Default cache is global home/toxic: $HOME/cache/freeproxy (Pens-scripts global, not /tmp)
 	freeproxyRegistry := freeproxy.NewRegistry(freeproxy.NewMemoryLimiter(15*time.Second), freeproxy.NewGlobalCache())
 	proxylog.Infof("freeproxy modular enabled: providers=%d models=%d cache=%s", len(freeproxyRegistry.Models()), len(freeproxyRegistry.Models()), "home/toxic/cache/freeproxy")
 

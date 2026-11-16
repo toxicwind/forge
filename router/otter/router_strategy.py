@@ -36,7 +36,7 @@ def call_one(provider: str, model: str, body: ChatBody) -> RouteResult:
     }
     if provider == "openrouter":
         headers["HTTP-Referer"] = "https://zed.dev"
-        headers["X-Title"] = "Estate-AST-Matrix"
+        headers["X-Title"] = "Pens-AST-Matrix"
     start = time.time()
     try:
         req = Request(url, data=data, headers=headers, method="POST")
@@ -107,7 +107,7 @@ def call_one_stream(provider: str, model: str, body: ChatBody) -> RouteResult:
     }
     if provider == "openrouter":
         headers["HTTP-Referer"] = "https://zed.dev"
-        headers["X-Title"] = "Estate-AST-Matrix"
+        headers["X-Title"] = "Pens-AST-Matrix"
     stream_body: ChatBody = {**body, "model": model, "stream": True}
     data = json.dumps(stream_body).encode()
     start = time.time()

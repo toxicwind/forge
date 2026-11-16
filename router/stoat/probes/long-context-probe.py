@@ -7,7 +7,7 @@ is only decidable with passing probe data. This script is the probe.
 
 Usage:
     python3 long-context-probe.py --lane nvidia --model nvidia/nemotron-3-super-120b-a12b \
-        --size 100k --db /home/toxic/pens/estate/data/ast_matrix.db --session 1m-probe-<id>
+        --size 100k --db /home/toxic/pens/Pens/data/ast_matrix.db --session 1m-probe-<id>
     python3 long-context-probe.py --lane nvidia --model ... --size ping   # tiny liveness ping
 
 Lanes:
@@ -131,8 +131,8 @@ def post_chat(base: str, key: str, model: str, prompt: str, timeout_s: int):
         headers={
             "Authorization": "Bearer " + key,
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://estate.local/probe",
-            "X-Title": "estate-longctx-probe",
+            "HTTP-Referer": "https://Pens.local/probe",
+            "X-Title": "Pens-longctx-probe",
         },
         method="POST",
     )

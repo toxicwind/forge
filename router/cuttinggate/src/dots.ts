@@ -1,5 +1,5 @@
 /**
- * Estate Dots-3-Note coercion provider for cuttinggate (custom/dots).
+ * Pens Dots-3-Note coercion provider for cuttinggate (custom/dots).
  * Neutralizes: Ghost outputs, list:string mismatches, 22s latency, and replay crashes.
  */
 
@@ -94,7 +94,7 @@ export function dotsBody(
     ...(strictTools ? { tools: strictTools } : {}),
     ...(toolChoice !== undefined ? { tool_choice: toolChoice } : {}),
     ...(opts.stream !== undefined ? { stream: opts.stream } : {}),
-    sessionId: opts.sessionId ?? "estate-dots-session",
+    sessionId: opts.sessionId ?? "Pens-dots-session",
     max_tokens: opts.max_tokens ?? 4096,
     temperature: opts.temperature ?? 0.1,
     reasoning: opts.reasoning ?? {

@@ -316,7 +316,7 @@ const WORKSTREAMS: Record<string, () => Promise<unknown>> = {
  * W2 integration: the semantic firewall — classify a stream chunk as prose
  * vs markup/DSML/protocol traffic with ONE cosine against a fixed markup
  * centroid. Use case: flag SSE streams that start leaking tool-call
- * protocols into user-visible prose (estate's DSML arc / anomaly class).
+ * protocols into user-visible prose (Pens's DSML arc / anomaly class).
  * Returns { kind: "markup" | "prose", score }.
  */
 export async function firewallClassify(text: string): Promise<{ kind: "markup" | "prose"; score: number }> {

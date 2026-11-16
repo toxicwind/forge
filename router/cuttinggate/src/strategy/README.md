@@ -1,6 +1,6 @@
 # @flock/strategy
 
-Flock strategy tier — estate-scripts-router's routing strategies (v3.2) ported to
+Flock strategy tier — Pens-scripts-router's routing strategies (v3.2) ported to
 Bun/TypeScript. Decides **which** provider/model serves a request and executes
 the call with fail-fast hedging. Sits above the policy tier (`../policy`:
 Elo, circuits, health analytics) and below the serving layer.
@@ -20,7 +20,7 @@ Elo, circuits, health analytics) and below the serving layer.
 ## Behavioral details preserved
 
 - **callOne**: entitlement-404 fail-fast guard → circuit guard → headers
-  (`Estate-Flock/3.1` UA, openrouter referer/title, nvidia pool rotation
+  (`Pens-Flock/3.1` UA, openrouter referer/title, nvidia pool rotation
   with 429 when buckets are dry) → governor admission → AbortSignal
   fail-fast stack (CONNECT_MS headers budget, TTFT_MS first-chunk budget
   for streams, ATTEMPT_MS total cap) → hedged_loser → 499 with **no**

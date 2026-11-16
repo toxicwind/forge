@@ -1,7 +1,7 @@
 /**
  * flock/ts/strategy/governor — model-pressure governor (AIMD).
  *
- * Ported from estate-scripts-router's router_matrix.ts Governor. Per
+ * Ported from Pens-scripts-router's router_matrix.ts Governor. Per
  * provider/model admission control: refused fast with 429 when the model
  * is at its worker cap or draining.
  *

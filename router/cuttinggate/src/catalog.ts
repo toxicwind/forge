@@ -4,8 +4,8 @@
  * The catalog is written by @toxicwind/pinax and read by every routing layer.
  * Two contracts are recognized on read:
  *
- *   estate-pinax/live-catalog/v1        canonical, pinax >= 2.4
- *   estate-providers/live-catalog/v1    predecessor, legacy < 2.4
+ *   Pens-pinax/live-catalog/v1        canonical, pinax >= 2.4
+ *   Pens-providers/live-catalog/v1    predecessor, legacy < 2.4
  *
  * There is no `contractMatched` boolean. The descriptor carries provenance;
  * `stale` is first-class; every failure mode has a name. The compiler forces
@@ -26,17 +26,17 @@ import {
 } from "node:fs";
 import { dirname } from "node:path";
 
-export const LIVE_CATALOG_CONTRACT = "estate-pinax/live-catalog/v1";
-export const LEGACY_CATALOG_CONTRACT = "estate-providers/live-catalog/v1";
+export const LIVE_CATALOG_CONTRACT = "Pens-pinax/live-catalog/v1";
+export const LEGACY_CATALOG_CONTRACT = "Pens-providers/live-catalog/v1";
 
 export const CONTRACTS = {
-  "estate-pinax/live-catalog/v1": {
+  "Pens-pinax/live-catalog/v1": {
     generation: 2,
     canonical: true,
     introduced: "2026-06-01",
     emittedBy: "@toxicwind/pinax >= 2.4",
   },
-  "estate-providers/live-catalog/v1": {
+  "Pens-providers/live-catalog/v1": {
     generation: 1,
     canonical: false,
     introduced: "2026-01-01",
@@ -105,7 +105,7 @@ export type CatalogLoad =
     };
 
 export const DEFAULT_CATALOG_PATH =
-  "/home/toxic/pens/estate/.state/provider-catalog.live.json";
+  "/home/toxic/pens/Pens/.state/provider-catalog.live.json";
 export const DEFAULT_STALE_MS = 15 * 60_000;
 
 export function loadLiveCatalog(

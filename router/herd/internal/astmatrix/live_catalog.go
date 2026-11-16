@@ -12,7 +12,7 @@ package astmatrix
 // 2026-09-30 verdict); the JSON catalog is the contract, the TS package is
 // the brain.
 //
-// Contract: estate-pinax/live-catalog/v1
+// Contract: Pens-pinax/live-catalog/v1
 //   { "contract": ..., "generatedAt": ..., "deadIds": [...],
 //     "providers": { "<name>": { "serving": [...], "quarantined": [...],
 //                               "discovered": bool } } }
@@ -35,10 +35,10 @@ import (
 // LiveCatalogPath resolves the live catalog file path: env override first,
 // then the TS router's default state location.
 func LiveCatalogPath() string {
-	if p := os.Getenv("estate-scripts_LIVE_CATALOG"); p != "" {
+	if p := os.Getenv("Pens-scripts_LIVE_CATALOG"); p != "" {
 		return p
 	}
-	return "/home/toxic/estate/.state/provider-catalog.live.json"
+	return "/home/toxic/pens/Pens/.state/provider-catalog.live.json"
 }
 
 type liveCatalogProvider struct {
@@ -48,8 +48,8 @@ type liveCatalogProvider struct {
 }
 
 const (
-	liveCatalogContract       = "estate-pinax/live-catalog/v1"
-	legacyLiveCatalogContract = "estate-scripts-providers/live-catalog/v1" // pre-rename backward-compat alias
+	liveCatalogContract       = "Pens-pinax/live-catalog/v1"
+	legacyLiveCatalogContract = "Pens-scripts-providers/live-catalog/v1" // pre-rename backward-compat alias
 )
 
 type liveCatalogData struct {
@@ -107,7 +107,7 @@ func (r *LiveCatalogReader) refreshIfStale() *liveCatalogData {
 		// Silently returning nil here is what let a pre-rename contract file sit
 		// on disk while every consumer quietly fell back to cold-start seeds.
 		// The mismatch is now loud, and the legacy name is accepted on read so
-		// the estate keeps working across the roost rename.
+		// the Pens keeps working across the roost rename.
 		log.Printf("[live-catalog] %s declares unknown contract %q; expected %s", r.path, d.Contract, liveCatalogContract)
 		return nil
 	}
@@ -165,9 +165,9 @@ func (r *LiveCatalogReader) SyncProviderModels(providers map[string]*provider) {
 // ------------------------------------------------------------------
 
 // serve404Endpoint is the TS router's 404 intake. Override with
-// estate-scripts_CATALOG_404_URL. Empty disables reporting.
+// Pens-scripts_CATALOG_404_URL. Empty disables reporting.
 func serve404Endpoint() string {
-	if u := os.Getenv("estate-scripts_CATALOG_404_URL"); u != "" {
+	if u := os.Getenv("Pens-scripts_CATALOG_404_URL"); u != "" {
 		return u
 	}
 	return "http://127.0.0.1:25104/admin/catalog/serve-404"
@@ -188,7 +188,7 @@ func reportServe404(provider, model string) {
 		return
 	}
 	req.Header.Set("Content-Type", "application/json")
-	if tok := os.Getenv("estate-scripts_CATALOG_ADMIN_TOKEN"); tok != "" {
+	if tok := os.Getenv("Pens-scripts_CATALOG_ADMIN_TOKEN"); tok != "" {
 		req.Header.Set("Authorization", "Bearer "+tok)
 	}
 	client := &http.Client{Timeout: 5 * time.Second}

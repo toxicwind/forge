@@ -2,7 +2,7 @@
 
 *Signed apt and yum repositories for mcpproxy, published to Cloudflare R2 on every `v*` release tag — so `apt upgrade` and `dnf upgrade` just work.*
 
-![estate](https://img.shields.io/badge/estate--projects-blue?style=for-the-badge) ![bash](https://img.shields.io/badge/bash-scripts-green?style=for-the-badge) ![CI](https://img.shields.io/badge/release--automation-purple?style=for-the-badge)
+![Pens](https://img.shields.io/badge/Pens--projects-blue?style=for-the-badge) ![bash](https://img.shields.io/badge/bash-scripts-green?style=for-the-badge) ![CI](https://img.shields.io/badge/release--automation-purple?style=for-the-badge)
 
 ## Why this exists
 

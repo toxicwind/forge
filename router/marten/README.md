@@ -91,7 +91,7 @@ free_zed_gateway/
 
 ## Dev / contributing
 
-Changes land as commits in the toxicwind/ranch repo. This concept was folded into the `free` strategy (estate-scripts-router, now vendored in cuttinggate) — treat new routing ideas as candidates for cuttinggate first, and this file as the standalone/experimental edition. Keep keys in env or `.env`, never in the repo.
+Changes land as commits in the toxicwind/ranch repo. This concept was folded into the `free` strategy (Pens-scripts-router, now vendored in cuttinggate) — treat new routing ideas as candidates for cuttinggate first, and this file as the standalone/experimental edition. Keep keys in env or `.env`, never in the repo.
 
 ## License & Security
 

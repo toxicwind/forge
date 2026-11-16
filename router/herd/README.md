@@ -1,6 +1,6 @@
 # Herd
 
-> 🗺️ Part of [**the ranch**](https://github.com/toxicwind/ranch) — the whole inference estate, one map.
+> 🗺️ Part of [**the ranch**](https://github.com/toxicwind/ranch) — the whole inference Pens, one map.
 
 > **Orchestrate fleets of LLM inference engines. Zero downtime, zero friction.**  
 > Canonical Lineage: **[toxicwind/herd](https://github.com/toxicwind/herd)** & **[toxicwind/herd](https://github.com/toxicwind/herd)** (Upstream: [mostlygeek/herd](https://github.com/mostlygeek/herd))
@@ -11,9 +11,9 @@
 
 ---
 
-## 🔱 Estate Fleet Orchestration (75 Models via AST Matrix)
+## 🔱 Pens Fleet Orchestration (75 Models via AST Matrix)
 
-Herd is the high-performance inference gateway and model router for the Estate Stack. It transforms single-model hot-swapping into multi-tier fleet orchestration across local hardware (NVIDIA RTX 3090 24GB CUDA 8.6 + AMD Ryzen 7 8700F Zen 4 AVX-512) and remote endpoints.
+Herd is the high-performance inference gateway and model router for the Pens Stack. It transforms single-model hot-swapping into multi-tier fleet orchestration across local hardware (NVIDIA RTX 3090 24GB CUDA 8.6 + AMD Ryzen 7 8700F Zen 4 AVX-512) and remote endpoints.
 
 - ✅ Easy to deploy and configure: one binary, one configuration file. no external dependencies
 - ✅ On-demand model switching for many local AI servers (llama.cpp + forks, vllm, stable-diffusion.cpp, audio.cpp, ComfyUI, etc.)
@@ -74,13 +74,13 @@ Herd is the high-performance inference gateway and model router for the Estate S
 
 ### Core Capabilities Matrix
 
-| Capability | Standard Hot-Swap | Herd Estate Orchestrator |
+| Capability | Standard Hot-Swap | Herd Pens Orchestrator |
 |---|---|---|
 | **Model Fleet** | 1 model active | **75 models routed via AST Matrix** |
 | **Connection Handling** | Drop connection on swap | **Zero-downtime SSE keep-alive** |
 | **Hardware Offload** | Unmanaged CPU/GPU | **CUDA 8.6 Flash-Attn + Zen 4 AVX-512** |
 | **API Endpoints** | OpenAI basic | **OpenAI, Anthropic, Ollama, SDAPI, Rerank, Voice** |
-| **Supervisor Integration** | Standalone process | **Pitchfork-LLM & Estate Control Plane (:25100)** |
+| **Supervisor Integration** | Standalone process | **Pitchfork-LLM & Pens Control Plane (:25100)** |
 | **Observability** | CLI logs | **Prometheus Metrics (:25105) + SSE Event Stream** |
 
 ---
@@ -127,7 +127,7 @@ graph TD
 ```bash
 # Build with Zen 4 AVX-512 and maximal Go compiler flags
 go build -v -ldflags="-s -w" -o herd ./cmd
-./herd --config /home/toxic/pens/estate/config/herd.yaml
+./herd --config /home/toxic/pens/Pens/config/herd.yaml
 ```
 The main build entry is `scripts/mise-build.sh` — it submits the canonical
 build+test (`go build ./... && go test -short -count=1 ./internal/...`, matching

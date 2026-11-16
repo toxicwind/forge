@@ -1,7 +1,7 @@
 /**
  * @flock/strategy — Flock strategy tier.
  *
- * Ported from estate-scripts-router's router_strategy.ts (v3.2). Sits above the
+ * Ported from Pens-scripts-router's router_strategy.ts (v3.2). Sits above the
  * policy tier (../policy: Elo, circuits, health analytics) and below the
  * serving layer: it decides WHICH provider/model serves a request and
  * executes the call with fail-fast hedging.

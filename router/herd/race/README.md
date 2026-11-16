@@ -1,6 +1,6 @@
 # herd/race — universal code racer as a first-class Herd model
 
-> **STATUS (2026-09-20):** this service is planned, not yet built — `main.go`, the `herd-race` binary, the pitchfork entry (`estate/herd-race`), the `herd.yaml` peer block, and `config/herd-race.json` do not exist yet. Treat this README as a design doc until the service lands.
+> **STATUS (2026-09-20):** this service is planned, not yet built — `main.go`, the `herd-race` binary, the pitchfork entry (`Pens/herd-race`), the `herd.yaml` peer block, and `config/herd-race.json` do not exist yet. Treat this README as a design doc until the service lands.
 
 `herd/race` is the universal code racer ported into Herd natively. It is a
 selectable model like any other: send `{"model": "herd-race/herd/race"}` to
@@ -20,9 +20,9 @@ client -> :25100 (herd) -> peer herd-race -> :25161 (this service)
 ```
 
 - **Service:** Go, `main.go` → binary `herd-race`, supervised by pitchfork
-  (`estate/herd-race`), config `/home/toxic/pens/estate/config/herd-race.json`,
+  (`Pens/herd-race`), config `/home/toxic/pens/Pens/config/herd-race.json`,
   port `25161` (`HERD_RACE_PORT` in `ports.env`).
-- **Herd wiring:** peer `herd-race` in `/home/toxic/pens/estate/config/herd.yaml`
+- **Herd wiring:** peer `herd-race` in `/home/toxic/pens/Pens/config/herd.yaml`
   (`proxy: http://127.0.0.1:25161`, `models: [herd/race]`). Herd's
   `--watch-config` picks it up without restart; it appears in `/v1/models`
   as `herd-race/herd/race` (house peer-qualified convention).
@@ -65,7 +65,7 @@ client -> :25100 (herd) -> peer herd-race -> :25161 (this service)
 curl -s http://127.0.0.1:25161/health | python3 -m json.tool
 
 # supervised lifecycle
-/home/toxic/pens/estate/stack/pf.sh start|stop estate/herd-race
+/home/toxic/pens/Pens/stack/pf.sh start|stop Pens/herd-race
 
 # model visible through the router?
 curl -s http://127.0.0.1:25100/v1/models | python3 -c \
@@ -94,7 +94,7 @@ shaped the config:
 | ---- | ---- |
 | `main.go`, `main_test.go`, `go.mod` | Service source (also mirrored in `~/workspace/audit-fix/race-port/herd-race/`) |
 | `herd-race` | Built binary (rebuilt on yote; `go build -o herd-race .`) |
-| `/home/toxic/pens/estate/config/herd-race.json` | Contestants, timeouts, breaker, log path |
-| `/home/toxic/pens/estate/config/herd.yaml` | `herd-race` peer block |
-| `/home/toxic/pens/estate/pitchfork.toml` | `[daemons.herd-race]` supervision |
-| `/home/toxic/pens/estate/config/ports.env` | `HERD_RACE_PORT=25161` |
+| `/home/toxic/pens/Pens/config/herd-race.json` | Contestants, timeouts, breaker, log path |
+| `/home/toxic/pens/Pens/config/herd.yaml` | `herd-race` peer block |
+| `/home/toxic/pens/Pens/pitchfork.toml` | `[daemons.herd-race]` supervision |
+| `/home/toxic/pens/Pens/config/ports.env` | `HERD_RACE_PORT=25161` |

@@ -348,7 +348,7 @@ export function buildApp(deps: AppDeps) {
       async ({ body, set, headers }) => {
         const auth = headers["authorization"] ?? "";
         if (!auth.startsWith("Bearer ")) { set.status = CODES.auth_missing; return envelope("auth_missing", "missing bearer token"); }
-        const catStateFn = deps.catalogState ?? (() => ({ status: "ok", source: "default", contract: { name: "estate-pinax/live-catalog/v1" as const, spec: { generation: 2, canonical: true, introduced: "2026-06-01", emittedBy: "test" }, canonical: true }, catalog: { contract: "estate-pinax/live-catalog/v1" as const, generatedAt: "", deadIds: [], providers: {} }, generatedAt: "", ageMs: 0, stale: false }));
+        const catStateFn = deps.catalogState ?? (() => ({ status: "ok", source: "default", contract: { name: "Pens-pinax/live-catalog/v1" as const, spec: { generation: 2, canonical: true, introduced: "2026-06-01", emittedBy: "test" }, canonical: true }, catalog: { contract: "Pens-pinax/live-catalog/v1" as const, generatedAt: "", deadIds: [], providers: {} }, generatedAt: "", ageMs: 0, stale: false }));
         const cat = catStateFn();
         if (cat.status !== "ok") {
           const code = cat.status === "unknown-contract" ? "catalog_unknown_contract" : "catalog_missing";
@@ -480,7 +480,7 @@ export async function main(): Promise<void> {
   const ledger = new Ledger();
   let credentials: CredentialPlane | undefined;
   try {
-    const pools = loadPoolsFromYaml(process.env.KEYPOOLS_YAML ?? "/home/toxic/pens/estate/config/keypools.yaml");
+    const pools = loadPoolsFromYaml(process.env.KEYPOOLS_YAML ?? "/home/toxic/pens/Pens/config/keypools.yaml");
     credentials = pools.length ? new CredentialPlane(pools) : undefined;
   } catch (e) { console.error(`keypool config unreadable, running without the credential plane: ${(e as Error).message}`); }
 

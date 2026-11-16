@@ -31,7 +31,7 @@ gate_pre_commit() {
 		fi
 	fi
 	gate_enabled || return 0
-	if ! gitleaks git --staged --no-banner --redact --config /home/toxic/estate/ops/git-hooks/gitleaks.toml "$top" >&2; then
+	if ! gitleaks git --staged --no-banner --redact --config /home/toxic/pens/estate/ops/git-hooks/gitleaks.toml "$top" >&2; then
 		echo "estate-hooks: BLOCKED — gitleaks found credential material in the staged diff." >&2
 		echo "estate-hooks: unstage it (git rm --cached <file>) and add it to .gitignore." >&2
 		return 1
@@ -52,7 +52,7 @@ gate_pre_push() {
 		else
 			range="$rsha..$lsha"
 		fi
-		if ! gitleaks git --no-banner --redact --config /home/toxic/estate/ops/git-hooks/gitleaks.toml --log-opts="$range" "$top" >&2; then
+		if ! gitleaks git --no-banner --redact --config /home/toxic/pens/estate/ops/git-hooks/gitleaks.toml --log-opts="$range" "$top" >&2; then
 			echo "estate-hooks: BLOCKED push of $lref -> $rref — gitleaks found credential material in $range." >&2
 			echo "estate-hooks: purge it from history (git filter-repo --invert-paths --path <file>) before pushing." >&2
 			return 1

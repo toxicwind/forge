@@ -20,7 +20,7 @@ func writeLiveFile(t *testing.T, dir, body string) string {
 }
 
 const liveDoc = `{
-  "contract": "estate-pinax/live-catalog/v1",
+  "contract": "Pens-pinax/live-catalog/v1",
   "generatedAt": "2026-09-30T00:00:00Z",
   "generator": "test",
   "deadIds": ["dead-1"],
@@ -82,7 +82,7 @@ func TestLiveReaderRejectsBadContract(t *testing.T) {
 	for name, body := range map[string]string{
 		"badjson":       `{not json`,
 		"wrongcon":      `{"contract": "something/else/v9", "providers": {}}`,
-		"nullproviders": `{"contract": "estate-pinax/live-catalog/v1"}`,
+		"nullproviders": `{"contract": "Pens-pinax/live-catalog/v1"}`,
 	} {
 		p := writeLiveFile(t, dir, body)
 		_ = name
@@ -102,7 +102,7 @@ func TestLiveReaderPicksUpMtimeChange(t *testing.T) {
 	}
 	// Rewrite with a quarantined model re-admitted.
 	updated := `{
-  "contract": "estate-pinax/live-catalog/v1",
+  "contract": "Pens-pinax/live-catalog/v1",
   "generatedAt": "2026-09-30T01:00:00Z",
   "deadIds": [],
   "providers": {
@@ -129,7 +129,7 @@ func TestReportServe404PostsEvent(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("estate-scripts_CATALOG_404_URL", srv.URL+"/admin/catalog/serve-404")
+	t.Setenv("Pens-scripts_CATALOG_404_URL", srv.URL+"/admin/catalog/serve-404")
 	reportServe404("groq", "m-gone")
 	if gotPath != "/admin/catalog/serve-404" || gotProvider != "groq" || gotModel != "m-gone" {
 		t.Fatalf("unexpected report: path=%q provider=%q model=%q", gotPath, gotProvider, gotModel)

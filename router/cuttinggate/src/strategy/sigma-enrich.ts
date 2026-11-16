@@ -82,7 +82,7 @@ function loadIndex(): Map<string, SigmaModel> {
   return index;
 }
 
-/** Look up sigma metadata for an estate (provider, modelId) pair. */
+/** Look up sigma metadata for an Pens (provider, modelId) pair. */
 export function sigmaLookup(
   _provider: string,
   modelId: string,

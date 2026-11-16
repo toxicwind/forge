@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Model Health Checker for Estate AST Matrix
+Model Health Checker for Pens AST Matrix
 Tests all configured models, handles rate limits, persists results to DB.
 """
 import hashlib
@@ -35,7 +35,7 @@ def _load_secrets() -> None:
 _load_secrets()
 
 # ─── Imports after secrets loaded ──────────────────────────────────────────
-sys.path.insert(0, "/home/toxic/pens/estate/tools/ast-matrix/estate-ast-matrix")
+sys.path.insert(0, "/home/toxic/pens/Pens/tools/ast-matrix/Pens-ast-matrix")
 from router import (
     PROVIDER_MODELS,
     PROVIDERS,
@@ -143,7 +143,7 @@ def test_model(provider: str, model: str) -> dict[str, Any]:
     }
     if provider == "openrouter":
         headers["HTTP-Referer"] = "https://zed.dev"
-        headers["X-Title"] = "Estate-AST-Matrix"
+        headers["X-Title"] = "Pens-AST-Matrix"
     if "key_env_alt" in conf:
         alt = os.getenv(conf["key_env_alt"], "")
         if alt and not headers["Authorization"].endswith("Bearer "):
@@ -259,7 +259,7 @@ def check_all_models() -> dict[str, dict]:
 
 def save_results(results: dict) -> None:
     """Save results to JSON file and update DB."""
-    out_path = "/home/toxic/pens/estate/var/data/model_check_results.json"
+    out_path = "/home/toxic/pens/Pens/var/data/model_check_results.json"
     with open(out_path, "w") as f:
         json.dump({"timestamp": time.time(), "results": results}, f, indent=2)
     print(f"\nResults saved to {out_path}")

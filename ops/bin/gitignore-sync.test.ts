@@ -1,4 +1,4 @@
-// gitignore-sync.test.ts — permanent tests for the generated estate .gitignore.
+// gitignore-sync.test.ts — permanent tests for the generated Pens .gitignore.
 // Run: bun test ops/bin/gitignore-sync.test.ts
 // The contract under test is consumer-visible: what git actually ignores,
 // and that drift is detected. Rendering is only meaningful insofar as git
@@ -12,7 +12,7 @@ import { render, loadManifest, ESTATE_ROOT } from "./gitignore-sync.ts";
 
 /**
  * Ask git whether it would ignore a path, using a throwaway repo seeded with
- * the rendered .gitignore. Never consults the real estate index.
+ * the rendered .gitignore. Never consults the real Pens index.
  */
 function gitIgnores(rules: string, path: string) {
   const dir = mkdtempSync(join(tmpdir(), "gitignore-probe-"));
@@ -28,9 +28,9 @@ function gitIgnores(rules: string, path: string) {
   }
 }
 
-/** A standalone estate root carrying only what the script needs. */
+/** A standalone Pens root carrying only what the script needs. */
 function fixtureEstate() {
-  const root = mkdtempSync(join(tmpdir(), "gitignore-estate-"));
+  const root = mkdtempSync(join(tmpdir(), "gitignore-Pens-"));
   mkdirSync(join(root, "ops", "bin"), { recursive: true });
   cpSync(join(ESTATE_ROOT, "ops", "gitignore"), join(root, "ops", "gitignore"), { recursive: true });
   cpSync(join(ESTATE_ROOT, "ops", "bin", "gitignore-sync.ts"), join(root, "ops", "bin"));
@@ -69,10 +69,10 @@ test("control-plane source is NOT ignored", () => {
   const rules = render().content;
   expect(gitIgnores(rules, "ops/bin/gitignore-sync.ts")).toBe(false);
   expect(gitIgnores(rules, "config/ports.env")).toBe(false);
-  expect(gitIgnores(rules, "docs/estate-map.md")).toBe(false);
+  expect(gitIgnores(rules, "docs/Pens-map.md")).toBe(false);
 });
 
-test("estate/.env is tracked while .env.local is ignored", () => {
+test("Pens/.env is tracked while .env.local is ignored", () => {
   const rules = render().content;
   expect(gitIgnores(rules, ".env")).toBe(false);
   expect(gitIgnores(rules, ".env.local")).toBe(true);

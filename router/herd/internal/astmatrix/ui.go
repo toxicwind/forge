@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-// uiHTML is a self-contained dashboard for the estate-scripts Router.
+// uiHTML is a self-contained dashboard for the Pens-scripts Router.
 const uiHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>estate-scripts Router — Provider Matrix</title>
+<title>Pens-scripts Router — Provider Matrix</title>
 <style>
   :root{--bg:#0b0e14;--panel:#121826;--panel2:#0f1420;--ink:#e6edf3;--muted:#8b98a9;--acc:#5ad1c4;--free:#7ee787;--warn:#f0883e;--bad:#ff6b6b;--line:#1f2937}
   *{box-sizing:border-box}
@@ -47,7 +47,7 @@ const uiHTML = `<!DOCTYPE html>
 </head>
 <body>
 <header>
-  <h1>estate-scripts Router</h1>
+  <h1>Pens-scripts Router</h1>
   <span class="sub" id="sub">loading</span>
 </header>
 <div class="wrap">
@@ -109,7 +109,7 @@ document.getElementById('send').onclick = async ()=>{
   const out=document.getElementById('out'); out.textContent='...';
   const body={model:document.getElementById('model').value,
     messages:[{role:'user',content:document.getElementById('prompt').value}]};
-  const r = await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-estate-scripts-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
+  const r = await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-Pens-scripts-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
   const txt=await r.text();
   out.textContent=txt.slice(0,4000);
   document.getElementById('routed').textContent='routed: '+ (r.headers.get('X-Routed-Via')||'?') +' - '+ (r.headers.get('X-Latency')||'?')+'s - '+ (r.headers.get('X-Strategy')||'?');
@@ -118,7 +118,7 @@ document.getElementById('stream').onclick = async ()=>{
   const out=document.getElementById('out'); out.textContent='';
   const body={model:document.getElementById('model').value,stream:true,
     messages:[{role:'user',content:document.getElementById('prompt').value}]};
-  const r = await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-estate-scripts-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
+  const r = await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-Pens-scripts-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
   const reader=r.body.getReader(); const dec=new TextDecoder();
   while(true){const d=await reader.read(); if(d.done)break; out.textContent+=dec.decode(d.value);}
   document.getElementById('routed').textContent='routed: '+ (r.headers.get('X-Routed-Via')||'?');
@@ -156,7 +156,7 @@ func (r *Router) uiData() map[string]interface{} {
 		}
 	}
 	return map[string]interface{}{
-		"router":    "estate-scripts-router-go",
+		"router":    "Pens-scripts-router-go",
 		"version":   "v3.1",
 		"strategy":  r.config.Strategy,
 		"providers": providers,

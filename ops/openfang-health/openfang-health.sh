@@ -66,8 +66,8 @@ fi
 # serving is a metadata problem (HFT: trust the live lane, not the stale view).
 supervisor_stale_ok() {
   case "$1" in
-    Estate/toolcall-llm) timeout 3 curl -sf -o /dev/null "http://127.0.0.1:25152/health" 2>/dev/null ;;
-    Estate/awrawr-ws-exec) [ "$(timeout 3 curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8379/exec-ws 2>/dev/null)" = "400" ] ;;
+    Pens/toolcall-llm) timeout 3 curl -sf -o /dev/null "http://127.0.0.1:25152/health" 2>/dev/null ;;
+    Pens/awrawr-ws-exec) [ "$(timeout 3 curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8379/exec-ws 2>/dev/null)" = "400" ] ;;
     *) return 1 ;;
   esac
 }
@@ -195,10 +195,10 @@ if [ "$(probe_tcp mesh 127.0.0.1 25115)" = ok ]; then result "meshub_ep" "ok" ":
 COYOTE_T0="$(now_ms)"
 COYOTE_RES="$(probe_http coyote http://127.0.0.1:25143/health)"
 COYOTE_MS=$(( $(now_ms) - COYOTE_T0 ))
-# Estate/coyote service daemon is not in the live pitchfork set -> expected down; warn, not fail
+# Pens/coyote service daemon is not in the live pitchfork set -> expected down; warn, not fail
 case "$COYOTE_RES" in
   ok\|*) result "coyote_ep" "ok" ":25143/health reachable in ${COYOTE_MS}ms" ;;
-  *)     result "coyote_ep" "warn" ":25143 code=${COYOTE_RES#*|} after ${COYOTE_MS}ms (Estate/coyote not in live pitchfork set)" ;;
+  *)     result "coyote_ep" "warn" ":25143 code=${COYOTE_RES#*|} after ${COYOTE_MS}ms (Pens/coyote not in live pitchfork set)" ;;
 esac
 
 # ---- 8. resource pressure (AgentCgroup: memory is the bottleneck) ----

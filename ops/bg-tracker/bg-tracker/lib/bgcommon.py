@@ -2,7 +2,7 @@
 """Shared helpers for the bg-tracker suite (bg-launch/register/heartbeat/audit/kill).
 
 State lives in <repo>/projects/ops/bg-tracker/state/ on yote, or
-~/workspace/state/bg-tracker/ on hatch (no Estate checkout there).
+~/workspace/state/bg-tracker/ on hatch (no Pens checkout there).
 The state dir is gitignored runtime state: it survives restarts because it
 is a real file on disk, not because it is committed.
 """
@@ -13,7 +13,7 @@ import platform
 import subprocess
 import time
 
-REPO_BG = "/home/toxic/pens/estate/projects/ops/bg-tracker/state"
+REPO_BG = "/home/toxic/pens/Pens/projects/ops/bg-tracker/state"
 HATCH_BG = os.path.expanduser("~/workspace/state/bg-tracker")
 
 
@@ -23,7 +23,7 @@ def box():
 
 
 def state_dir():
-    base = REPO_BG if os.path.isdir("/home/toxic/pens/estate") else HATCH_BG
+    base = REPO_BG if os.path.isdir("/home/toxic/pens/Pens") else HATCH_BG
     os.makedirs(base, exist_ok=True)
     return base
 

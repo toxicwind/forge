@@ -1,7 +1,7 @@
 /**
  * flock/ts/strategy/deps — StrategyDeps backed by the policy tier.
  *
- * This is the composition root that replaces estate-scripts-router's global
+ * This is the composition root that replaces Pens-scripts-router's global
  * `state` singleton (the RouterState/Matrix trio). PolicyBackedDeps wires
  * EloEngine + CircuitPolicy + PolicyHealthDB (../policy) together with a
  * Roost-backed ModelCatalog and the Governor, and exposes them through
@@ -81,7 +81,7 @@ export class PolicyBackedDeps implements StrategyDeps {
     this.elo = new EloEngine();
     this.circuit = new CircuitPolicy();
     this.health = new PolicyHealthDB(
-      opts.dbPath ?? "/home/toxic/pens/estate/.state/health.db",
+      opts.dbPath ?? "/home/toxic/pens/Pens/.state/health.db",
     );
     this.catalog = new ModelCatalog(PROVIDER_DEFS, {
       aliases: MODEL_ALIASES,

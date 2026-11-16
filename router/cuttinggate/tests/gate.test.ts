@@ -125,7 +125,7 @@ describe("quarantine", () => {
   });
 
   // The outage guard: a burst of 404s while the listing itself is broken is an
-  // outage, not 117 dead models. Quarantining during an outage empties the estate.
+  // outage, not 117 dead models. Quarantining during an outage empties the Pens.
   test("strikes do not accrue before two successful listings", () => {
     const q = new Quarantine();
     q.noteServe404("x", "p");

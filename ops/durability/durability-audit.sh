@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# durability-audit.sh — estate durability guard.
+# durability-audit.sh — Pens durability guard.
 #
 # Hunts the recurring monkey-patch classes (anvil, 2026-09-20):
 #   1. processes anchored in ephemeral paths (/tmp, /dev/shm) doing real jobs
 #   2. listening TCP ports with no pitchfork.toml daemon coverage
 #   3. shell profiles containing daemon logic (belongs in pitchfork/systemd)
 #   4. cron files / systemd units referencing ephemeral paths
-#   5. uncommitted live edits in /home/toxic/estate (state paths excluded)
+#   5. uncommitted live edits in /home/toxic/pens/Pens (state paths excluded)
 #
 # Alerts to squawk fleet ONLY when findings exist (alert on conditions, not on
 # a timer). Exit 0 = clean, 2 = findings reported.
@@ -14,7 +14,7 @@
 # Usage: durability-audit.sh [--alert]   # --alert posts to fleet; default prints
 set -uo pipefail
 
-REPO="${ESTATE_REPO:-/home/toxic/estate}"
+REPO="${ESTATE_REPO:-/home/toxic/pens/Pens}"
 TOML="$REPO/pitchfork.toml"
 ALLOW="$REPO/ops/durability/allowlist.txt"
 SQUAWK_ROOT="${SQUAWK_ROOT:-/home/toxic/.fleet-bus/squawk-root}"
@@ -106,7 +106,7 @@ if [[ -f "$TOML" ]]; then
     for p in "${!PORT_OWNER[@]}"; do
         ss -ltn 2>/dev/null | grep -qE "[:.]$p([^0-9]|$)" && continue
         d="${PORT_OWNER[$p]}"
-        st="$("$PF_BIN" status --json "Estate/$d" 2>/dev/null | \
+        st="$("$PF_BIN" status --json "Pens/$d" 2>/dev/null | \
               python3 -c 'import json,sys; print(json.load(sys.stdin).get("status",""))' 2>/dev/null)"
         [[ "$st" == "running" ]] && \
             note "STALE-READY :$p (daemon $d reports running but nothing listens; re-register via bin/pitchfork-restart)"
@@ -147,7 +147,7 @@ done
 if [[ -d "$REPO/.git" ]]; then
     dirty="$(git -C "$REPO" status --porcelain 2>/dev/null | \
         grep -vE 'squawk-relay/|var/openfang-health/|todos\.md|\.pid$|\.backup/|^\?\? \.staging/' || true)"
-    [[ -n "$dirty" ]] && note "UNCOMMITTED Estate: $(echo "$dirty" | wc -l) files: $(echo "$dirty" | awk '{print $2}' | tr '\n' ' ' | cut -c1-400)"
+    [[ -n "$dirty" ]] && note "UNCOMMITTED Pens: $(echo "$dirty" | wc -l) files: $(echo "$dirty" | awk '{print $2}' | tr '\n' ' ' | cut -c1-400)"
     # submodule drift (bulk ops must be submodule-aware)
     while IFS= read -r sm; do
         [[ -n "$sm" ]] && note "SUBMODULE-DIRTY $sm"

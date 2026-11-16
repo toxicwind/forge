@@ -10,7 +10,7 @@
  *      as the GuideLLM ranking-eval, so priors stay comparable
  *   3. latency: per-request ms, p50 reported
  *
- * Doctrine (borrowed from the estate's own scars):
+ * Doctrine (borrowed from the Pens's own scars):
  *   - fail-fast: per-request timeout, NO retries. A 429/401/timeout is
  *     DATA (recorded on the model), never a retry signal.
  *   - 429 stops the provider: rate-limit is a stop condition, not a

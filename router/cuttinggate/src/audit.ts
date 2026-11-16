@@ -3,11 +3,11 @@
  *
  * Backs bin/catalog-audit.ts: probes both gateways (herd, flock), diffs the
  * live catalog against what each gateway actually serves, and names every id
- * the estate believes it can serve that no live gateway accepts.
+ * the Pens believes it can serve that no live gateway accepts.
  */
 import { loadLiveCatalog, servingIds, type Probe, type LiveCatalog } from "./catalog";
 
-export const DEFAULT_REPORT_PATH = "/home/toxic/pens/estate/.state/provider-catalog-audit.json";
+export const DEFAULT_REPORT_PATH = "/home/toxic/pens/Pens/.state/provider-catalog-audit.json";
 
 export type AuditReport = {
   readonly probes: readonly Probe[];

@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 # maximal-host-pack.sh — run ON toxic@awrawr-pc (NOT on Grok Bot VM).
-# Phases A–G per /workspace/plans/2026-10-07-estate-forward.md
-# Prefer host scripts if present (comment SHAs from estate history):
+# Phases A–G per /workspace/plans/2026-10-07-Pens-forward.md
+# Prefer host scripts if present (comment SHAs from Pens history):
 #   ranch/doorbell/scripts/funnel-on.sh        # @ SHA 942ba604…
-#   estate copy / patch-upstreams.sh           # @ SHA 0ac68ff5…
+#   Pens copy / patch-upstreams.sh           # @ SHA 0ac68ff5…
 #   ranch/doorbell/host-install/pitchfork-takeover.sh
 set -euo pipefail
 
-ESTATE="${ESTATE:-$HOME/estate}"
-RANCH="${RANCH:-$ESTATE/ranch}"
+Pens="${Pens:-$HOME/Pens}"
+RANCH="${RANCH:-$Pens/ranch}"
 ARCHIVE_DIR="${ARCHIVE_DIR:-$HOME/.tau/archives}"
 TS="$(date +%Y%m%d-%H%M%S)"
-TAR="$ARCHIVE_DIR/estate-rescue-${TS}.tar.gz"
+TAR="$ARCHIVE_DIR/Pens-rescue-${TS}.tar.gz"
 MANIFEST="$ARCHIVE_DIR/manifest-${TS}.txt"
 FUNNEL_HOST="${FUNNEL_HOST:-github-mcp-host.tailc9ac71.ts.net}"
 SAFE_PUSH="${SAFE_PUSH:-0}"
@@ -20,7 +20,7 @@ die() { echo "FATAL: $*" >&2; exit 1; }
 info() { echo "=== $* ==="; }
 
 [ "$(id -un)" = "toxic" ] || echo "WARN: expected user toxic (got $(id -un))"
-[ -d "$ESTATE" ] || die "missing $ESTATE — refuse to invent layout"
+[ -d "$Pens" ] || die "missing $Pens — refuse to invent layout"
 [ -d "$RANCH" ] || die "missing $RANCH"
 
 # ─────────────────────────────────────────────────────────────
@@ -30,12 +30,12 @@ info "A) Funnel diagnose"
 tailscale serve status 2>&1 | head -30 || true
 tailscale funnel status 2>&1 | head -20 || true
 
-# Prefer existing host funnel-on.sh (@ SHA 942ba604…) under ranch/doorbell or estate
+# Prefer existing host funnel-on.sh (@ SHA 942ba604…) under ranch/doorbell or Pens
 FUNNEL_SCRIPT=""
 for cand in \
   "$RANCH/doorbell/scripts/funnel-on.sh" \
-  "$ESTATE/bin/funnel-on.sh" \
-  "$ESTATE/ops/funnel-on.sh" \
+  "$Pens/bin/funnel-on.sh" \
+  "$Pens/ops/funnel-on.sh" \
   "$RANCH/doorbell/host-install/funnel-on.sh"
 do
   if [ -x "$cand" ] || [ -f "$cand" ]; then FUNNEL_SCRIPT="$cand"; break; fi
@@ -52,7 +52,7 @@ else
   # Prefer pitchfork-takeover if present (does not touch Tailscale itself)
   for pt in \
     "$RANCH/doorbell/host-install/pitchfork-takeover.sh" \
-    "$ESTATE/ranch/doorbell/host-install/pitchfork-takeover.sh"
+    "$Pens/ranch/doorbell/host-install/pitchfork-takeover.sh"
   do
     if [ -f "$pt" ]; then
       echo "(pitchfork-takeover present at $pt — not re-running unless FORCE_TAKEOVER=1)"
@@ -80,8 +80,8 @@ fi
 
 # Optional gatehouse upstream patch (@ SHA 0ac68ff5…) — call if present, never invent symlinks
 for pu in \
-  "$ESTATE/ops/patch-upstreams.sh" \
-  "$ESTATE/bin/patch-upstreams.sh" \
+  "$Pens/ops/patch-upstreams.sh" \
+  "$Pens/bin/patch-upstreams.sh" \
   "$RANCH/doorbell/scripts/patch-upstreams.sh"
 do
   if [ -f "$pu" ]; then
@@ -119,12 +119,12 @@ mkdir -p "$ARCHIVE_DIR"
 # Build relative-to-$HOME path list of things that exist
 REL_PATHS=()
 for rel in \
-  "estate/var/scratch" \
-  "estate/ranch/tack" \
-  "estate/README.md" \
-  "estate/ranch/README.md" \
-  "estate/.gitmodules" \
-  "estate/ranch/.gitmodules"
+  "Pens/var/scratch" \
+  "Pens/ranch/tack" \
+  "Pens/README.md" \
+  "Pens/ranch/README.md" \
+  "Pens/.gitmodules" \
+  "Pens/ranch/.gitmodules"
 do
   if [ -e "$HOME/$rel" ]; then
     REL_PATHS+=("$rel")
@@ -154,13 +154,13 @@ if [ -d "$RANCH/tack" ]; then
   echo "purged $RANCH/tack"
 fi
 # scratch rescue dirs only (tmp-rescue-* and similar zombies)
-if [ -d "$ESTATE/var/scratch" ]; then
-  find "$ESTATE/var/scratch" -maxdepth 1 -mindepth 1 \
+if [ -d "$Pens/var/scratch" ]; then
+  find "$Pens/var/scratch" -maxdepth 1 -mindepth 1 \
     \( -name 'tmp-rescue-*' -o -name '*rescue*' -o -name 'tmp-clone-*' -o -name '.tmp-clone-*' \) \
     -print -exec rm -rf {} + 2>/dev/null || true
 fi
 # .tmp-clone-* under tau plugins cache
-for root in "$HOME/tau" "$HOME/.tau" "$ESTATE/tau"; do
+for root in "$HOME/tau" "$HOME/.tau" "$Pens/tau"; do
   [ -d "$root" ] || continue
   find "$root" -maxdepth 4 -type d -name '.tmp-clone-*' -print -exec rm -rf {} + 2>/dev/null || true
 done
@@ -169,7 +169,7 @@ done
 # D) Sanitize dead gitmodules entries carefully (audit only)
 # ─────────────────────────────────────────────────────────────
 info "D) Sanitize dead .gitmodules entries (no blind wipe)"
-GM="$ESTATE/.gitmodules"
+GM="$Pens/.gitmodules"
 if [ -f "$GM" ]; then
   cp -a "$GM" "$GM.bak.${TS}"
   # Dead paths called out in plan — remove ONLY these path= blocks
@@ -202,11 +202,11 @@ PY
   echo "backup: $GM.bak.${TS}"
   # drop matching git index entries if present (best-effort)
   for dead in projects/shell/ii tau/vendors; do
-    if git -C "$ESTATE" ls-files --error-unmatch "$dead" >/dev/null 2>&1; then
-      git -C "$ESTATE" rm -rf --cached "$dead" 2>/dev/null || true
+    if git -C "$Pens" ls-files --error-unmatch "$dead" >/dev/null 2>&1; then
+      git -C "$Pens" rm -rf --cached "$dead" 2>/dev/null || true
     fi
     # also clear submodule section from .git/config if any
-    git -C "$ESTATE" config --remove-section "submodule.$dead" 2>/dev/null || true
+    git -C "$Pens" config --remove-section "submodule.$dead" 2>/dev/null || true
   done
 else
   echo "no $GM — skip"
@@ -245,12 +245,12 @@ fi
 # ─────────────────────────────────────────────────────────────
 # E) Write plane-map READMEs + ops/sync.sh
 # ─────────────────────────────────────────────────────────────
-info "E) Write estate/README.md + ranch/README.md + estate/ops/sync.sh"
+info "E) Write Pens/README.md + ranch/README.md + Pens/ops/sync.sh"
 
-mkdir -p "$ESTATE/ops"
+mkdir -p "$Pens/ops"
 
-cat > "$ESTATE/README.md" << 'EOF'
-# estate — ops / master plane
+cat > "$Pens/README.md" << 'EOF'
+# Pens — ops / master plane
 
 Host ops for **yote** (awrawr-pc). Project code lives in [ranch](./ranch). Private cell: **hatch**. Public MCP: **doorbell**.
 
@@ -258,8 +258,8 @@ Host ops for **yote** (awrawr-pc). Project code lives in [ranch](./ranch). Priva
 
 | Plane | Path / repo | Role |
 |-------|-------------|------|
-| Ops / master | `toxicwind/estate` → `~/estate` | pitchfork, config, bin, stack, ports |
-| Projects | `toxicwind/ranch` → `~/estate/ranch` | animals as directories |
+| Ops / master | `toxicwind/Pens` → `~/Pens` | pitchfork, config, bin, stack, ports |
+| Projects | `toxicwind/ranch` → `~/Pens/ranch` | animals as directories |
 | Control cell | `toxicwind/hatch` (private) | Ember; light only |
 | Bot plane | `ranch/arroyo/` | overlord · coyote · discord · mcp |
 | Public MCP | `ranch/doorbell` (+ `toxicwind/doorbell` curl mirror) | `:25202`, aliases `/doorbell-mcp` `/gemini-mcp` |
@@ -278,11 +278,11 @@ Host ops for **yote** (awrawr-pc). Project code lives in [ranch](./ranch). Priva
 ## Deep links
 
 - ranch · tau · hatch · doorbell · squawk
-- Ops sync: `ops/sync.sh` (status across estate / ranch / tau)
+- Ops sync: `ops/sync.sh` (status across Pens / ranch / tau)
 
 ## Invariants
 
-1. Project code → ranch; host ops → estate; cell → hatch.
+1. Project code → ranch; host ops → Pens; cell → hatch.
 2. Ship on `main` (no PR theater).
 3. Archive then purge; never edit only the live doorbell path.
 EOF
@@ -290,7 +290,7 @@ EOF
 cat > "$RANCH/README.md" << 'EOF'
 # ranch — animals by plane
 
-Monorepo under `~/estate/ranch` (`toxicwind/ranch`). Host ops stay in **estate**. Host machine stays **yote**.
+Monorepo under `~/Pens/ranch` (`toxicwind/ranch`). Host ops stay in **Pens**. Host machine stays **yote**.
 
 ## Inference
 
@@ -330,27 +330,27 @@ Env: introduce `ARROYO_*`, keep `YOTE_*` aliases until cutover. See `arroyo/MOVE
 - Blind-wipe `.gitmodules` — audit dead entries only
 EOF
 
-# Kill Estate-projects fiction if present
-if [ -f "$ESTATE/ESTATE-PROJECTS.md" ]; then
-  mv "$ESTATE/ESTATE-PROJECTS.md" "$ESTATE/ESTATE-PROJECTS.md.bak.${TS}"
-  echo "archived fiction ESTATE-PROJECTS.md → .bak.${TS}"
+# Kill Pens-projects fiction if present
+if [ -f "$Pens/Pens-PROJECTS.md" ]; then
+  mv "$Pens/Pens-PROJECTS.md" "$Pens/Pens-PROJECTS.md.bak.${TS}"
+  echo "archived fiction Pens-PROJECTS.md → .bak.${TS}"
 fi
-if [ -f "$RANCH/ESTATE-PROJECTS.md" ]; then
-  mv "$RANCH/ESTATE-PROJECTS.md" "$RANCH/ESTATE-PROJECTS.md.bak.${TS}"
+if [ -f "$RANCH/Pens-PROJECTS.md" ]; then
+  mv "$RANCH/Pens-PROJECTS.md" "$RANCH/Pens-PROJECTS.md.bak.${TS}"
 fi
 
-cat > "$ESTATE/ops/sync.sh" << 'EOF'
+cat > "$Pens/ops/sync.sh" << 'EOF'
 #!/usr/bin/env bash
-# Status across estate / ranch / tau (and herd if separate). No auto-commit.
+# Status across Pens / ranch / tau (and herd if separate). No auto-commit.
 set -euo pipefail
-ESTATE="${ESTATE:-$HOME/estate}"
+Pens="${Pens:-$HOME/Pens}"
 REPOS=(
-  "$ESTATE"
-  "$ESTATE/ranch"
+  "$Pens"
+  "$Pens/ranch"
   "$HOME/tau"
 )
 # optional herd path if checked out separately
-[ -d "$ESTATE/ranch/herd/.git" ] && REPOS+=("$ESTATE/ranch/herd")
+[ -d "$Pens/ranch/herd/.git" ] && REPOS+=("$Pens/ranch/herd")
 [ -d "$HOME/herd/.git" ] && REPOS+=("$HOME/herd")
 
 for repo in "${REPOS[@]}"; do
@@ -363,7 +363,7 @@ for repo in "${REPOS[@]}"; do
   git -C "$repo" remote -v 2>/dev/null | head -4 || true
 done
 EOF
-chmod +x "$ESTATE/ops/sync.sh"
+chmod +x "$Pens/ops/sync.sh"
 
 # ─────────────────────────────────────────────────────────────
 # F) ranch/arroyo/ skeleton + MOVE.md
@@ -422,7 +422,7 @@ cat > "$ARROYO/MOVE.md" << 'EOF'
 EOF
 
 # ─────────────────────────────────────────────────────────────
-# G) git add/commit on estate + ranch mains; print push (no push unless SAFE_PUSH=1)
+# G) git add/commit on Pens + ranch mains; print push (no push unless SAFE_PUSH=1)
 # ─────────────────────────────────────────────────────────────
 info "G) Commit on main (no push unless SAFE_PUSH=1)"
 
@@ -440,7 +440,7 @@ commit_repo() {
   git -C "$repo" log -1 --oneline
 }
 
-commit_repo "$ESTATE" \
+commit_repo "$Pens" \
   "chore: archive rescue scratch, sanitize gitmodules, README plane map, ops/sync.sh"
 
 commit_repo "$RANCH" \
@@ -448,13 +448,13 @@ commit_repo "$RANCH" \
 
 echo
 echo "======== PUSH COMMANDS (not run unless SAFE_PUSH=1) ========"
-echo "  git -C \"$ESTATE\" push origin main"
+echo "  git -C \"$Pens\" push origin main"
 echo "  git -C \"$RANCH\"  push origin main"
 echo "============================================================"
 
 if [ "$SAFE_PUSH" = "1" ]; then
   info "SAFE_PUSH=1 → pushing mains"
-  git -C "$ESTATE" push origin main
+  git -C "$Pens" push origin main
   git -C "$RANCH"  push origin main
 else
   echo "Skipped push (set SAFE_PUSH=1 to enable)."

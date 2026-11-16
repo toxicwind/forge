@@ -121,8 +121,8 @@ describe("keypools.yaml parsing", () => {
     expect(pool!.keys).toEqual([{ name: "PLAIN" }, { name: "FREE", freeOnly: true }]);
   });
 
-  test("the estate's real keypools.yaml loads", () => {
-    const pools = loadPoolsFromYaml("/home/toxic/pens/estate/config/keypools.yaml");
+  test("the Pens's real keypools.yaml loads", () => {
+    const pools = loadPoolsFromYaml("/home/toxic/pens/Pens/config/keypools.yaml");
     expect(pools.length).toBeGreaterThan(0);
     expect(pools.every((p) => p.keys.length > 0)).toBe(true);
     expect(pools.some((p) => p.cooldown[429] === 60)).toBe(true);

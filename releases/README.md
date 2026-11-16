@@ -1,11 +1,11 @@
 # Forge Release Lane
 
-First-class GitHub release drop-in for the forge estate build lane.
+First-class GitHub release drop-in for the forge Pens build lane.
 
 ## What this is
 
 A native release lane that turns a forge-cache-verified artifact into a
-GitHub Release with upload, using the estate `delend-*` primitive (`gh` via
+GitHub Release with upload, using the Pens `delend-*` primitive (`gh` via
 `delend-gh`'s underlying `gh` CLI). No GitHub Actions CI required — the build
 happens through the forge-native path (nativelink REAPI `:25155` → mise/mbx
 cache `:25148`) and this lane publishes the result.
@@ -13,7 +13,7 @@ cache `:25148`) and this lane publishes the result.
 ## Why native beats GA CI for the Linux CLI
 
 - **No extra infra cost.** GA minutes burn credits; the forge lane runs
-  entirely on the estate box.
+  entirely on the Pens box.
 - **Forge cache first.** `mise run kappa-build` (or any `mise run <task>`)
   routes through nativelink REAPI and gets cache hits — identical to the
   woodpecker forge daemon's pipeline.
@@ -101,7 +101,7 @@ forge-release --repo toxicwind/kappa-code \
 6. Print summary URL
 ```
 
-All `gh` calls go through the estate-standard `gh` binary (not `ghq` or
+All `gh` calls go through the Pens-standard `gh` binary (not `ghq` or
 `delend-gh` — `delend-gh` is a git-primitive, not a release tool).
 
 ## The rig
@@ -112,7 +112,7 @@ other agents (kappa, tau, delend-quick workflows) can invoke.
 ## Deploy lane (forge → pitchfork → healthck)
 
 The release lane (`forge-release`) publishes to GitHub. The deploy lane
-(`forge-deploy`) completes the estate doctrine pipeline: nativelink build →
+(`forge-deploy`) completes the Pens doctrine pipeline: nativelink build →
 binary stage → pitchfork daemon restart → health-check.
 
 ```bash
@@ -133,27 +133,27 @@ forge-deploy --tag v0.15.0 --dry-run
 2. **Stage** — copies the ELF binary to `/home/toxic/.local/bin/kappa` via
    atomic rename (`staging → dest`). The pitchfork daemon (`kappa-serve.sh`)
    resolves `/home/toxic/.local/bin/kappa` → `serve --port 25159`.
-3. **Restart** — `pitchfork restart estate/kappa-acp` adopts the new binary.
+3. **Restart** — `pitchfork restart Pens/kappa-acp` adopts the new binary.
    The daemon reads the binary on each start.
 4. **Health-check** — `curl http://127.0.0.1:25159/` confirms the service is
-   accepting connections. If it fails, check `pitchfork logs estate/kappa-acp`.
+   accepting connections. If it fails, check `pitchfork logs Pens/kappa-acp`.
 
 **Honest GA boundary (deployment):** This lane deploys the Linux CLI binary only.
 Cross-platform binaries (macOS ARM/x64, Windows), EV code-signing, and
 multi-target marketplace publishing still need GA or self-hosted runners.
 The release lane (`forge-release`) handles the GitHub publish; `forge-deploy`
-handles the live estate swap. Use both in sequence for a complete deploy:
+handles the live Pens swap. Use both in sequence for a complete deploy:
 
 ```bash
 # 1. Build + release
 mise run kappa-build
 forge-release --repo toxicwind/kappa-code --artifact packages/cli/dist/@kappacode/cli-linux-x64/bin/kappa --tag v0.15.0
 
-# 2. Deploy to live estate (from a separate session if the current one runs on kappa-acp)
+# 2. Deploy to live Pens (from a separate session if the current one runs on kappa-acp)
 forge-deploy --tag v0.15.0
 ```
 
-**WARNING:** `forge-deploy` kills and restarts the live `estate/kappa-acp` daemon.
+**WARNING:** `forge-deploy` kills and restarts the live `Pens/kappa-acp` daemon.
 If your current session is running on that daemon (as is typical), DO NOT run
 the non-dry-run version — it will terminate your own session. Validate with
 `--dry-run` first, then execute the actual swap from a separate terminal or
@@ -188,7 +188,7 @@ $ forge-deploy --tag v0.15.0 --dry-run
 [dry-run] cp .../kappa /home/toxic/.local/bin/kappa.deploy-staging
 [dry-run] mv /home/toxic/.local/bin/kappa.deploy-staging /home/toxic/.local/bin/kappa
 [deploy] step 3: restarting pitchfork daemon...
-[dry-run] pitchfork restart estate/kappa-acp
+[dry-run] pitchfork restart Pens/kappa-acp
 [deploy] step 4: health-checking http://127.0.0.1:25159/...
 [deploy] health-check PASS
 [deploy] done: toxicwind/kappa-code@v0.15.0 → live
@@ -196,11 +196,11 @@ $ forge-deploy --tag v0.15.0 --dry-run
 
 ## Live daemon status (read-only, at time of this write)
 
-- `pitchfork list` → `estate/kappa-acp` is in **errored** state (exit code 127).
+- `pitchfork list` → `Pens/kappa-acp` is in **errored** state (exit code 127).
 - `curl http://127.0.0.1:25159/` → **connection refused** (no listener).
-- The daemon is configured in `/home/toxic/pens/estate/pitchfork.toml`:
-  `run = "exec /home/toxic/pens/estate/bin/kappa-serve.sh"`, ready on port 25159.
+- The daemon is configured in `/home/toxic/pens/Pens/pitchfork.toml`:
+  `run = "exec /home/toxic/pens/Pens/bin/kappa-serve.sh"`, ready on port 25159.
 - **The live swap+restart is deferred** until the parent authorizes. Executing
-  `pitchfork restart estate/kappa-acp` from this session would kill the running
+  `pitchfork restart Pens/kappa-acp` from this session would kill the running
   daemon and terminate THIS conversation. Use `--dry-run` to validate, then
   deploy from an external terminal or a separate session.

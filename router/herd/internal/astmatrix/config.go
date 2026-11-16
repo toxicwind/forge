@@ -27,7 +27,7 @@ func (a *AstMatrixConfig) Defaults() {
 		a.MaxParallel = 4
 	}
 	if a.DbPath == "" {
-		a.DbPath = "/home/toxic/estate/var/data/ast_matrix.db"
+		a.DbPath = "/home/toxic/pens/Pens/var/data/ast_matrix.db"
 	}
 	if a.StickyTTL <= 0 {
 		a.StickyTTL = 1800

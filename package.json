@@ -1,7 +1,7 @@
 {
   "name": "forge",
   "version": "0.1.0",
-  "description": "The estate's build daemon + REAPI remote-execution layer.",
+  "description": "The Pens's build daemon + REAPI remote-execution layer.",
   "license": "MIT",
   "author": "",
   "type": "module",

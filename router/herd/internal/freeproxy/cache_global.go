@@ -19,8 +19,8 @@ type globalCache struct {
 }
 
 func homeCacheDir() string {
-	// estate-scripts global cache is /home/toxic/cache (no dot) — see env CACHE_DIR, GOCACHE, etc.
-	// Prefer CACHE_DIR, then XDG_CACHE_HOME, then $HOME/cache (estate-scripts), then $HOME/.cache
+	// Pens-scripts global cache is /home/toxic/cache (no dot) — see env CACHE_DIR, GOCACHE, etc.
+	// Prefer CACHE_DIR, then XDG_CACHE_HOME, then $HOME/cache (Pens-scripts), then $HOME/.cache
 	if d := os.Getenv("CACHE_DIR"); d != "" {
 		return filepath.Join(d, "freeproxy")
 	}
@@ -31,7 +31,7 @@ func homeCacheDir() string {
 	if home == "" {
 		home = "/home/toxic"
 	}
-	// estate-scripts uses /home/toxic/cache (no dot) as global cache; keep .cache as fallback
+	// Pens-scripts uses /home/toxic/cache (no dot) as global cache; keep .cache as fallback
 	if _, err := os.Stat(filepath.Join(home, "cache")); err == nil {
 		return filepath.Join(home, "cache", "freeproxy")
 	}

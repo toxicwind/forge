@@ -1,7 +1,7 @@
 /**
  * flock/ts/strategy/nvidia-keys — NVIDIA multi-key rotation (token bucket).
  *
- * Ported from estate-scripts-router's router_matrix.ts Matrix.nextNvidiaKey
+ * Ported from Pens-scripts-router's router_matrix.ts Matrix.nextNvidiaKey
  * (absorbed from the retired :8000 proxy). Round-robin across the nvapi
  * key pool, each key behind its own token bucket (40 rpm). Returns null
  * when every bucket is dry — the caller serves an honest 429 rather than

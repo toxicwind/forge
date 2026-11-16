@@ -51,7 +51,7 @@ flowchart LR
     scan -->|risk score| q
 ```
 
-In the estate deployment, agents see a handful of built-in MCPProxy tools instead of hundreds of upstream schemas. Shep's config (`mcp_config.json`) declares the 30 upstream servers; the quarantine gate holds new servers until approved; BM25 `retrieve_tools` keeps agent context small. The reproducible numbers behind the token-reduction claims are measured by `bench/` — see [bench/README.md](bench/README.md).
+In the Pens deployment, agents see a handful of built-in MCPProxy tools instead of hundreds of upstream schemas. Shep's config (`mcp_config.json`) declares the 30 upstream servers; the quarantine gate holds new servers until approved; BM25 `retrieve_tools` keeps agent context small. The reproducible numbers behind the token-reduction claims are measured by `bench/` — see [bench/README.md](bench/README.md).
 
 ---
 
@@ -320,5 +320,5 @@ make lint           # Run linters
 
 ## License & Security
 
-- **License:** MIT — see [LICENSE](LICENSE). (Vendored copy carries the upstream license; the estate deployment config around it follows the toxicwind/ranch repo licensing.)
+- **License:** MIT — see [LICENSE](LICENSE). (Vendored copy carries the upstream license; the Pens deployment config around it follows the toxicwind/ranch repo licensing.)
 - **Security posture:** automatic quarantine blocks tool-poisoning attacks until new servers are manually approved; pluggable Docker-based security scanners (Snyk, Semgrep, Trivy, Cisco) scan quarantined servers with findings normalized to SARIF + a composite risk score; intent is validated against tool annotations on every call; arguments and responses are scanned for sensitive data; every call lands in the local activity log with a request ID. Report upstream vulnerabilities to the [smart-mcp-proxy/mcpproxy-go](https://github.com/smart-mcp-proxy/mcpproxy-go) maintainers.

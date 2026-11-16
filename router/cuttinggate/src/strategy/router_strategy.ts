@@ -137,7 +137,7 @@ export async function callOne(
   }
   if (provider === "openrouter") {
     headers["HTTP-Referer"] = "https://zed.dev";
-    headers["X-Title"] = "Estate-Router";
+    headers["X-Title"] = "Pens-Router";
   }
    if (provider === "zen") {
      // OpenCode Zen free-tier gate (borrowed: denysvitali/llm-proxy, 12errh/zen-proxy).
@@ -404,7 +404,7 @@ export function firstUsableModelFor(p: string): string | undefined {
 // jitter — it nudges ties, never overrides the breaker or elo.
 // Reversible: ESTATE_MODEL_BONUS=0. Cites: health DB rows
 // strategy='longctx-probe' (session 1m-probe-20260921-1745), commit
-// 7f4f79a48c, ranch/mesh/router/estate-scripts-router/probes/RESULTS-2026-09-21.md.
+// 7f4f79a48c, ranch/mesh/router/Pens-scripts-router/probes/RESULTS-2026-09-21.md.
 const PROBE_VERIFIED_MODELS: Record<string, Set<string>> = {
   nvidia: new Set([
     // 1M needle retrieval verified at 100k/500k/1M, exact every time.
@@ -797,7 +797,7 @@ export async function routeCascade(
 // 1M-context pin — oracle DECISION 12187, verdict A (CONDITIONAL).
 // Evidence: probe session 1m-probe-20260921-1745 (13 rows,
 // strategy='longctx-probe' in the health DB; artifacts committed in
-// 7f4f79a48c; analysis in ranch/mesh/router/estate-scripts-router/probes/RESULTS-2026-09-21.md)
+// 7f4f79a48c; analysis in ranch/mesh/router/Pens-scripts-router/probes/RESULTS-2026-09-21.md)
 // verified EXACT 1M-token needle retrieval on the KEYED lane below
 // (100k/500k/1M at 3.4/9.2/18.2/41.4s) plus the verified negative:
 // OpenRouter :free caps at 262144 tokens (HTTP 400 at 500k) — no free lane
@@ -1000,7 +1000,7 @@ export async function tryLongctx2MPin(
 }
 
 /**
- * routeAuto — the automatic main router (estate-owned openrouter/auto
+ * routeAuto — the automatic main router (Pens-owned openrouter/auto
  * equivalent). Prompt-aware per-request strategy switching: AST race for
  * code-shaped traffic, free race for the default path, hybrid fallback when
  * the free pool is empty. (The 2M/1M context pins run BEFORE strategy
@@ -1039,7 +1039,7 @@ export async function routeAuto(
 }
 
 /**
- * buildBodybuilderRequests — estate-owned openrouter/bodybuilder equivalent.
+ * buildBodybuilderRequests — Pens-owned openrouter/bodybuilder equivalent.
  * Takes a natural-language multi-model job description and returns the
  * structured {requests:[...]} fan-out bodies for the CALLER to execute in
  * parallel (generation is the router's job; execution stays with the caller —
@@ -1054,7 +1054,7 @@ export async function buildBodybuilderRequests(
   // Live model allow-list (Chris 2026-10-01): the decomposer LLM hallucinates
   // model IDs from training data (e.g. openai/gpt-4o) when unconstrained.
   // Constrain it to the live free pool AND sanitize the parsed output, so
-  // every emitted body routes to a real estate model.
+  // every emitted body routes to a real Pens model.
   const pool = freeCandidates();
   const allowIds = pool.map(([p, m]) => `${p}/${m}`);
   const allowSet = new Set(allowIds);

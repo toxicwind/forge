@@ -1,5 +1,5 @@
 /**
- * Estate MCP Gateway — HTTP entry point.
+ * Pens MCP Gateway — HTTP entry point.
  *
  * Thin Bun.serve wrapper around the testable core in ./gateway-core.ts.
  * The gateway is the agent's trust boundary + resource allocator in front of
@@ -84,7 +84,7 @@ async function refreshUpstreamTools(upstream: Upstream) {
       params: {
         protocolVersion: "2024-11-05",
         capabilities: {},
-        clientInfo: { name: "estate-gateway", version: "1" },
+        clientInfo: { name: "Pens-gateway", version: "1" },
       },
     };
     const r1 = await fetch(upstream.base.replace(/\/$/, "") + UPSTREAM_PATH, {
@@ -133,7 +133,7 @@ const server = Bun.serve({
     if (req.method === "GET" && (path === "/health" || path === "/")) {
       return Response.json({
         status: "ok",
-        router: "estate-mcp-gateway",
+        router: "Pens-mcp-gateway",
         version: "v1",
         ...healthSnapshot(state, UPSTREAMS),
       });
@@ -251,13 +251,13 @@ setInterval(() => {
 }, 60_000).unref();
 
 console.log(
-  `[estate-mcp-gateway] listening on ${HOST}:${PORT} upstreams=${UPSTREAMS.map((u) => u.name).join(",")}`,
+  `[Pens-mcp-gateway] listening on ${HOST}:${PORT} upstreams=${UPSTREAMS.map((u) => u.name).join(",")}`,
 );
 
 const GATEWAY_UI_HTML = `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Estate MCP Gateway</title>
+<title>Pens MCP Gateway</title>
 <style>
 :root{--bg:#0b0e14;--panel:#121826;--panel2:#0f1420;--ink:#e6edf3;--muted:#8b98a9;--acc:#5ad1c4;--free:#7ee787;--warn:#f0883e;--bad:#ff6b6b;--line:#1f2937}
 *{box-sizing:border-box}body{margin:0;font:14px/1.5 ui-monospace,Menlo,monospace;background:var(--bg);color:var(--ink)}
@@ -271,13 +271,13 @@ header{padding:18px 22px;border-bottom:1px solid var(--line)}header h1{font-size
 .tag{font-size:11px;padding:2px 7px;border-radius:6px;background:#0c111b;border:1px solid var(--line);color:var(--muted)}
 .meta{color:var(--muted);font-size:12px}
 </style></head>
-<body><header><h1>Estate MCP Gateway</h1><span class="meta">trust boundary + circuit breaker + sticky affinity in front of upstream MCP servers</span></header>
+<body><header><h1>Pens MCP Gateway</h1><span class="meta">trust boundary + circuit breaker + sticky affinity in front of upstream MCP servers</span></header>
 <div class="wrap"><div class="panel"><h2>Upstreams</h2><div id="ups"><span class="meta">loading</span></div></div>
 <div class="panel"><h2>Topology</h2><div class="meta">agent → gateway (:25120) → circuit/failover → upstreams</div>
 <pre>client
   │  JSON-RPC (notifications/initialized = session anchor)
   ▼
-estate-mcp-gateway  :25120
+Pens-mcp-gateway  :25120
   ├─ circuit breaker / sticky affinity
   ├─ tools/list union (provenance-tagged)
   └─ server/discover (synthesized)

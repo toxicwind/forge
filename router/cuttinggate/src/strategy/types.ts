@@ -1,7 +1,7 @@
 /**
  * flock/ts/strategy/types — shared types for the Flock strategy tier.
  *
- * Ported from estate-scripts-router's router_types.ts. The strategy tier sits
+ * Ported from Pens-scripts-router's router_types.ts. The strategy tier sits
  * above the policy tier (../policy: Elo, circuits, health analytics) and
  * below the serving layer: it decides WHICH provider/model serves a
  * request and executes the call with fail-fast hedging. The Rust proxy
@@ -60,7 +60,7 @@ export interface ProviderView {
 /**
  * StrategyDeps — everything the routing strategies need from the world.
  *
- * This replaces estate-scripts-router's global `state` singleton (router_matrix
+ * This replaces Pens-scripts-router's global `state` singleton (router_matrix
  * Matrix). The policy-backed implementation lives in deps.ts, built on
  * ../policy (EloEngine, CircuitPolicy, PolicyHealthDB) plus the Roost
  * catalog. Strategies take deps as their first argument so they stay

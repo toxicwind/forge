@@ -8,7 +8,7 @@ set -euo pipefail
 SENDER="remora"
 PERSONA_SRC=""
 HATCH_ROOT="${HATCH_ROOT:-/home/toxic/hatch}"
-ESTATE_ROOT="${ESTATE_ROOT:-/home/toxic/estate}"
+ESTATE_ROOT="${ESTATE_ROOT:-/home/toxic/pens/Pens}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 log() { printf '[remora-install] %s\n' "$*"; }
@@ -34,7 +34,7 @@ fi
 
 log "inventory hatch root: ${HATCH_ROOT}"
 if [[ ! -d "${HATCH_ROOT}" ]]; then
-  log "WARN: ${HATCH_ROOT} missing — will fall back to estate/docs/fleet if needed"
+  log "WARN: ${HATCH_ROOT} missing — will fall back to Pens/docs/fleet if needed"
 fi
 
 inventory() {
@@ -97,7 +97,7 @@ if [[ -n "${EXISTING_REMORA}" ]]; then
   log "remora path exists: ${EXISTING_REMORA} — copy/link into it"
   install_persona "${EXISTING_REMORA}"
 else
-  # Prefer hatch agents/personas layout; else estate/docs/fleet
+  # Prefer hatch agents/personas layout; else Pens/docs/fleet
   DEST=""
   if [[ -d "${HATCH_ROOT}" ]]; then
     if [[ -d "${HATCH_ROOT}/personas" ]] || [[ -d "${HATCH_ROOT}/agents/personas" ]]; then
@@ -151,7 +151,7 @@ for f in "${HATCH_MCP_CANDIDATES[@]}"; do
   fi
 done
 if [[ "${found_mcp}" -eq 0 ]]; then
-  log "no hatch-mcp server.ts found at known paths — locate via gatehouse mcp_config (hatch-mcp -> estate/tools/hatch-mcp/server.ts)"
+  log "no hatch-mcp server.ts found at known paths — locate via gatehouse mcp_config (hatch-mcp -> Pens/tools/hatch-mcp/server.ts)"
 fi
 log "================================================"
 log ""

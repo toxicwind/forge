@@ -4,8 +4,8 @@
 
 <div align="right">
 
-[![license: MIT](https://img.shields.io/badge/license-MIT%20%2B%20upstream-blue?style=for-the-badge)](https://github.com/toxicwind/Estate-projects#license)
-[![Estate-projects](https://img.shields.io/badge/Estate--projects-main-6e56cf?style=for-the-badge)](https://github.com/toxicwind/Estate-projects)
+[![license: MIT](https://img.shields.io/badge/license-MIT%20%2B%20upstream-blue?style=for-the-badge)](https://github.com/toxicwind/Pens-projects#license)
+[![Pens-projects](https://img.shields.io/badge/Pens--projects-main-6e56cf?style=for-the-badge)](https://github.com/toxicwind/Pens-projects)
 
 </div>
 
@@ -23,7 +23,7 @@
 
 ```mermaid
 flowchart TB
-    LOOP[loop.sh<br/>pitchfork daemon Estate/openfang-health<br/>every OPENFANG_HEALTH_INTERVAL s (default 300)] --> PROBE[openfang-health.sh<br/>fail-fast probes]
+    LOOP[loop.sh<br/>pitchfork daemon Pens/openfang-health<br/>every OPENFANG_HEALTH_INTERVAL s (default 300)] --> PROBE[openfang-health.sh<br/>fail-fast probes]
     PROBE --> JSON[/home/toxic/.fleet-bus/var/openfang-health/openfang-health.json]
     PROBE --> HTML[openfang-health.html<br/>auto-refresh 300s]
     PROBE -->|transition or daily digest| FLEET[squawk fleet post]
@@ -66,4 +66,4 @@ Code: AgentSight https://github.com/eunomia-bpf/agentsight · AgentCgroup https:
 
 ## License & security
 
-MIT where marked — [LICENSE](https://github.com/toxicwind/Estate-projects#license). Provider checks report **auth posture by name only** — key values never leave the box, never enter the JSON, never reach the fleet post. The HTML status page and JSON are served from the estate's own paths; don't funnel them publicly without a gate.
+MIT where marked — [LICENSE](https://github.com/toxicwind/Pens-projects#license). Provider checks report **auth posture by name only** — key values never leave the box, never enter the JSON, never reach the fleet post. The HTML status page and JSON are served from the Pens's own paths; don't funnel them publicly without a gate.

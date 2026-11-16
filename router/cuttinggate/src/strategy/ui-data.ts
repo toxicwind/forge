@@ -1,14 +1,14 @@
 /**
  * flock/ts/strategy/ui-data — /ui data contract for the Flock serve layer.
  *
- * Ported from estate-scripts-router's router_ui.ts. Two exports:
+ * Ported from Pens-scripts-router's router_ui.ts. Two exports:
  *
  * - uiData(deps): the /ui/data JSON payload — per-provider key state,
  *   circuit state, Elo, candidate score, serving model counts, and the
  *   free-model list.
  * - FLOCK_UI_HTML: the self-contained dashboard page. It is the legacy
  *   /ui embed contract (fetches /health and /v1/models, posts to
- *   /v1/chat/completions with X-Estate-Strategy). The PRIMARY
+ *   /v1/chat/completions with X-Pens-Strategy). The PRIMARY
  *   dashboard is the separate flock/dashboard Bun app; this module keeps
  *   the /ui contract portable so the Rust proxy can serve a matrix page
  *   without the dashboard app. See ../../dashboard for the full UI.
@@ -32,7 +32,7 @@ export function uiData(deps: PolicyBackedDeps): Record<string, unknown> {
     };
   }
   return {
-    router: "estate-flock",
+    router: "Pens-flock",
     version: "v3.1",
     strategy: deps.strategyName,
     providers,
@@ -90,14 +90,14 @@ async function load(){
 document.getElementById('send').onclick=async()=>{
  const out=document.getElementById('out');out.textContent='...';
  const body={model:document.getElementById('model').value,messages:[{role:'user',content:document.getElementById('prompt').value}]};
- const r=await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-Estate-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
+ const r=await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-Pens-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
  const t=await r.text();out.textContent=t.slice(0,4000);
  document.getElementById('routed').textContent='routed: '+(r.headers.get('X-Routed-Via')||'?')+' - '+(r.headers.get('X-Latency')||'?')+'s - '+(r.headers.get('X-Strategy')||'?');
 };
 document.getElementById('stream').onclick=async()=>{
  const out=document.getElementById('out');out.textContent='';
  const body={model:document.getElementById('model').value,stream:true,messages:[{role:'user',content:document.getElementById('prompt').value}]};
- const r=await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-Estate-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
+ const r=await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-Pens-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
  const rd=r.body.getReader();const dec=new TextDecoder();
  while(true){const d=await rd.read();if(d.done)break;out.textContent+=dec.decode(d.value);}
  document.getElementById('routed').textContent='routed: '+(r.headers.get('X-Routed-Via')||'?');

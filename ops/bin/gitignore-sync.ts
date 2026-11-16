@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
-// gitignore-sync — render estate/.gitignore from a pinned template library
-// plus ordered estate-specific layers. The generated file is never hand-edited.
+// gitignore-sync — render Pens/.gitignore from a pinned template library
+// plus ordered Pens-specific layers. The generated file is never hand-edited.
 //
 //   bun ops/bin/gitignore-sync.ts            render + write
 //   bun ops/bin/gitignore-sync.ts --check    exit 1 if on-disk file has drifted
@@ -78,8 +78,8 @@ export function render(
     );
   };
 
-  // Order is load-bearing. Estate-specific rules must be able to override the
-  // upstream templates (Python.gitignore ships `.env`; the estate tracks it),
+  // Order is load-bearing. Pens-specific rules must be able to override the
+  // upstream templates (Python.gitignore ships `.env`; the Pens tracks it),
   // so postLayers render last.
   for (const layer of manifest.preLayers) emitLayer(layer);
   for (const template of manifest.templates) emitTemplate(template);

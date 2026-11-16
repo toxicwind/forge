@@ -1,7 +1,7 @@
 {
   "name": "herd-herd",
   "version": "18.1.14",
-  "description": "Maximal estate herd \u2014 herd engine with mesh orchestration",
+  "description": "Maximal Pens herd \u2014 herd engine with mesh orchestration",
   "main": "herd.go",
   "scripts": {
     "start": "go run ./cmd/main.go",
@@ -38,7 +38,7 @@
     "herd",
     "herd",
     "mesh",
-    "estate",
+    "Pens",
     "inference"
   ],
   "author": "toxicwind",

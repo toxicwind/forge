@@ -1,11 +1,11 @@
-# ops/durability — estate durability guard
+# ops/durability — Pens durability guard
 
 The permanent mechanism behind "no monkeypatching": hunts the recurring monkey-patch classes on this box and alerts to fleet **only when findings exist**. Alert on conditions, not on a timer.
 
 <div align="right">
 
-[![license: MIT](https://img.shields.io/badge/license-MIT%20%2B%20upstream-blue?style=for-the-badge)](https://github.com/toxicwind/Estate-projects#license)
-[![Estate-projects](https://img.shields.io/badge/Estate--projects-main-6e56cf?style=for-the-badge)](https://github.com/toxicwind/Estate-projects)
+[![license: MIT](https://img.shields.io/badge/license-MIT%20%2B%20upstream-blue?style=for-the-badge)](https://github.com/toxicwind/Pens-projects#license)
+[![Pens-projects](https://img.shields.io/badge/Pens--projects-main-6e56cf?style=for-the-badge)](https://github.com/toxicwind/Pens-projects)
 
 </div>
 
@@ -21,7 +21,7 @@ The permanent mechanism behind "no monkeypatching": hunts the recurring monkey-p
 2. Listening TCP ports with no `pitchfork.toml` daemon coverage
 3. Shell profiles (`.bashrc`/`.profile`) containing daemon logic
 4. Cron files / systemd units referencing ephemeral paths
-5. Uncommitted live edits in `/home/toxic/estate` (state paths excluded)
+5. Uncommitted live edits in `/home/toxic/pens/Pens` (state paths excluded)
 6. Dirty submodules (bulk ops must be submodule-aware)
 
 ```mermaid
@@ -48,17 +48,17 @@ flowchart LR
 ## Quick start
 
 ```bash
-/home/toxic/pens/estate/ops/durability/durability-audit.sh          # print only
-/home/toxic/pens/estate/ops/durability/durability-audit.sh --alert  # print + fleet alert
+/home/toxic/pens/Pens/ops/durability/durability-audit.sh          # print only
+/home/toxic/pens/Pens/ops/durability/durability-audit.sh --alert  # print + fleet alert
 ```
 
 ## Install / reinstall
 
 ```bash
 mkdir -p ~/.config/systemd/user
-ln -sf /home/toxic/pens/estate/ops/durability/systemd/durability-audit.service \
+ln -sf /home/toxic/pens/Pens/ops/durability/systemd/durability-audit.service \
        ~/.config/systemd/user/durability-audit.service
-ln -sf /home/toxic/pens/estate/ops/durability/systemd/durability-audit.timer \
+ln -sf /home/toxic/pens/Pens/ops/durability/systemd/durability-audit.timer \
        ~/.config/systemd/user/durability-audit.timer
 systemctl --user daemon-reload
 systemctl --user enable --now durability-audit.timer
@@ -69,8 +69,8 @@ journalctl --user -u durability-audit.service -n 20
 
 ## History
 
-- 2026-09-20 (anvil): created during the estate durability sweep. First findings: retired a vestigial nginx on :8901 (config in /tmp, served a nonexistent kodi-fleet/releases root, zero legitimate traffic) and killed a leftover inotify diagnostic (`/tmp/dir-trap.py`).
+- 2026-09-20 (anvil): created during the Pens durability sweep. First findings: retired a vestigial nginx on :8901 (config in /tmp, served a nonexistent kodi-fleet/releases root, zero legitimate traffic) and killed a leftover inotify diagnostic (`/tmp/dir-trap.py`).
 
 ## License & security
 
-MIT where marked — [LICENSE](https://github.com/toxicwind/Estate-projects#license). The audit is read-only — it finds and reports, never fixes. Findings are evidence for a human decision, not an auto-remediation trigger: a daemon in `/tmp` might be a legit diagnostic. `allowlist.txt` is the known-good list — keep it tight, review additions.
+MIT where marked — [LICENSE](https://github.com/toxicwind/Pens-projects#license). The audit is read-only — it finds and reports, never fixes. Findings are evidence for a human decision, not an auto-remediation trigger: a daemon in `/tmp` might be a legit diagnostic. `allowlist.txt` is the known-good list — keep it tight, review additions.

@@ -4,7 +4,7 @@
 
 | Caller | How |
 |---|---|
-| estate-scripts-router-ts `nvidia` provider | `http://127.0.0.1:8000` (OpenAI-compatible) |
+| Pens-scripts-router-ts `nvidia` provider | `http://127.0.0.1:8000` (OpenAI-compatible) |
 | flock Go router (`projects/herd/internal/flock`) | provider definitions point at upstream `integrate.api.nvidia.com/v1`; the flock proxy daemon is the optional local enforcement layer |
 
 ## Ownership

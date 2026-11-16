@@ -94,7 +94,7 @@ export class ProviderGate {
 
   /**
    * Counts a 200-shaped but empty response. Metric family matches flock's
-   * `flock_model_empty_strikes` and estate-scripts-router's
+   * `flock_model_empty_strikes` and Pens-scripts-router's
    * `estate_router_model_empty_strikes` so the three stacks correlate.
    */
   noteEmpty(model: string): number {

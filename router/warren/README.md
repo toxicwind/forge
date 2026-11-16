@@ -1,4 +1,4 @@
-# estate-mcp-gateway
+# Pens-mcp-gateway
 
 *The trust boundary in front of upstream MCP servers: per-upstream circuit breakers quarantine poisoned servers while agents see one provenance-namespaced tool union.*
 
@@ -10,7 +10,7 @@ Agents call tools; tools come from upstream MCP servers; upstream servers can be
 
 ## Status
 
-**Not live.** The code defaults to `:25120`, but that port is canonically estate-chat's per `estate/pitchfork.toml` — do not start the gateway on `:25120` without resolving the collision. No pitchfork stanza, nothing listening. Preserved for reference; MCP federation on the estate is gatehouse's domain (`barn/gatehouse`, `:25127`).
+**Not live.** The code defaults to `:25120`, but that port is canonically Pens-chat's per `Pens/pitchfork.toml` — do not start the gateway on `:25120` without resolving the collision. No pitchfork stanza, nothing listening. Preserved for reference; MCP federation on the Pens is gatehouse's domain (`barn/gatehouse`, `:25127`).
 
 ## Layout
 
@@ -23,4 +23,4 @@ gateway-core.test.ts  bun test suite
 
 ## Dev / contributing
 
-Changes land as commits in the [toxicwind/ranch](https://github.com/toxicwind/ranch) repo (`mesh/router/estate-mcp-gateway/`). `bun test` before pushing.
+Changes land as commits in the [toxicwind/ranch](https://github.com/toxicwind/ranch) repo (`mesh/router/Pens-mcp-gateway/`). `bun test` before pushing.

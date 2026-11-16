@@ -7,7 +7,7 @@
  * a router that knows a model is dead but cannot rotate a dead key is only
  * half a router.
  *
- * Ported from estate/config/keypools.yaml + estate/bin/herd-keypool.py.
+ * Ported from Pens/config/keypools.yaml + Pens/bin/herd-keypool.py.
  *
  *   401/402 -> the credential itself is wrong: long cooldown, it will not fix itself
  *   429    -> we are being rate limited: short cooldown, retrying is correct
@@ -197,7 +197,7 @@ export class CredentialPlane {
 }
 
 
-/** Parse the estate keypools.yaml shape. Unconfigured cooldown falls back sanely. */
+/** Parse the Pens keypools.yaml shape. Unconfigured cooldown falls back sanely. */
 export type RawPool = Omit<Partial<KeyPool>, "cooldown" | "keys"> & {
   /** keypools.yaml puts the fallback cooldown inside this map as `default`. */
   cooldown?: Record<string, number>;
@@ -225,7 +225,7 @@ export function parsePools(doc: { pools?: Record<string, RawPool> }): KeyPool[] 
   });
 }
 
-/** Load estate/config/keypools.yaml. Bun 1.4 ships a YAML parser, so no dep. */
+/** Load Pens/config/keypools.yaml. Bun 1.4 ships a YAML parser, so no dep. */
 export function loadPoolsFromYaml(path: string): KeyPool[] {
   return parsePools(Bun.YAML.parse(readFileSync(path, "utf8")) as { pools?: Record<string, RawPool> });
 }

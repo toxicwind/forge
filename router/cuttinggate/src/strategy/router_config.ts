@@ -41,9 +41,9 @@ loadEnvFile(`${homedir()}/.secrets`);
 
 loadEnvFile("/home/toxic/.secrets");
 
-loadEnvFile("/home/toxic/pens/estate/config/ports.env");
+loadEnvFile("/home/toxic/pens/Pens/config/ports.env");
 
-loadEnvFile("/home/toxic/pens/estate/.env.local");
+loadEnvFile("/home/toxic/pens/Pens/.env.local");
 
 // Port SSOT: service-specific ESTATE_ROUTER_PORT wins; ESTATE_PORT is legacy fallback.
 export const _portRaw =
@@ -58,7 +58,7 @@ if (!_portRaw) {
 export const PORT = parseInt(_portRaw, 10);
 
 export const DB_PATH =
-  process.env.estate-scripts_DB || "/home/toxic/pens/estate/var/data/estate-scripts_router.db";
+  process.env.Pens-scripts_DB || "/home/toxic/pens/Pens/var/data/Pens-scripts_router.db";
 
 export const MAX_PARALLEL = 4;
 
@@ -100,7 +100,7 @@ export const FIFO_MAX = 64;
 
 export const STRATEGY = process.env.ESTATE_STRATEGY || "auto";
 
-export const UA = "Mozilla/5.0 (compatible; Estate-Flock/3.1)";
+export const UA = "Mozilla/5.0 (compatible; Pens-Flock/3.1)";
 
 // ---------------------------------------------------------------------------
 // HERD_V1 (must come before PROVIDERS that uses it)
@@ -121,7 +121,7 @@ export function loadLocalRoleModels(): {
     longctx: "beellama/qwen-flash-256k",
   };
   try {
-    const p = "/home/toxic/pens/estate/.state/best-models.json";
+    const p = "/home/toxic/pens/Pens/.state/best-models.json";
     if (!existsSync(p)) return defaults;
     const j = JSON.parse(readFileSync(p, "utf8"));
     return {
@@ -149,7 +149,7 @@ export const LOCAL_ROLES = loadLocalRoleModels();
 // ---------------------------------------------------------------------------
 function effectiveDefs(): ProviderDef[] {
   return PKG_PROVIDER_DEFS.map((d) => {
-    // Local SSOT — always first-class for estate GPU path
+    // Local SSOT — always first-class for Pens GPU path
     if (d.name === "herd") return { ...d, baseUrl: HERD_V1 };
     // Local NIM proxy (:8000, nim-consolidation track). Shows dead in
     // /status until the proxy key lands — the router then picks it up via
@@ -201,7 +201,7 @@ export const PROVIDERS: Record<
 // ---------------------------------------------------------------------------
 export const CATALOG_STATE_PATH =
   process.env.ESTATE_CATALOG_STATE ||
-  "/home/toxic/pens/estate/.state/provider-catalog.json";
+  "/home/toxic/pens/Pens/.state/provider-catalog.json";
 
 export const catalog = new ModelCatalog(EFFECTIVE_DEFS, {
   aliases: PKG_MODEL_ALIASES,
@@ -362,7 +362,7 @@ export function isLocalSwapModelId(model: string): boolean {
   ) {
     return true;
   }
-  // estate naming prefixes / known local ids
+  // Pens naming prefixes / known local ids
   return /^(beellama|mradermacher|jackrong|turboquant|ik_llama|ik_turboquant|holo|qwen\/|gemma-4|exaone)/i.test(
     model,
   );

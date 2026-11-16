@@ -1,11 +1,11 @@
 /**
  * flock/ts/strategy/strategy — routing strategies for Flock.
  *
- * Ported from estate-scripts-router's router_strategy.ts (v3.2). The behavioral
+ * Ported from Pens-scripts-router's router_strategy.ts (v3.2). The behavioral
  * details are preserved exactly:
  *
  * - callOne: the single provider-call primitive. Entitlement-404 fail-fast
- *   guard → circuit guard → headers (Estate-Flock UA, openrouter referer
+ *   guard → circuit guard → headers (Pens-Flock UA, openrouter referer
  *   + title, nvidia pool rotation with honest 429 when buckets are dry) →
  *   governor admission → AbortSignal fail-fast stack (CONNECT_MS headers
  *   budget, TTFT_MS first-chunk budget for streams, ATTEMPT_MS total cap)
@@ -161,7 +161,7 @@ export async function callOne(
   }
   if (provider === "openrouter") {
     headers["HTTP-Referer"] = "https://zed.dev";
-    headers["X-Title"] = "Estate-Router";
+    headers["X-Title"] = "Pens-Router";
   }
   // Model-pressure governor (AIMD, per provider/model): refused fast with
   // 429 when the model is at its worker cap or draining.

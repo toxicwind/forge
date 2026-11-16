@@ -6,7 +6,7 @@
  * lane is the ONE embed source (2026-11-02 consolidation; the earlier
  * "401 rotation" ticket was a wrong-path misdiagnosis).
  *
- * Consumers: forge ops, wip-to-product classifier, estate classifiers —
+ * Consumers: forge ops, wip-to-product classifier, Pens classifiers —
  * everything imports from here instead of re-implementing fetch+cosine.
  */
 import type { Subprocess } from "bun";

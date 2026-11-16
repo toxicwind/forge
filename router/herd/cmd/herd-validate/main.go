@@ -4,7 +4,7 @@
 // It exists because the loader used to accept keys it did not understand and
 // discard them without a word. A config could name a section that no code
 // reads, load cleanly forever, and serve nothing — which is exactly what
-// happened to the top-level `aliases:` block in the estate's herd.yaml. The
+// happened to the top-level `aliases:` block in the Pens's herd.yaml. The
 // loader now rejects unknown top-level keys; this command is how you find
 // out, without starting a server.
 //

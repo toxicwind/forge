@@ -33,7 +33,7 @@ export const ATTEMPT_STREAM_MS = TIMING.ATTEMPT_STREAM_MS;
 export const HEDGE_MS = TIMING.HEDGE_MS;
 
 export const DEFAULT_STRATEGY = process.env.ESTATE_STRATEGY || "hybrid";
-export const UA = "Mozilla/5.0 (compatible; Estate-Flock/3.1)";
+export const UA = "Mozilla/5.0 (compatible; Pens-Flock/3.1)";
 
 /** Code-shaped output detector (AST race preference). */
 export const AST_RE =
@@ -58,7 +58,7 @@ const DEFAULT_ROLES: LocalRoles = {
 
 export function loadLocalRoleModels(): LocalRoles {
   try {
-    const p = "/home/toxic/pens/estate/.state/best-models.json";
+    const p = "/home/toxic/pens/Pens/.state/best-models.json";
     if (!existsSync(p)) return DEFAULT_ROLES;
     const j = JSON.parse(readFileSync(p, "utf8"));
     return {

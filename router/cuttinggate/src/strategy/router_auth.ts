@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Operator auth for estate-scripts-router-ts — TypeScript port of flock's
+ * Operator auth for Pens-scripts-router-ts — TypeScript port of flock's
  * proxy/src/auth.rs (role/session semantics).
  *
  * What this ports, faithfully:

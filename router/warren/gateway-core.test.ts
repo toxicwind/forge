@@ -172,7 +172,7 @@ describe("upstream info + discover/tools synthesis", () => {
 
   it("buildDiscover namespaces tools and merges caps", () => {
     const d = buildDiscover(s, UP);
-    expect(d.result.server_info.name).toBe("estate-mcp-gateway");
+    expect(d.result.server_info.name).toBe("Pens-mcp-gateway");
     expect(d.result.tools[0].name).toBe("byte-vision__generate_completion");
     expect(d.result.tools[0].description).toBe("[byte-vision] gen");
     expect(d.result.capabilities.tools).toEqual({ listChanged: false });

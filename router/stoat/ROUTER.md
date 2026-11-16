@@ -3,7 +3,7 @@
 > **STATUS: SUPERSEDED 2026-10-02, STILL RUNNING.** The :25104 port was marked
 > retired (config/ports.env line 80; this directory's
 > pitchfork.d/stoat.toml.retired-20261002), but the composing stanza
-> `[daemons.stoat]` in estate/pitchfork.toml still sets
+> `[daemons.stoat]` in Pens/pitchfork.toml still sets
 > auto = ["start"]: `bun router.ts` is bound to :25104 and /health answers 200
 > (verified 2026-10-02). cuttinggate on :25200 is canonical.
 > This doc describes the router as it last ran. Code retained here for
@@ -12,7 +12,7 @@
 > if this code is ever revived.
 
 OpenAI-compatible chat router on `http://127.0.0.1:25104`, supervised by
-pitchfork (`estate/pitchfork.toml [daemons.stoat]`, `auto = ["start"]`). Bun/TypeScript single binary
+pitchfork (`Pens/pitchfork.toml [daemons.stoat]`, `auto = ["start"]`). Bun/TypeScript single binary
 (ranch/mesh/router/stoat/stoat-ts/).
 
 ## Architecture
@@ -52,7 +52,7 @@ bucket), `groq`, `cerebras`, `google`, `mistral`.
   without restart.
 - **`/status`**: per-provider circuit detail, last error, Elo, live models,
   p50/p95 latency (SQLite, 30 min window), kimi-auto resolved model.
-- **`X-Estate-Timings`**: every chat response ships
+- **`X-Pens-Timings`**: every chat response ships
   `connect_ms / ttft_ms / total_ms` per-hop timings.
 
 ## HFT synthesis (the novel part)
@@ -77,7 +77,7 @@ fallback planned before primary) applied to LLM routing:
 4. **Push-not-poll kimi-auto**: `fs.watch` on the resolver's `state.json`
    keeps `/status`'s resolved-model marker instant; the shim reads state
    live per request.
-5. **Per-hop telemetry**: `X-Estate-Timings` on every response; p50/p95
+5. **Per-hop telemetry**: `X-Pens-Timings` on every response; p50/p95
    per provider in `/status`.
 
 Measured: hedge fires at ~1500ms (test); blackholed-backend failover serves

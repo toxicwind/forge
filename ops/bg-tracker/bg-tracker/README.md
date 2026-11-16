@@ -1,4 +1,4 @@
-# bg-tracker — background-task registry for the estate
+# bg-tracker — background-task registry for the Pens
 
 **Problem (User, 2026-09-20):** backgrounding/multitasking happens with no registry — detached procs go blind. Nobody knows who spawned what, why it's still alive, or whether it's safe to touch. Stale execution quiet for 12+ hours is extremely bad.
 
@@ -6,8 +6,8 @@
 
 <div align="right">
 
-[![license: MIT](https://img.shields.io/badge/license-MIT%20%2B%20upstream-blue?style=for-the-badge)](https://github.com/toxicwind/Estate-projects#license)
-[![Estate-projects](https://img.shields.io/badge/Estate--projects-main-6e56cf?style=for-the-badge)](https://github.com/toxicwind/Estate-projects)
+[![license: MIT](https://img.shields.io/badge/license-MIT%20%2B%20upstream-blue?style=for-the-badge)](https://github.com/toxicwind/Pens-projects#license)
+[![Pens-projects](https://img.shields.io/badge/Pens--projects-main-6e56cf?style=for-the-badge)](https://github.com/toxicwind/Pens-projects)
 
 </div>
 
@@ -74,18 +74,18 @@ No polling daemon ships with this. If you want push-on-change, add a systemd pat
 ```ini
 # /etc/systemd/system/bg-tracker.path
 [Path]
-PathChanged=/home/toxic/pens/estate/projects/ops/bg-tracker/state
+PathChanged=/home/toxic/pens/Pens/projects/ops/bg-tracker/state
 [Install]
 WantedBy=multi-user.target
 ```
 
 ## Deep links
 
-- Estate ops conventions: [`../README.md`](../README.md)
-- Master README: [`/home/toxic/pens/estate/README.md`](../../README.md)
+- Pens ops conventions: [`../README.md`](../README.md)
+- Master README: [`/home/toxic/pens/Pens/README.md`](../../README.md)
 - Fleet knowledgebase: `docs/fleet-knowledgebase.md`
 - Standing rules: no monkeypatching, permanence, durability across bridge restart + yote power-cycle. The script is the deliverable.
 
 ## License & security
 
-MIT where marked — [LICENSE](https://github.com/toxicwind/Estate-projects#license). The registry is the fleet's memory of what's running: `bg-audit` is read-only by design and `bg-kill` refuses PID reuse — a recycled pid is never signaled. Kills need positive orphan confirmation plus a fleet note with evidence; when in doubt, leave it running and flag it. `state/` is gitignored runtime state — real files on disk, not committed.
+MIT where marked — [LICENSE](https://github.com/toxicwind/Pens-projects#license). The registry is the fleet's memory of what's running: `bg-audit` is read-only by design and `bg-kill` refuses PID reuse — a recycled pid is never signaled. Kills need positive orphan confirmation plus a fleet note with evidence; when in doubt, leave it running and flag it. `state/` is gitignored runtime state — real files on disk, not committed.

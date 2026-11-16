@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-exec /home/toxic/estate/ops/git-hooks/dispatch pre-commit "$@"
+exec /home/toxic/pens/estate/ops/git-hooks/dispatch pre-commit "$@"

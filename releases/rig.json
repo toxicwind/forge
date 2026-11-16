@@ -1,5 +1,5 @@
 {
-  "$schema": "https://forge.estate/rig/v1.json",
+  "$schema": "https://forge.Pens/rig/v1.json",
   "name": "forge-release",
   "version": "1.0.0",
   "description": "GitHub Release drop-in for forge-native build artifacts. Creates and uploads releases via gh CLI, org-agnostic, idempotent with --clobber.",

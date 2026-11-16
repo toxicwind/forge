@@ -44,7 +44,7 @@ _load_secrets()
 
 
 
-# Port SSOT: estate/.env.local AST_MATRIX_PORT=25104
+# Port SSOT: Pens/.env.local AST_MATRIX_PORT=25104
 # process-compose sets ESTATE_PORT=${AST_MATRIX_PORT}; Zed hits :25104/v1
 PORT = int(
     os.getenv("ESTATE_PORT")
@@ -53,7 +53,7 @@ PORT = int(
 )
 
 
-DB = os.getenv("ESTATE_DB", "/home/toxic/pens/estate/var/data/ast_matrix.db")
+DB = os.getenv("ESTATE_DB", "/home/toxic/pens/Pens/var/data/ast_matrix.db")
 
 
 MAX_PARALLEL = 4

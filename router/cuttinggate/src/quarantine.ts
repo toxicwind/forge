@@ -10,7 +10,7 @@
  * refreshes, it either 404s at serve time or vanishes from the live listing.
  * "Consecutive successful" matters: a burst of 404s while the listing itself is
  * broken is an outage, not 117 dead models, and quarantining during an outage
- * empties the estate.
+ * empties the Pens.
  *
  * Quarantine is never silent. Every entry is observable via `/quarantine` and
  * counted in metrics, and `/v1/models` marks hidden models rather than hiding

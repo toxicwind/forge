@@ -21,7 +21,7 @@ ts/src/
                                                      <- from providers.rs pool.rs circuit.rs
                                                         ratelimit.rs roost_providers.rs
   auth/         tokens.ts  users.ts                   <- from auth.rs
-  strategy/     (already present: estate-scripts-router's TS strategy layer, vendored)
+  strategy/     (already present: Pens-scripts-router's TS strategy layer, vendored)
   roost/        (already present: provider catalog SSOT)
   astmatrix/    (already present: Elo matrix)
 ```
@@ -91,7 +91,7 @@ across 2 consecutive successful refreshes is quarantined and never served.
 
 ## Rules
 
-1. **No `any`.** Use `unknown` + narrowing guards. The estate lints for it.
+1. **No `any`.** Use `unknown` + narrowing guards. The Pens lints for it.
 2. **No bare `fetch()` outside `shared.ts`.** Everything goes through
    `callUpstream` so circuit, ratelimit, and telemetry cannot be bypassed.
 3. **Never lose an existing behavior.** The Rust is the spec. If you believe a

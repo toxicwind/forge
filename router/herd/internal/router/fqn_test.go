@@ -7,7 +7,7 @@ import (
 	"github.com/mostlygeek/herd/internal/config"
 )
 
-// TestHerdFQNEstateRegression — estate-shaped regression test for the
+// TestHerdFQNEstateRegression — Pens-shaped regression test for the
 // 2026-09-20 incident: a stale herd binary registered only bare model
 // names and silently dropped cross-peer duplicates ("already mapped to
 // another peer, skipping"), so OpenFang's qualified request

@@ -1,7 +1,7 @@
 // gitignore-audit.ts — mechanical invariants over the rendered .gitignore.
 // Born from the 2026-10-15 incident: 4 stacked template layers ship unanchored
 // `*.log` / `var/` / `lib/` / `**/[Pp]ackages/*` rules that silently swallow
-// estate source and SSOT files at any depth. These invariants must hold forever.
+// Pens source and SSOT files at any depth. These invariants must hold forever.
 //
 // Run: bun ops/bin/gitignore-audit.ts        (exit 1 on any violation)
 //      bun test ops/bin/gitignore-audit.test.ts
@@ -54,14 +54,14 @@ const SECRETS_IGNORED = [
   "x/creds.token",
 ];
 
-// estate source dirs that template layers must not swallow
+// Pens source dirs that template layers must not swallow
 const SOURCE_NOT_SWALLOWED = [
   "skills/tau-session-audit/helper/x.ts",
   "skills/tau-session-audit/reports/probe.log",
   "ops/bin/x.ts",
   "ops/gitignore/layers/x.gitignore",
   "config/tau/extensions/nemotron/lib/x.ts",
-  "packages/Estate-utils/x.ts",
+  "packages/Pens-utils/x.ts",
   "packages/metaharness/x.ts",
   "tools/stash-guard/x.py",
   "docs/x.md",

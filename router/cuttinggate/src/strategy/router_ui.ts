@@ -18,7 +18,7 @@ export function uiData(): Record<string, unknown> {
     };
   }
   return {
-    router: "estate-scripts-router-ts",
+    router: "Pens-scripts-router-ts",
     version: "v3.1",
     strategy: STRATEGY,
     providers,
@@ -28,7 +28,7 @@ export function uiData(): Record<string, unknown> {
 export const ROUTER_UI_HTML = `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Estate Router — Provider Matrix</title>
+<title>Pens Router — Provider Matrix</title>
 <style>
 :root{--bg:#0b0e14;--panel:#121826;--panel2:#0f1420;--ink:#e6edf3;--muted:#8b98a9;--acc:#5ad1c4;--free:#7ee787;--warn:#f0883e;--bad:#ff6b6b;--line:#1f2937}
 *{box-sizing:border-box}body{margin:0;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg);color:var(--ink)}
@@ -50,7 +50,7 @@ button{background:var(--acc);color:#04201d;border:0;border-radius:8px;padding:9p
 pre{background:#06090f;border:1px solid var(--line);border-radius:8px;padding:10px;max-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin:10px 0 0}
 .meta{color:var(--muted);font-size:12px;margin-top:6px}
 </style></head>
-<body><header><h1>Estate Router</h1><span class="sub" id="sub">loading</span></header>
+<body><header><h1>Pens Router</h1><span class="sub" id="sub">loading</span></header>
 <div class="wrap"><div class="panel"><h2>Provider Matrix</h2><div id="providers"><span class="meta">loading</span></div></div>
 <div class="panel"><h2>Chat (OpenAI-compatible)</h2>
 <div class="row"><select id="model"></select>
@@ -76,14 +76,14 @@ async function load(){
 document.getElementById('send').onclick=async()=>{
  const out=document.getElementById('out');out.textContent='...';
  const body={model:document.getElementById('model').value,messages:[{role:'user',content:document.getElementById('prompt').value}]};
- const r=await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-Estate-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
+ const r=await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-Pens-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
  const t=await r.text();out.textContent=t.slice(0,4000);
  document.getElementById('routed').textContent='routed: '+(r.headers.get('X-Routed-Via')||'?')+' - '+(r.headers.get('X-Latency')||'?')+'s - '+(r.headers.get('X-Strategy')||'?');
 };
 document.getElementById('stream').onclick=async()=>{
  const out=document.getElementById('out');out.textContent='';
  const body={model:document.getElementById('model').value,stream:true,messages:[{role:'user',content:document.getElementById('prompt').value}]};
- const r=await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-Estate-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
+ const r=await fetch('/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','X-Pens-Strategy':document.getElementById('strategy').value},body:JSON.stringify(body)});
  const rd=r.body.getReader();const dec=new TextDecoder();
  while(true){const d=await rd.read();if(d.done)break;out.textContent+=dec.decode(d.value);}
  document.getElementById('routed').textContent='routed: '+(r.headers.get('X-Routed-Via')||'?');

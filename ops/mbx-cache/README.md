@@ -1,6 +1,6 @@
 # mbx-cache
 
-`mbx-cache` is the estate's local remote cache for [mise](https://mise.jdx.dev/)
+`mbx-cache` is the Pens's local remote cache for [mise](https://mise.jdx.dev/)
 task artifacts and mr-boxington builds.
 
 - **Daemon:** `mbx-cache`, supervised by pitchfork on `127.0.0.1:25148`
@@ -10,9 +10,9 @@ task artifacts and mr-boxington builds.
 - **Data:** `var/runtime/mbx-cache`
 - **Client config:** `mise/conf.d/15-remote-cache.toml`
 
-This is intentionally not a fork and not a container. `ranch/` is for estate
+This is intentionally not a fork and not a container. `ranch/` is for Pens
 projects with their own history; `vendored/` holds upstream source. The service
-configuration belongs in `ops/` because it is estate infrastructure.
+configuration belongs in `ops/` because it is Pens infrastructure.
 
 ## Operations
 
@@ -20,7 +20,7 @@ configuration belongs in `ops/` because it is estate infrastructure.
 curl -fsS http://127.0.0.1:25148/v1/status
 curl -fsS http://127.0.0.1:25148/v1/capabilities
 
-cd /home/toxic/pens/estate/vendored/mr-boxington-cache
+cd /home/toxic/pens/Pens/vendored/mr-boxington-cache
 mise exec -- cargo build --release
 pitchfork restart mbx-cache
 ```

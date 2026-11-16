@@ -52,7 +52,7 @@ describe("custom/dots coercion layer", () => {
     expect(out?.[0]?.function?.parameters?.additionalProperties).toBe(false);
   });
 
-  test("constructs full estate payload with reasoning cap, stop tokens, and provider flags", () => {
+  test("constructs full Pens payload with reasoning cap, stop tokens, and provider flags", () => {
     const payload = dotsBody(
       [{ role: "assistant", content: null }, { role: "user", content: "run tool" }],
       {
@@ -124,8 +124,8 @@ describe("custom/* HTTP routes end-to-end (custom/dots, custom/bodybuilder, cust
       catalogState: () => ({
         status: "ok",
         source: "test",
-        contract: { name: "estate-pinax/live-catalog/v1", spec: { generation: 2, canonical: true, introduced: "2026-06-01", emittedBy: "test" }, canonical: true },
-        catalog: { contract: "estate-pinax/live-catalog/v1", generatedAt: "", deadIds: [], providers: {} },
+        contract: { name: "Pens-pinax/live-catalog/v1", spec: { generation: 2, canonical: true, introduced: "2026-06-01", emittedBy: "test" }, canonical: true },
+        catalog: { contract: "Pens-pinax/live-catalog/v1", generatedAt: "", deadIds: [], providers: {} },
         generatedAt: "",
         ageMs: 0,
         stale: false,
@@ -181,8 +181,8 @@ describe("custom/* HTTP routes end-to-end (custom/dots, custom/bodybuilder, cust
       catalogState: () => ({
         status: "ok",
         source: "test",
-        contract: { name: "estate-pinax/live-catalog/v1", spec: { generation: 2, canonical: true, introduced: "2026-06-01", emittedBy: "test" }, canonical: true },
-        catalog: { contract: "estate-pinax/live-catalog/v1", generatedAt: "", deadIds: [], providers: {} },
+        contract: { name: "Pens-pinax/live-catalog/v1", spec: { generation: 2, canonical: true, introduced: "2026-06-01", emittedBy: "test" }, canonical: true },
+        catalog: { contract: "Pens-pinax/live-catalog/v1", generatedAt: "", deadIds: [], providers: {} },
         generatedAt: "",
         ageMs: 0,
         stale: false,
@@ -217,8 +217,8 @@ describe("custom/* HTTP routes end-to-end (custom/dots, custom/bodybuilder, cust
       catalogState: () => ({
         status: "ok",
         source: "test",
-        contract: { name: "estate-pinax/live-catalog/v1", spec: { generation: 2, canonical: true, introduced: "2026-06-01", emittedBy: "test" }, canonical: true },
-        catalog: { contract: "estate-pinax/live-catalog/v1", generatedAt: "", deadIds: [], providers: {} },
+        contract: { name: "Pens-pinax/live-catalog/v1", spec: { generation: 2, canonical: true, introduced: "2026-06-01", emittedBy: "test" }, canonical: true },
+        catalog: { contract: "Pens-pinax/live-catalog/v1", generatedAt: "", deadIds: [], providers: {} },
         generatedAt: "",
         ageMs: 0,
         stale: false,

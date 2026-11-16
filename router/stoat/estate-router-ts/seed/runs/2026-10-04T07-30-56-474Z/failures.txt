@@ -1,2 +1,0 @@
-[mistral/codestral-2508] reasoning_depth/reasoning-puzzle -> BERTJUDGE_MISMATCH
-[mistral/codestral-2508] tools/tools-no-tool-needed -> TOOL_TOOL_NOT_NEEDED

@@ -1,8 +1,8 @@
 # Forge
 
-> Part of [**the ranch**](https://github.com/toxicwind/ranch) — the whole inference estate, one map.
+> Part of [**the ranch**](https://github.com/toxicwind/ranch) — the whole inference Pens, one map.
 
-Forge is the estate's local-only build daemon: a Woodpecker v3 Go fork stripped down to direct job execution with content-hash caching. It replaced the old Python `buildsrv` daemon (briefly and mistakenly renamed "brand" on 2026-09-30 — that name is gone) on the same port, as a drop-in replacement.
+Forge is the Pens's local-only build daemon: a Woodpecker v3 Go fork stripped down to direct job execution with content-hash caching. It replaced the old Python `buildsrv` daemon (briefly and mistakenly renamed "brand" on 2026-09-30 — that name is gone) on the same port, as a drop-in replacement.
 
 No containers, no remote forges, no auth — single-tenant daemon that runs jobs through bash login shells (so mise toolchains resolve) and returns `CACHED` when an identical job spec was already run.
 
@@ -42,7 +42,7 @@ Identical job specs (command, workdir, sorted env, cache key, sorted artifacts) 
 - `/home/toxic/forge/` — state on yote
 - Ports: `:25148` HTTP API, `:25240` gRPC
 
-Pitchfork supervises `estate-scripts/forge` (server) and `estate-scripts/forge-agent` (local execution agent).
+Pitchfork supervises `Pens-scripts/forge` (server) and `Pens-scripts/forge-agent` (local execution agent).
 
 ## History
 

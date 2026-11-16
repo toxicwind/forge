@@ -38,7 +38,7 @@ Every forge-native deploy has the same five pieces:
 3. **Rollout script**: swaps the artifact in, runs health gates, promotes to
    `:live` or rolls back. Also a forge job.
 4. **Funnel path**: one line in the public `MAP` in
-   `estate-scripts/projects/yote/ops/funnel-map.sh`, applied with
+   `Pens-scripts/projects/yote/ops/funnel-map.sh`, applied with
    `sudo funnel-map.sh`, verified with `sudo funnel-map.sh --check`.
 5. **GitHub webhook**: registered on the repo (events: push), secret = the
    yote-side HMAC secret.

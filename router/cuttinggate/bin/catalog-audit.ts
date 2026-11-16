@@ -2,9 +2,9 @@
 /**
  * catalog-audit — is the model catalog true?
  *
- * Reads the live catalog, probes both gateways, and names every id the estate
+ * Reads the live catalog, probes both gateways, and names every id the Pens
  * believes it can serve that no live gateway will accept. This is the check
- * that would have caught `estate/free`, `local-fast`, and the nemotron
+ * that would have caught `Pens/free`, `local-fast`, and the nemotron
  * cloud model on the day they were declared.
  *
  *   cuttinggate/bin/catalog-audit.ts              # audit, exit 1 on findings
@@ -21,8 +21,8 @@ const args = process.argv.slice(2);
 const flags = new Set(args.filter((a) => a.startsWith("--")));
 const positional = args.filter((a) => !a.startsWith("--"));
 
-/** Ports come from the estate SSOT; fall back to the documented defaults. */
-const PORTS_ENV = process.env.ESTATE_PORTS_ENV ?? "/home/toxic/pens/estate/config/ports.env";
+/** Ports come from the Pens SSOT; fall back to the documented defaults. */
+const PORTS_ENV = process.env.ESTATE_PORTS_ENV ?? "/home/toxic/pens/Pens/config/ports.env";
 function portFromEnv(name: string, fallback: string): string {
   try {
     const text = readFileSync(PORTS_ENV, "utf8");

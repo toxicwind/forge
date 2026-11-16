@@ -2,13 +2,13 @@
 // ⚠️  DEPRECATED 2026-10-04 — superseded by Rust flock on :25193.
 // Kept for reference; do not deploy. See flock-ssot/ROUTER_CANON.md.
 /**
- * Estate Router v3.2 (Bun/TypeScript)
- * Port of estate-scripts-router/router.py — same strategies, HealthDB WAL, circuit breakers.
+ * Pens Router v3.2 (Bun/TypeScript)
+ * Port of Pens-scripts-router/router.py — same strategies, HealthDB WAL, circuit breakers.
  *
  * Strategies: fifo_matrix (alias fifo_flock) | ast_race (alias flock_race) | sticky_affinity | weighted_elo | circuit_chain | hybrid
  * Default hybrid: sticky → ast_race → circuit_chain; explicit CODING aliases go direct.
  *
- * Env SSOT: estate/config/ports.env (mise _.file) + ~/.secrets
+ * Env SSOT: Pens/config/ports.env (mise _.file) + ~/.secrets
  *   ESTATE_ROUTER_PORT / ESTATE_PORT — never invent non-25xxx ports
  */
 
@@ -104,7 +104,7 @@ async function handleStream(
         "X-Longctx-Pin": "2m",
         ...(pst2
           ? {
-              "X-Estate-Timings": `connect_ms=${pst2.connect_ms};ttft_ms=${pst2.ttft_ms ?? "-"};total_ms=${pst2.total_ms}`,
+              "X-Pens-Timings": `connect_ms=${pst2.connect_ms};ttft_ms=${pst2.ttft_ms ?? "-"};total_ms=${pst2.total_ms}`,
             }
           : {}),
       },
@@ -127,7 +127,7 @@ async function handleStream(
         "X-Longctx-Pin": "1",
         ...(pst
           ? {
-              "X-Estate-Timings": `connect_ms=${pst.connect_ms};ttft_ms=${pst.ttft_ms ?? "-"};total_ms=${pst.total_ms}`,
+              "X-Pens-Timings": `connect_ms=${pst.connect_ms};ttft_ms=${pst.ttft_ms ?? "-"};total_ms=${pst.total_ms}`,
             }
           : {}),
       },
@@ -149,7 +149,7 @@ async function handleStream(
         "X-Routed-Via": `${p}/${mid}`,
         ...(st
           ? {
-              "X-Estate-Timings": `connect_ms=${st.connect_ms};ttft_ms=${st.ttft_ms ?? "-"};total_ms=${st.total_ms}`,
+              "X-Pens-Timings": `connect_ms=${st.connect_ms};ttft_ms=${st.ttft_ms ?? "-"};total_ms=${st.total_ms}`,
             }
           : {}),
       },
@@ -190,7 +190,7 @@ const server = Bun.serve({
 
     if (path.startsWith("/mesh")) {
       const m = await handleMeshRequest(req, {
-        service: "estate-scripts-router",
+        service: "Pens-scripts-router",
         version: "v3.2",
       });
       if (m) return m;
@@ -226,9 +226,9 @@ const server = Bun.serve({
       // seeds pre-discovery, live discovery after), plus the CODING aliases.
       // Each entry carries the provider's live metadata (pricing,
       // context_length, architecture...) plus the router's own routing
-      // metadata under "x-estate". The free flag is the same live-derived
+      // metadata under "x-Pens". The free flag is the same live-derived
       // eligibility routing consumes (modelFree), not a static suffix guess.
-      // x-estate.source is the catalog's model source:
+      // x-Pens.source is the catalog's model source:
       // seed | live | static | overlay.
       const seen = new Set<string>();
       const data: Record<string, unknown>[] = [];
@@ -249,7 +249,7 @@ const server = Bun.serve({
           object: "model",
           owned_by: p,
           ...(meta as Record<string, unknown>),
-          "x-estate": sovMeta(p, id, source),
+          "x-Pens": sovMeta(p, id, source),
         });
       };
       for (const p of Object.keys(PROVIDERS)) {
@@ -265,7 +265,7 @@ const server = Bun.serve({
           id,
           object: "model",
           owned_by: "alias",
-          "x-estate": {
+          "x-Pens": {
             provider: "alias",
             source: "alias",
             free: id === "free",
@@ -300,7 +300,7 @@ const server = Bun.serve({
       }
       return json({
         status: "ok",
-        router: "estate-scripts-router-ts",
+        router: "Pens-scripts-router-ts",
         version: "v3.2",
 strategy: STRATEGY,
 strategy_detail: STRATEGY === "auto" ? "auto: ast_race (code-shaped) -> free race (default) -> hybrid (fallback); per-request X-Strategy/X-Routed-Via headers show the chosen lane" : STRATEGY,
@@ -392,7 +392,7 @@ strategy_detail: STRATEGY === "auto" ? "auto: ast_race (code-shaped) -> free rac
       }
       return json({
         status: "ok",
-        router: "estate-scripts-router-ts",
+        router: "Pens-scripts-router-ts",
         version: "v3.2",
         strategy: STRATEGY,
         parallel: MAX_PARALLEL,
@@ -479,7 +479,7 @@ strategy_detail: STRATEGY === "auto" ? "auto: ast_race (code-shaped) -> free rac
       }
     }
 
-    // Estate-owned openrouter/bodybuilder equivalent: natural-language
+    // Pens-owned openrouter/bodybuilder equivalent: natural-language
     // multi-model job -> structured {requests:[...]} fan-out bodies for the
     // caller to execute in parallel. Generation is free (free-race lane);
     // execution stays with the caller.
@@ -513,7 +513,7 @@ strategy_detail: STRATEGY === "auto" ? "auto: ast_race (code-shaped) -> free rac
         return json({ error: "invalid_json" }, 400);
       }
       const sid = sessionId(req, body);
-      const strat = req.headers.get("X-Estate-Strategy") || STRATEGY;
+      const strat = req.headers.get("X-Pens-Strategy") || STRATEGY;
       // openfang shim: canonicalize "provider:model" / "provider/model"
       // mangled specs before routing.
       const rawModel = String(body.model || "auto");
@@ -548,7 +548,7 @@ strategy_detail: STRATEGY === "auto" ? "auto: ast_race (code-shaped) -> free rac
             "X-Longctx-Pin": "2m",
             ...(t2
               ? {
-                  "X-Estate-Timings": `connect_ms=${t2.connect_ms};ttft_ms=${t2.ttft_ms ?? "-"};total_ms=${t2.total_ms}`,
+                  "X-Pens-Timings": `connect_ms=${t2.connect_ms};ttft_ms=${t2.ttft_ms ?? "-"};total_ms=${t2.total_ms}`,
                 }
               : {}),
           },
@@ -571,7 +571,7 @@ strategy_detail: STRATEGY === "auto" ? "auto: ast_race (code-shaped) -> free rac
             "X-Longctx-Pin": "1",
             ...(t
               ? {
-                  "X-Estate-Timings": `connect_ms=${t.connect_ms};ttft_ms=${t.ttft_ms ?? "-"};total_ms=${t.total_ms}`,
+                  "X-Pens-Timings": `connect_ms=${t.connect_ms};ttft_ms=${t.ttft_ms ?? "-"};total_ms=${t.total_ms}`,
                 }
               : {}),
           },
@@ -591,7 +591,7 @@ strategy_detail: STRATEGY === "auto" ? "auto: ast_race (code-shaped) -> free rac
             "X-Strategy": strat,
             ...(t
               ? {
-                  "X-Estate-Timings": `connect_ms=${t.connect_ms};ttft_ms=${t.ttft_ms ?? "-"};total_ms=${t.total_ms}`,
+                  "X-Pens-Timings": `connect_ms=${t.connect_ms};ttft_ms=${t.ttft_ms ?? "-"};total_ms=${t.total_ms}`,
                 }
               : {}),
           },
@@ -612,7 +612,7 @@ strategy_detail: STRATEGY === "auto" ? "auto: ast_race (code-shaped) -> free rac
 const SECRET_FILES = [
   `${process.env.HOME}/.secrets`,
   "/home/toxic/.secrets",
-  "/home/toxic/pens/estate/.env.local",
+  "/home/toxic/pens/Pens/.env.local",
 ];
 function hotReload(source: string): Record<string, unknown> {
   for (const f of SECRET_FILES) loadEnvFile(f, true);
@@ -730,7 +730,7 @@ startLiveDiscovery();
 
 const keyed = Object.keys(PROVIDERS).filter(keyOk);
 
-console.log(`Estate Router TS v3.2 on http://127.0.0.1:${PORT}/v1`);
+console.log(`Pens Router TS v3.2 on http://127.0.0.1:${PORT}/v1`);
 
 console.log(
   `Strategy=${STRATEGY} | routes: ${Object.keys(ROUTERS).join(", ")}`,

@@ -2,11 +2,11 @@
 
 **Status:** Active as of 2026-09-30. Blessed binary sha256:
 `e1d70dd074bf6c1218ce45be5e2cf9ebb609cf7439d279989d2429c2f08e2e4e`
-Immutable copy: `/home/toxic/pens/estate/projects/herd/herd.20260930-052800`
+Immutable copy: `/home/toxic/pens/Pens/projects/herd/herd.20260930-052800`
 
 ## If herd fails to start or dies
 
-Herd serves on `:25100`. The estate router (`:25104`) depends on it via
+Herd serves on `:25100`. The Pens router (`:25104`) depends on it via
 `LLM_BASE_URL` (default `http://127.0.0.1:25100/v1`).
 
 ### Immediate fallback (no restart needed)
@@ -22,20 +22,20 @@ export HERD_V1="https://openrouter.ai/api/v1"
 
 The router reads `LLM_BASE_URL` first, then `HERD_V1`, then defaults to
 herd `:25100`. Setting either env var reroutes around a dead herd instantly.
-Restart the router (`estate/router`) to pick up the change.
+Restart the router (`Pens/router`) to pick up the change.
 
 ### Restore the binary (warden path)
 
-Do NOT roll back to a stale backup. The warden (`bin/estate-reconcile`)
+Do NOT roll back to a stale backup. The warden (`bin/Pens-reconcile`)
 follows **fallback, not rollback**:
 
-- `estate-reconcile check` — read-only drift report (exit 1 on drift)
-- `estate-reconcile --apply` — HARD-DISABLED (refuses, exit 2).
+- `Pens-reconcile check` — read-only drift report (exit 1 on drift)
+- `Pens-reconcile --apply` — HARD-DISABLED (refuses, exit 2).
   Restoration is dead on every path (the Architect 2026-09-30); the warden only
   alerts. Rebuild from a trusted source and redeploy by hand.
 
 If the immutable copy itself is corrupt, rebuild from source:
-`toxicwind/estate-swap` @ `7fc25280816fa7f98764ac46d1435d55ac9dc3c3`
+`toxicwind/Pens-swap` @ `7fc25280816fa7f98764ac46d1435d55ac9dc3c3`
 (or newer upstream — prefer cutting edge per the Architect).
 
 ### Verify after recovery
@@ -43,7 +43,7 @@ If the immutable copy itself is corrupt, rebuild from source:
 ```bash
 curl -sf http://127.0.0.1:25100/health        # expect: OK
 curl -sf http://127.0.0.1:25100/v1/models     # expect: model list JSON
-/home/toxic/pens/estate/bin/estate-reconcile check  # expect: exit 0
+/home/toxic/pens/Pens/bin/Pens-reconcile check  # expect: exit 0
 ```
 
 ## Why fallback, not rollback (the Architect 2026-09-30)
