@@ -12,7 +12,7 @@ import {
   MODEL_ALIASES as PKG_MODEL_ALIASES,
   DEAD_MODEL_IDS as PKG_DEAD_MODEL_IDS,
   type ProviderDef,
-} from "../../../../../geode/products/mimetite/src/index.ts";
+} from "../../../../../../olympus/products/tau/geode/products/mimetite/src/index.ts";
 
 // ---------------------------------------------------------------------------
 // Secrets + local stack env (mise loads these; standalone bun needs them too)
@@ -221,7 +221,7 @@ function effectiveDefs(): ProviderDef[] {
   return [...pkg.filter((d) => !localNames.has(d.name)), ...localDefs];
 }
 
-const EFFECTIVE_DEFS = effectiveDefs();
+export const EFFECTIVE_DEFS = effectiveDefs();
 
 /**
  * CLIENT_IDENTITY — provider name → identity class, from the SSOT defs
