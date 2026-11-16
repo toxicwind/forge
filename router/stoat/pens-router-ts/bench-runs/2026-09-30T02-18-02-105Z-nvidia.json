@@ -1,0 +1,80 @@
+{
+  "tool": "provider-bench",
+  "version": 1,
+  "startedAt": "2026-09-30T02:18:02.105Z",
+  "provider": "nvidia",
+  "base": "https://integrate.api.nvidia.com/v1",
+  "config": {
+    "reqs": 3,
+    "concurrency": 2,
+    "timeoutMs": 45000
+  },
+  "models": [
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "liveness": {
+        "healthy": false,
+        "reason": "http 401: {\"status\":401,\"title\":\"Unauthorized\",\"detail\":\"Authentication failed\"}",
+        "latencyMs": 124
+      },
+      "quality": {
+        "scores": [],
+        "mean": 0,
+        "n": 0
+      },
+      "latencyP50Ms": 124,
+      "rateLimited": false,
+      "keyDead": true
+    },
+    {
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "liveness": {
+        "healthy": false,
+        "reason": "http 401: {\"status\":401,\"title\":\"Unauthorized\",\"detail\":\"Authentication failed\"}",
+        "latencyMs": 117
+      },
+      "quality": {
+        "scores": [],
+        "mean": 0,
+        "n": 0
+      },
+      "latencyP50Ms": 117,
+      "rateLimited": false,
+      "keyDead": true
+    },
+    {
+      "model": "nvidia/nemotron-nano-3-30b-a3b",
+      "liveness": {
+        "healthy": false,
+        "reason": "skipped: provider stopped",
+        "latencyMs": null
+      },
+      "quality": {
+        "scores": [],
+        "mean": 0,
+        "n": 0
+      },
+      "latencyP50Ms": null,
+      "rateLimited": false,
+      "keyDead": true
+    },
+    {
+      "model": "nvidia/llama-3.1-nemotron-70b-instruct",
+      "liveness": {
+        "healthy": false,
+        "reason": "skipped: provider stopped",
+        "latencyMs": null
+      },
+      "quality": {
+        "scores": [],
+        "mean": 0,
+        "n": 0
+      },
+      "latencyP50Ms": null,
+      "rateLimited": false,
+      "keyDead": true
+    }
+  ],
+  "providerRateLimited": false,
+  "providerKeyDead": true
+}

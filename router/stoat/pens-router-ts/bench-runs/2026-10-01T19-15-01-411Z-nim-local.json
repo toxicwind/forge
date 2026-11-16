@@ -1,0 +1,76 @@
+{
+  "tool": "provider-bench",
+  "version": 1,
+  "startedAt": "2026-10-01T19:15:01.411Z",
+  "provider": "nim-local",
+  "base": "http://127.0.0.1:8000/v1",
+  "config": {
+    "reqs": 3,
+    "concurrency": 2,
+    "timeoutMs": 45000
+  },
+  "models": [
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "liveness": {
+        "healthy": true,
+        "reason": "ok",
+        "latencyMs": 560
+      },
+      "quality": {
+        "scores": [
+          2,
+          2,
+          2
+        ],
+        "mean": 2,
+        "n": 3
+      },
+      "latencyP50Ms": 560,
+      "rateLimited": false,
+      "keyDead": false
+    },
+    {
+      "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "liveness": {
+        "healthy": true,
+        "reason": "ok",
+        "latencyMs": 3827
+      },
+      "quality": {
+        "scores": [
+          2,
+          2,
+          2
+        ],
+        "mean": 2,
+        "n": 3
+      },
+      "latencyP50Ms": 3827,
+      "rateLimited": false,
+      "keyDead": false
+    },
+    {
+      "model": "deepseek-ai/deepseek-v4.1-flash",
+      "liveness": {
+        "healthy": true,
+        "reason": "ok",
+        "latencyMs": 2923
+      },
+      "quality": {
+        "scores": [
+          2,
+          2,
+          1
+        ],
+        "mean": 1.667,
+        "n": 3
+      },
+      "latencyP50Ms": 1549,
+      "rateLimited": false,
+      "keyDead": false
+    }
+  ],
+  "providerRateLimited": false,
+  "providerKeyDead": false
+}

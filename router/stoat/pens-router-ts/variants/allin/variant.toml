@@ -1,0 +1,4 @@
+[variant]
+name = "allin"
+description = "Variant allin for Obelisk evolutionary race"
+port_offset = 1

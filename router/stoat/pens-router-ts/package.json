@@ -1,0 +1,19 @@
+{
+  "name": "Pens-scripts-router-ts",
+  "version": "3.1.0",
+  "type": "module",
+  "main": "router.ts",
+  "scripts": {
+    "start": "bun run router.ts",
+    "dev": "bun --hot run router.ts",
+    "check": "bun build router.ts --outdir=/tmp/Pens-scripts-router-ts-check --target=bun"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "bun-types": "^1.4.4",
+    "@types/bun": "latest"
+  },
+  "dependencies": {
+    "@takk/bayesroute": "^1.0.0"
+  }
+}
