@@ -56,10 +56,15 @@ describe("DEAD_MODEL_IDS sweep", () => {
     );
   });
   test("nvidia live seeds survive the sweep (geode 47-def SSOT)", () => {
+    // 2026-11-15 live probe (integrate.api.nvidia.com): nemotron-3-super-
+    // 120b-a12b is 410 EOL, nemotron-3.5-content-safety is 404, and
+    // riva-translate-4b-instruct-v1.1 is 410 EOL — all three are now in
+    // DEAD_MODEL_IDS and filtered. The verified 200 survivor is
+    // nemotron-3.5-super-vl-120b-a12b (moved from secure-nim into nvidia).
     expect(catalogModelsFor("nvidia")).toContain(
-      // 2026-10-26 entitlement audit: nemotron-3-super-120b-a12b is
-      // entitlement-dead (404) and was removed from the SSOT seeds; the
-      // verified 200 set below is the surviving fixture.
+      "nvidia/nemotron-3.5-super-vl-120b-a12b",
+    );
+    expect(catalogModelsFor("nvidia")).not.toContain(
       "nvidia/nemotron-3-super-120b-a12b",
     );
   });
